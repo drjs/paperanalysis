@@ -3,7 +3,6 @@ function balloons(words, wordCount, corrMat, tree)
     %   Detailed explanation goes here
     
     f = figure('Name', 'Balloon Race');
-    axText = axes();
     
     textGroup = generateTextHandles(words, wordCount, corrMat, tree);
     [~,referenceWordIdx] = max(wordCount);
