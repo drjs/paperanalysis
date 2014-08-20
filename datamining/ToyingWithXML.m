@@ -1,3 +1,5 @@
+function ToyingWithXML
+
 %% Scrape the data from the XML file
 clear
 
@@ -99,17 +101,17 @@ ProbAbstracts = strrep(ProbAbstracts,char(39),'');
 % Concatenate relevant data entries
 
 Abstracts = {};
-for i= 1:numel(IndxPapTitle)-1    
+for i= 1:numel(IndxPapTitle)-1
     ithAbs = (find ((IndxPapTitle(i) < IndxProbAbst) & (IndxPapTitle(i+1) > IndxProbAbst )));
-    Abstracts(i) = {strjoin(ProbAbstracts(ithAbs)')};    
+    Abstracts(i) = {strjoin(ProbAbstracts(ithAbs)')};
 end
 ithAbs = (find ((IndxPapTitle(133) < IndxProbAbst) & (IndxPapTitle(133)+10 > IndxProbAbst )));
 Abstracts(133) = {strjoin(ProbAbstracts(ithAbs)')};
- 
+
 clear ithAbs i data ProbAbstracts
 
 %% Build the dictionary
- 
+
 WholeBody = strsplit(strjoin(Abstracts));
 
 % Delete small words
@@ -120,7 +122,7 @@ WholeBody(L <= 3) = [];
 WholeBody = lower(WholeBody);
 
 % Construct the dictionary
-vocabulary = unique(WholeBody);  
+vocabulary = unique(WholeBody);
 
 fileid = fopen('CommonWords100oxforddictionaries.com.txt');
 Wcommon = textscan(fileid, '%s');
@@ -128,14 +130,14 @@ if fileid ~=-1
     fclose(fileid);
 end
 Wcommon = Wcommon{1};
- 
+
 vocabulary(ismember(vocabulary,Wcommon)) = [];
 
 n = length(vocabulary);
 freq = zeros(n,1);
 for i=1:n
     freq(i) = nnz(ismember(WholeBody,vocabulary{i}));
-end 
+end
 
 [freq, idx] = sort(freq, 'descend');
 vocabulary = vocabulary(idx);
@@ -144,28 +146,108 @@ T = table(vocabulary',freq,'VariableNames',{'Vocabulary' 'Freq'});
 clear idx fileid Wcommon WholeBody freq i ans n L2 L
 
 
-%% Make frequency count for each document
+%% Make frequency count variants for each document/term
 
 Top30words = vocabulary(1:30);
-WordFrequencies = zeros(numel(IndxPapTitle),30); 
+WordFreq = zeros(numel(IndxPapTitle),30);
 
+% Simple counting Words / Documents
 for j = 1:numel(IndxPapTitle)
     for i=1:30
-        WordFrequencies(j,i) = nnz(ismember( strsplit(Abstracts{j}) ,Top30words{i}));
+        WordFreq(j,i) = nnz(ismember( strsplit(Abstracts{j}) ,Top30words{i}));
     end
 end
 
-%% Try different similarity measures
+% L2 Normalization for Words
+WordFreqNorms = cellfun(@norm, num2cell(WordFreq,2));
+WordFreqL2 =  WordFreq./repmat(WordFreqNorms,[1 30]);
+
+% L2 Normalization for Documents
+DocFreqNorms = cellfun(@norm, num2cell(WordFreq,1));
+DocFreqL2 =  WordFreq./repmat(DocFreqNorms,[133 1]);
+
+% TF-IDF normalization (Term Frequency. * Inverse Docum. Frequency)
+TF = log( WordFreq + 1);
+IDF = log( numel(IndxPapTitle) ./ (  sum( ~(WordFreq <2*eps) ) + 1) );
+WordFreq_tfidf = TF .* repmat(IDF, numel(IndxPapTitle), 1);
 
 
+%% Try some statistics and do naive visualizations
+
+%% Simple rank and linear correlations plots for word terms using CORR
+
+figure(1);
+subplot(1,2,1)
+makeCorrelationPlot(WordFreq,'Pearson',Top30words);
+title({'Spearman (rank) correlations between Top 30 terms' 'Word Counts'});
+subplot(1,2,2)
+makeCorrelationPlot(WordFreq,'Spearman',Top30words); 
+title({'Pearson (linear) correlations between Top 30 terms' 'Word Counts'});
+
+figure(2);
+subplot(1,2,1)
+makeCorrelationPlot(WordFreqL2,'Pearson',Top30words);
+title({'Spearman (rank) correlations between Top 30 terms' 'Word Freq. L2 normalized'});
+subplot(1,2,2)
+makeCorrelationPlot(WordFreqL2,'Spearman',Top30words); 
+title({'Pearson (linear) correlations between Top 30 terms' 'Word Freq. L2 normalized'});
+
+figure(3);
+subplot(1,2,1)
+makeCorrelationPlot(WordFreq_tfidf,'Pearson',Top30words);
+title({'Spearman (rank) correlations between Top 30 terms' 'Word Freq. TFIDF'});
+subplot(1,2,2)
+makeCorrelationPlot(WordFreq_tfidf,'Spearman',Top30words); 
+title({'Pearson (linear) correlations between Top 30 terms' 'Word Freq. TFIDF'});
+
+%% Simple rank and linear correlations plots for documents using CORR
+
+figure(4)
+subplot(1,2,1);
+Corr_Spr = corr(WordFreq','type','spearman');
+surf( (Corr_Spr)); axis square; view([0 90])
+xlim([1 size(Corr_Spr,1)]); ylim([1 size(Corr_Spr,1)]);
+xlabel('Document Index'); ylabel('Document Index');
+title('Spearman (rank) correlations between the documents'); shading flat
+
+subplot(1,2,2);
+Corr_Pea = corr(WordFreq','type','pearson');
+surf( (Corr_Pea)); axis square; view([0 90])
+xlim([1 size(Corr_Pea,1)]); ylim([1 size(Corr_Pea,1)]);
+xlabel('Document Index'); ylabel('Document Index');
+title('Pearson (linear) correlations between the documents'); shading flat
+
+%% Simple linkage plots for words using LINKAGE
+
+tree = linkage(WordFreqL2','average','cosine');
+D = pdist(WordFreqL2','cosine');
+leafOrder = optimalleaforder(tree,D);
+
+figure(5)
+dendrogram(tree,'Reorder',leafOrder,'Labels',Top30words,'Orientation','left')
 
 
-[pca_loadings,pca_scores,pca_lambdas] = princomp(WordFrequencies);
+tree = linkage(WordFreq_tfidf','average','cosine');
+D = pdist(WordFreq_tfidf','cosine');
+leafOrder = optimalleaforder(tree,D);
 
-Y = pdist(pca_scores)
+figure(6)
+dendrogram(tree,'Reorder',leafOrder,'Labels',Top30words,'Orientation','left')
 
-Z = linkage(pca_scores(:,1:5),'average','cityblock'); dendrogram(Z)
-Z = linkage(WordFrequencies); dendrogram(Z)
 
-A = corrcov(cov(WordFrequencies));
- 
+% Finding the number of components using FITGMDIST and PRINCOMP
+[pca_loadings,pca_scores,pca_lambdas] = princomp(WordFreq');
+
+    function  makeCorrelationPlot(MATRIX,TYPE,LABELS)
+        Corr_Spr = corr(MATRIX,'type',TYPE);
+        surf( (Corr_Spr)); 
+        axis square;  view([0 90])
+        xlim([1 size(Corr_Spr,1)]); ylim([1 size(Corr_Spr,1)]);       
+        shading flat;
+        set(gca,'Xtick',1:size(Corr_Spr,1),'XTickLabel',LABELS,'XTickLabelRotation',45);
+        set(gca,'Ytick',1:size(Corr_Spr,1),'YTickLabel',LABELS,'YTickLabelRotation',0);
+    end
+
+
+end
+
