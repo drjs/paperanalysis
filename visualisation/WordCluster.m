@@ -3,23 +3,43 @@ classdef WordCluster
     %   Detailed explanation goes here
     
     properties
-        centreWordHandle;
+        centreRow;
+        rowsAbove;
+        rowsBelow;
         centreX;
         centreY;
-        subClouds= [];
     end
     
     methods
-        function this = WordCluster(centreWordHandle)
-            this.centreWordHandle = centreWordHandle;
-            this.centreX = 0;
-            this.centreY = 0;
+        function this = WordCluster(x, y, centreWordHandle)
+            this.centreRow = WordClusterRow(centreWordHandle, x, y);
+            this.centreX   = x;
+            this.centreY   = y;
         end
         
-        function this = addWords(this, wordHandles, wordCounts, corrMat)
-            if numel(wordHandles) == 7;
-                this = this.add7words(wordHandles);
+        function this = addWords(this, wordHandles, correlationToCentre)
+            % sort words according to how correlated they are to the centre
+            [correlationToCentre, sortOrderIdx] = sort(correlationToCentre, 'descend');
+            wordHandles = wordHandles(sortOrderIdx);
+            % small clusters don't quite follow the same build pattern so
+            % do those first proceedurally           
+            if numel(wordHandles) > 6;
+                this = this.addFirst7Words(wordHandles(1:6));
+            else
+                this = this.addFirst7Words(wordHandles);
             end
+            
+            % start in the top row. Add a word to the right hand side
+            % move down to next row add next word.  
+            % until adding to the right on the bottom row.
+            
+            % start in the bottom row add words to the left
+            % move up to next row and add word to the left
+            
+            % when it gets back to where it started...
+            % if the outer row has 3 words in
+            %make a new outer row and add the new word
+            
         end
         
         function this = add7Words(this, wordHandles)

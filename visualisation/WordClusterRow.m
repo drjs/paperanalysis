@@ -17,7 +17,7 @@ classdef WordClusterRow
         marginLR = 2;
         marginTB = 2;
         % where is the row currently centred
-        centreX = 0.5;
+        centreX = 0;
         centreY = 0;
     end
     
@@ -68,6 +68,10 @@ classdef WordClusterRow
             this = this.recalculateLimits();
             % recentre the row
             this = this.recentreRow();
+        end
+        
+        function count = getNumberOfWordsInRow(this)
+            count = numel(this.allWordHandles);
         end
         
         function this = recentreRow(this)
