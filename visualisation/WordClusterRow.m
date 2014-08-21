@@ -4,8 +4,6 @@ classdef WordClusterRow
     
     properties
         allWordHandles;
-        % use a hgtransform to translate row to where it needs to be
-        transformGroup;
         % what's the left right top and bottom limit of the row?
         % measured in "blocks"
         blockSize = 0.002;
@@ -14,25 +12,29 @@ classdef WordClusterRow
         top    = 0;
         bottom = 0;
         % how much padding to give each word (in blocks)
-        marginLR = 2;
-        marginTB = 2;
+        marginLR = 3;
+        marginTB = 0;
         % where is the row currently centred
         centreX = 0;
         centreY = 0;
+        % should the text be aligned from the top or bottom?
+        % if the row is above centre, use bottom aligned text
+        % if the row is below centre, use top aligned text
+        alignment;
     end
     
     methods
-        function this = WordClusterRow(centreWordHandle, varargin)
-            if nargin == 3
+        function this = WordClusterRow(centreWordHandle, alignment, varargin)
+            if nargin == 4
                 this.centreX = varargin{1};
                 this.centreY = varargin{2};
             end
             
-            this.transformGroup = hgtransform;
+            this.alignment = alignment;
             this.allWordHandles = centreWordHandle;
             % place centre word in centre
             this.placeWordAtLocation(centreWordHandle, ...
-                this.centreX, this.centreY, 'center', 'bottom');
+                this.centreX, this.centreY, 'center', this.alignment);
             % recalculate left, right, top and bottom extent of the row.
             this = this.recalculateLimits();
             
@@ -50,7 +52,7 @@ classdef WordClusterRow
             this.allWordHandles = [newWordHandle, this.allWordHandles];
             % add to row
             this.placeWordAtLocation(newWordHandle, ...
-                this.left, this.centreY, 'right', 'bottom');
+                this.left, this.centreY, 'right', this.alignment);
             % recalculate limits
             this = this.recalculateLimits();
             % recentre the row
@@ -63,7 +65,7 @@ classdef WordClusterRow
             this.allWordHandles = [this.allWordHandles, newWordHandle];
             % add to row
             this.placeWordAtLocation(newWordHandle, ...
-                this.right, this.centreY, 'left', 'bottom');
+                this.right, this.centreY, 'left', this.alignment);
             % recalculate limits
             this = this.recalculateLimits();
             % recentre the row
@@ -91,8 +93,8 @@ classdef WordClusterRow
                 th.Position = [th.Position(1)+dX, th.Position(2)+dY];
             end
             % recalculate centre and limits.
-            this.centreX = this.centreX + dX;
-            this.centreY = this.centreY + dY;
+%             this.centreX = this.centreX + dX;
+%             this.centreY = this.centreY + dY;
             this.left    = this.left + dX;
             this.right   = this.right + dX;
             this.top     = this.top + dY;
@@ -137,7 +139,7 @@ classdef WordClusterRow
             wh.HorizontalAlignment = halign;
             wh.VerticalAlignment   = valign;
             wh.Position            = [x y];
-            wh.Parent              = this.transformGroup;
+            % wh.Parent              = this.transformGroup;
         end
         
         function y = ceilToNearest(~, x, acc)

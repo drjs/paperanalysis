@@ -44,7 +44,8 @@ whR = text('String', 'or is it?', ...
     'Position', [0.5,1] ...
     );
 
-wr = WordClusterRow(wh1, cx, cy);
+wr = WordClusterRow(wh1, 'middle', cx, cy);
 wr = wr.addWordLeft(whL);
 wr = wr.addWordRight(whR);
-wr = wr.repositionRow(0.64, 0.2)
+wr = wr.addWordRight(whR);
+% wr = wr.repositionRow(0.64, 0.2)

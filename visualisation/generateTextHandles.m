@@ -1,4 +1,4 @@
-function textGroup = generateTextHandles(words, wordCount, corrMat, tree)
+function textHandles = generateTextHandles(words, wordCount, corrMat, tree)
     %GENERATETEXTHANDLES Generates nicely coloured and sized text handles
     %for use with the visualisation
     % WORDS a cell array containing N text strings to turn into handles.
@@ -19,18 +19,20 @@ function textGroup = generateTextHandles(words, wordCount, corrMat, tree)
     close(f);
     
     colours = generateWordRGBColours(bestOrder, corrMat);
-    r = colours(:,1)';
-    g = colours(:,2)';
-    b = colours(:,3)';
     
-    textGroup = hggroup;
     % draw some text
-    textHandles = arrayfun(@makeATextHandle, words, wordCount, ...
-        r, g, b, sum(corrMat), 'UniformOutput', false);
+    textHandles = [];
+    mat = sum(corrMat);
+    
+    for i = 1:numel(words)
+       textHandles = [textHandles, ...
+        makeATextHandle(words(i), wordCount(i), colours(i,:), mat(i))];
+    end
+    
     % add all text to text group
-    cellfun(@(th) set(th, 'Parent', textGroup), textHandles);
+    % cellfun(@(th) set(th, 'Parent', textGroup), textHandles);
     % adding things into a group seems to flip the ordering, so...
-    textGroup.Children = flip(textGroup.Children);
+    % textGroup.Children = flip(textGroup.Children);
 end
 
 function jLength = calculateJourneyLength(journey, corrMat)
@@ -62,12 +64,11 @@ function colours = generateWordRGBColours(wordOrder, corrMat)
 end
 
 
-function th = makeATextHandle(word, wordCount, r, g, b, totalCorrelation)
+function th = makeATextHandle(word, wordCount, rgb, totalCorrelation)
     fontScaleFactor = log10(wordCount);
     fontBlockSize = 0.002; % measured in "FontUnits"
     makeBackground = false;
     prettyFonts = {'Century Gothic', 'Cooper Black', 'Magneto Bold'};   
-    rgb = [r,g,b]; % array fun does not like to pass vectors.
     
     th = text('String', word, ...
         'FontName', prettyFonts{randi(numel(prettyFonts), 1)}, ... % random pretty font
@@ -75,7 +76,7 @@ function th = makeATextHandle(word, wordCount, r, g, b, totalCorrelation)
         'Margin', 1, ...
         'FontUnits', 'normalized', ...
         'FontSize', (wordCount/fontScaleFactor)*fontBlockSize, ...
-        'Units', 'normalized', ... % 'data', ... %
+        'Units', 'data', ... % 'normalized', ... %
         'VerticalAlignment', 'middle', ...
         'HorizontalAlignment', 'center', ...
         'Position', [0,0] ...
