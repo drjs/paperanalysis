@@ -1,8 +1,7 @@
 function WordCloudMaker
-cla reset
+% cla reset
 clear variables
 % clear classes
-numberClusters = 4;
 
 % load realtestdata
 % 
@@ -10,33 +9,37 @@ numberClusters = 4;
 % T = cluster(tree, 'maxclust', numberClusters);
 % c = hist(T, numberClusters)
 
-fontBlockSize = 0.02;
-prettyFonts = {'Century Gothic', 'Cooper Black', 'Magneto Bold'};
 
-cx = 0.2;
-cy = 0.8;
+wordsample = {'student','engineering','learning','education','university', ...
+    'project','research','study','teaching','skills','technology',...
+    'engineers','result','course','programme','design','development',...
+    'approach','knowledge','training','different','activities',...
+    'courses','professional','level','process','educational',...
+    'curriculum','mathematics','higher'};
+wordcount = [475,336,227,170,149,118,103,103,90,83,82,77,77,75,74,67,67,63,62,59,56,55,55,53,47,45,44,41,41,40];
+wordcount = wordcount./min(wordcount);
+wordarray = [];
 
-wh1 = makeWord('string1');
-wh2 = makeWord('wh2 added to');
-wh3 = makeWord('or is it?');
-wh4 = makeWord('kthxbye');
-wh5 = makeWord('O RLY?');
-wh6 = makeWord('*sad face*');
-wh7 = makeWord('to the cloud!');
+f = figure('Name', 'Word Cloud', 'Position', [340 340 1000 420]);
+
+for w = 1:numel(wordsample)
+    wordarray = [wordarray, makeWord(wordsample(w), wordcount(w))];
+end
 
 axis manual
-
-w = WordCluster(wh1, 0.5, 0.5);
-% corrMat(1, 2:8)
-w = w.addFirst7Words([wh2, wh3, wh4, wh5, wh6, wh7]); %, wordCount(2:8), corrMat(1, 2:8));]); %
-
+nwords =30;
+w = WordCluster(wordarray(1), 0.5, 0.5);
+w = w.addWords(wordarray(2:nwords), rand([1,nwords-1])); %, wordCount(2:8), corrMat(1, 2:8));]); %
 
 
+ax = gca;
+ax.Visible = 'off';
+f.Color = 'black';
 
 
 end
 
-function w = makeWord(string)
+function w = makeWord(string, count)
 fontBlockSize = 0.02;
 prettyFonts = {'Century Gothic', 'Cooper Black', 'Magneto Bold'};
 
@@ -45,7 +48,7 @@ w = text('String', string, ...
     'Color', rand(1,3), ...
     'Margin', 1, ...
     'FontUnits', 'normalized', ...
-    'FontSize', 4*fontBlockSize, ...
+    'FontSize', count*fontBlockSize, ...
     'Units', 'data', ... % 'normalized', ... %
     'VerticalAlignment', 'middle', ...
     'HorizontalAlignment', 'center', ...

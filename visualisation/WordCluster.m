@@ -17,27 +17,78 @@ classdef WordCluster
         
         function this = addWords(this, wordHandles, correlationToCentre)
             % sort words according to how correlated they are to the centre
-            [correlationToCentre, sortOrderIdx] = sort(correlationToCentre, 'descend');
+            [~, sortOrderIdx] = sort(correlationToCentre, 'descend');
             wordHandles = wordHandles(sortOrderIdx);
             % small clusters don't quite follow the same build pattern so
             % do those first proceedurally
-            if numel(wordHandles) > 6;
-                this = this.addFirst7Words(wordHandles(1:6));
-            else
+            if numel(wordHandles) < 7;
                 this = this.addFirst7Words(wordHandles);
+                return;
+            end
+            this = this.addFirst7Words(wordHandles(1:6));
+            wordHandles(1:6) = [];
+            wordAt = 1; % current word to add to cluster
+            % this build algorithm will populate the cluster in a spiral
+            % but randomly start building from either the topR or bottomL
+            startAtTop = rand(1)>0.5;
+            
+            if startAtTop 
+                % build from the top down before entering main cluster
+                % construction loop
+                if(this.wordRows(end).isFull() && wordAt <= numel(wordHandles))
+                    this = addRowAbove(this, wordHandles(wordAt));
+                    wordAt = wordAt + 1;
+                end
+                [this, wordAt] = this.addWordsTopRToBottomR(wordAt, wordHandles);
             end
             
-            % start in the top row. Add a word to the right hand side
-            % move down to next row add next word.
-            % until adding to the right on the bottom row.
+            while wordAt <= numel(wordHandles)              
+                % if bottom row is full and there's at least one more word,
+                % create a new row underneath and add next word
+                if(this.wordRows(1).isFull() && wordAt <= numel(wordHandles))
+                    this = addRowBelow(this, wordHandles(wordAt));
+                    wordAt = wordAt + 1;
+                end
+                
+                % start in the bottom row add words to the left
+                % move up to next row and add word to the left
+                [this, wordAt] = this.addWordsBottomLToTopL(wordAt, wordHandles);
+                
+                
+                % if top row is full and there's at least one more word,
+                % create a new row above and add next word
+                if(this.wordRows(end).isFull() && wordAt <= numel(wordHandles))
+                    this = addRowAbove(this, wordHandles(wordAt));
+                    wordAt = wordAt + 1;
+                end
+                
+                % start in the top row. Add a word to the right hand side
+                % move down to next row add next word.
+                % until adding to the right on the bottom row.
+                [this, wordAt] = this.addWordsTopRToBottomR(wordAt, wordHandles);
+                
+            end
             
-            % start in the bottom row add words to the left
-            % move up to next row and add word to the left
-            
-            % when it gets back to where it started...
-            % if the outer row has 3 words in
-            %make a new outer row and add the new word
-            
+        end
+        
+        function [this, wordAt] = addWordsBottomLToTopL(this, wordAt, wordHandles)
+            r = 1;
+            while (r <= numel(this.wordRows)) && (wordAt <= numel(wordHandles))
+                this.wordRows(r) = ...
+                    this.wordRows(r).addWordLeft(wordHandles(wordAt));
+                r = r + 1;
+                wordAt = wordAt + 1;
+            end
+        end
+        
+        function [this, wordAt] = addWordsTopRToBottomR(this, wordAt, wordHandles)
+            r = numel(this.wordRows);
+            while (r > 0) && (wordAt <= numel(wordHandles))
+                this.wordRows(r) = ...
+                    this.wordRows(r).addWordRight(wordHandles(wordAt));
+                r = r-1;
+                wordAt = wordAt + 1;
+            end
         end
         
         function this = addFirst7Words(this, wordHandles)
@@ -76,7 +127,7 @@ classdef WordCluster
                             this.wordRows(end).addWordRight(wordHandles(1));
                     else
                         this.wordRows(1) = ...
-                        this.wordRows(1).addWordRight(wordHandles(1));
+                            this.wordRows(1).addWordRight(wordHandles(1));
                     end
                 case {2, 3, 4}
                     this.wordRows(end) = ...
@@ -88,13 +139,15 @@ classdef WordCluster
             
             % if there are any remaining words put them in the middle row
             switch numel(wordHandles)
+                case 0
+                    %break
                 case 1
                     if isAtTop
                         this.wordRows(2) = this.wordRows(2).addWordLeft(wordHandles(1));
                     else
                         this.wordRows(2) = this.wordRows(2).addWordRight(wordHandles(1));
                     end
-                case 2
+                otherwise
                     this.wordRows(2) = this.wordRows(2).addWordRight(wordHandles(2));
                     this.wordRows(2) = this.wordRows(2).addWordLeft(wordHandles(1));
             end
@@ -102,14 +155,12 @@ classdef WordCluster
         
         function this = addRowAbove(this, word)
             lowerEdge = this.wordRows(end).top;
-            line([0 1], [lowerEdge lowerEdge])
             this.wordRows = [this.wordRows, ...
                 WordClusterRow(word, 'bottom', this.centreX, lowerEdge)];
         end
         
         function this = addRowBelow(this, word)
             upperEdge = this.wordRows(1).bottom;
-            line([0 1], [upperEdge upperEdge])
             this.wordRows = [ ...
                 WordClusterRow(word, 'top', this.centreX, upperEdge), ...
                 this.wordRows];

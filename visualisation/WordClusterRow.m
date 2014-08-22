@@ -4,6 +4,10 @@ classdef WordClusterRow
     
     properties
         allWordHandles;
+        % should the text be aligned from the top or bottom?
+        % if the row is above centre, use bottom aligned text
+        % if the row is below centre, use top aligned text
+        verticalAlignment;
         % what's the left right top and bottom limit of the row?
         % measured in "blocks"
         blockSize = 0.002;
@@ -17,10 +21,6 @@ classdef WordClusterRow
         % where is the row currently centred
         centreX = 0;
         centreY = 0;
-        % should the text be aligned from the top or bottom?
-        % if the row is above centre, use bottom aligned text
-        % if the row is below centre, use top aligned text
-        alignment;
     end
     
     methods
@@ -30,11 +30,11 @@ classdef WordClusterRow
                 this.centreY = varargin{2};
             end
             
-            this.alignment = alignment;
+            this.verticalAlignment = alignment;
             this.allWordHandles = centreWordHandle;
             % place centre word in centre
             this.placeWordAtLocation(centreWordHandle, ...
-                this.centreX, this.centreY, 'center', this.alignment);
+                this.centreX, this.centreY, 'center', this.verticalAlignment);
             % recalculate left, right, top and bottom extent of the row.
             this = this.recalculateLimits();
             
@@ -48,44 +48,45 @@ classdef WordClusterRow
         end
         
         function this = addWordLeft(this, newWordHandle)
+            % place a new word on the left side of the row.
             % save handle into list
             this.allWordHandles = [newWordHandle, this.allWordHandles];
             % add to row
             this.placeWordAtLocation(newWordHandle, ...
-                this.left, this.centreY, 'right', this.alignment);
+                this.left, this.centreY, 'right', this.verticalAlignment);
             % recalculate limits
             this = this.recalculateLimits();
             % recentre the row
-            this = this.recentreRow();
+            this = this.reAlignRow();
         end
         
-        % addWordRight
         function this = addWordRight(this, newWordHandle)
+            % place a new word on the right side of the row.
             % save handle into list
             this.allWordHandles = [this.allWordHandles, newWordHandle];
             % add to row
             this.placeWordAtLocation(newWordHandle, ...
-                this.right, this.centreY, 'left', this.alignment);
+                this.right, this.centreY, 'left', this.verticalAlignment);
             % recalculate limits
             this = this.recalculateLimits();
             % recentre the row
-            this = this.recentreRow();
+            this = this.reAlignRow();
         end
         
-        function count = getNumberOfWordsInRow(this)
-            count = numel(this.allWordHandles);
+        function tf = isFull(this)
+            tf = numel(this.allWordHandles) > 2;
         end
         
-        function this = recentreRow(this)
+        function this = reAlignRow(this)
             % recentre the row so that the words are evenly spaces around
             % the centre X coordinate.
             % take L and R limits and find the midpoint
             % offset the x position of all words by midpoint
             offsetX = this.centreX - (this.left + this.right)/2;
-            this = this.shiftRow(offsetX, 0);
+            this = this.shiftAllWords(offsetX, 0);
         end
         
-        function this = shiftRow(this, dX, dY)
+        function this = shiftAllWords(this, dX, dY)
             % shifts the row centre by the given amount. 
             % +x shifts right, -x shifts left
             % +y shifts up -y shifts down.
@@ -101,10 +102,20 @@ classdef WordClusterRow
             this.bottom  = this.bottom + dY;
         end
         
-        function this = repositionRow(this, newX, newY)
+        function this = repositionRowAbsolute(this, newX, newY)
             dX = newX - this.centreX;
             dY = newY - this.centreY;
-            this = this.shiftRow(dX, dY);
+            this = this.shiftAllWords(dX, dY);
+            
+            this.centreX = newX;
+            this.centreY = newY;
+        end
+        
+        function this = repositionRowRelative(this, dX, dY)
+            this = this.shiftAllWords(dX, dY);
+            
+            this.centreX = newX;
+            this.centreY = newY;
         end
         
         function this = recalculateLimits(this)
@@ -133,8 +144,7 @@ classdef WordClusterRow
                 (this.marginTB*this.blockSize);
             this.bottom = min([this.bottom, botL, botR]);
         end
-        
-        
+             
         function this = placeWordAtLocation(this, wh, x, y, halign, valign)
             wh.HorizontalAlignment = halign;
             wh.VerticalAlignment   = valign;
