@@ -68,26 +68,52 @@ classdef WordCluster
                 [this, wordAt] = this.addWordsTopRToBottomR(wordAt, wordHandles);
                 
             end
-            
+            this = respaceRows(this);
         end
         
+        function this = respaceRows(this)
+           % find the centre row, this is the one that's 'middle' aligned
+           for middleRow = 1:numel(this.wordRows)
+               if isequal(this.wordRows(middleRow).verticalAlignment, 'middle');
+                   break
+               end
+           end
+           % for all above the centre row set the centre to the top limit
+           % of line below
+           for r = (middleRow+1):numel(this.wordRows)
+               dY = this.wordRows(r).centreY - this.wordRows(r-1).top;
+               this.wordRows(r) = this.wordRows(r).repositionRowRelative(0, dY);
+           end
+           for r = (middleRow-1):-1:1
+               dY = this.wordRows(r).centreY - this.wordRows(r+1).bottom;
+               this.wordRows(r) = this.wordRows(r).repositionRowRelative(0, dY);
+           end
+        end
+    end
+    
+    methods (Access = private)
         function [this, wordAt] = addWordsBottomLToTopL(this, wordAt, wordHandles)
             r = 1;
             while (r <= numel(this.wordRows)) && (wordAt <= numel(wordHandles))
-                this.wordRows(r) = ...
-                    this.wordRows(r).addWordLeft(wordHandles(wordAt));
+                % if there is space in the row, add another word
+                if(~this.wordRows(r).isFull())
+                    this.wordRows(r) = ...
+                        this.wordRows(r).addWordLeft(wordHandles(wordAt));
+                    wordAt = wordAt + 1;
+                end
                 r = r + 1;
-                wordAt = wordAt + 1;
             end
         end
         
         function [this, wordAt] = addWordsTopRToBottomR(this, wordAt, wordHandles)
             r = numel(this.wordRows);
             while (r > 0) && (wordAt <= numel(wordHandles))
-                this.wordRows(r) = ...
-                    this.wordRows(r).addWordRight(wordHandles(wordAt));
+                if(~this.wordRows(r).isFull())
+                    this.wordRows(r) = ...
+                        this.wordRows(r).addWordRight(wordHandles(wordAt));
+                    wordAt = wordAt + 1;
+                end
                 r = r-1;
-                wordAt = wordAt + 1;
             end
         end
         
@@ -164,9 +190,7 @@ classdef WordCluster
             this.wordRows = [ ...
                 WordClusterRow(word, 'top', this.centreX, upperEdge), ...
                 this.wordRows];
-        end
-        
-        
+        end   
     end
     
 end

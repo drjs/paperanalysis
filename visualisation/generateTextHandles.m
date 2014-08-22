@@ -18,8 +18,8 @@ function textHandles = generateTextHandles(words, wordCount, corrMat, clusterTre
     [~,~,bestOrder] = dendrogram(clusterTree);
     close(f);
     
-    colours = generateUniformRGBColours(numel(words)); 
-    %colours = generateScaledRGBColours(bestOrder, corrMat);
+    %colours = generateUniformRGBColours(numel(words)); 
+    colours = generateScaledRGBColours(bestOrder, corrMat);
     
     % normalise word counts
     wordCount = wordCount./min(wordCount);
@@ -67,7 +67,7 @@ function colours = generateScaledRGBColours(wordOrder, corrMat)
     
     % use cumulative word distances to scale the word colouring
     mapIndex = round(cumulativeWordDistances ./ (totalWordDistance / 255))+1;
-    colmap = parula(256);
+    colmap = flip(parula(256));
     colours = colmap(mapIndex, :);
 end
 

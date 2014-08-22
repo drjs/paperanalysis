@@ -74,7 +74,8 @@ classdef WordClusterRow
         end
         
         function tf = isFull(this)
-            tf = numel(this.allWordHandles) > 2;
+            % tf = numel(this.allWordHandles) > 2;
+            tf = (this.right - this.left) > 0.6;
         end
         
         function this = reAlignRow(this)
@@ -114,8 +115,8 @@ classdef WordClusterRow
         function this = repositionRowRelative(this, dX, dY)
             this = this.shiftAllWords(dX, dY);
             
-            this.centreX = newX;
-            this.centreY = newY;
+            this.centreX = this.centreX + dX;
+            this.centreY = this.centreY + dY;
         end
         
         function this = recalculateLimits(this)
