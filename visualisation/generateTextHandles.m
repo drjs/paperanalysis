@@ -67,7 +67,7 @@ function colours = generateScaledRGBColours(wordOrder, corrMat)
     
     % use cumulative word distances to scale the word colouring
     mapIndex = round(cumulativeWordDistances ./ (totalWordDistance / 255))+1;
-    colmap = flip(parula(256));
+    colmap = generateUniformRGBColours(256);
     colours = colmap(mapIndex, :);
 end
 

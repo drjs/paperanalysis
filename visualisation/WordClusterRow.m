@@ -75,28 +75,20 @@ classdef WordClusterRow
         
         function tf = isFull(this)
             % tf = numel(this.allWordHandles) > 2;
-            tf = (this.right - this.left) > 0.6;
+            tf = (this.right - this.left) > 0.5;
         end
         
-        function this = reAlignRow(this)
-            % recentre the row so that the words are evenly spaces around
-            % the centre X coordinate.
-            % take L and R limits and find the midpoint
-            % offset the x position of all words by midpoint
-            offsetX = this.centreX - (this.left + this.right)/2;
-            this = this.shiftAllWords(offsetX, 0);
-        end
         
         function this = shiftAllWords(this, dX, dY)
-            % shifts the row centre by the given amount. 
+            % shifts the row centre by the given amount.
             % +x shifts right, -x shifts left
             % +y shifts up -y shifts down.
             for th = this.allWordHandles
                 th.Position = [th.Position(1)+dX, th.Position(2)+dY];
             end
             % recalculate centre and limits.
-%             this.centreX = this.centreX + dX;
-%             this.centreY = this.centreY + dY;
+            %             this.centreX = this.centreX + dX;
+            %             this.centreY = this.centreY + dY;
             this.left    = this.left + dX;
             this.right   = this.right + dX;
             this.top     = this.top + dY;
@@ -117,6 +109,18 @@ classdef WordClusterRow
             
             this.centreX = this.centreX + dX;
             this.centreY = this.centreY + dY;
+        end
+        
+    end
+    
+    methods (Access = private)
+        function this = reAlignRow(this)
+            % recentre the row so that the words are evenly spaces around
+            % the centre X coordinate.
+            % take L and R limits and find the midpoint
+            % offset the x position of all words by midpoint
+            offsetX = this.centreX - (this.left + this.right)/2;
+            this = this.shiftAllWords(offsetX, 0);
         end
         
         function this = recalculateLimits(this)
@@ -145,7 +149,7 @@ classdef WordClusterRow
                 (this.marginTB*this.blockSize);
             this.bottom = min([this.bottom, botL, botR]);
         end
-             
+        
         function this = placeWordAtLocation(this, wh, x, y, halign, valign)
             wh.HorizontalAlignment = halign;
             wh.VerticalAlignment   = valign;
