@@ -2,11 +2,13 @@ classdef WordCloud
     
     properties (Constant = true)
         prettyFonts = {'Century Gothic', 'Cooper Black', 'Magneto Bold'}; 
-        fontScaleFactor = 1;
+        fontScaleFactor = 3;
     end
     
     properties
         clusters;
+        centreX  = 0.5;
+        centreY  = 0.5;
     end
     
     methods
@@ -20,6 +22,10 @@ classdef WordCloud
             % find the right order to do the custers in
             [sizeCluster,~]  = histcounts(clusterGroups);
             [~,clusterOrder] = sort(sizeCluster, 'descend');
+            nClusters = numel(clusterOrder);    
+            
+            % generate colours for each cluster
+            cols = flip(parula(nClusters));
             
             % process the clusters in order
             for clust = clusterOrder
@@ -27,24 +33,64 @@ classdef WordCloud
                 counts = wordCounts(idx);
                 words  = wordList(idx);
                 correlations = wordCorrelations(idx, idx);
-                this = this.makeWordCluster(words, counts, correlations);  
+                this = this.makeWordCluster(words, counts, correlations, cols(clust,:));  
             end
             
             % place the first and biggest cluster in the centre
-            this.clusters(1).recentreCluster(0.5, 0.5);
+            this.clusters(1).recentreCluster(this.centreX, this.centreY);
+            
+            % find correlation distance between centre cluster and each
+            % satellite cluster
+            dists = this.calculateClusterDistancesFromCentre(...
+                wordCorrelations, clusterGroups, clusterOrder);
+            
+            % for the remaining clusters
+            for clust = 2:nClusters                
+                distance = ( dists(clust)/max(dists) );
+                
+                % go in a circle around the centre starting from the top
+                theta = (2*pi*clust/(nClusters-1));
+                
+                % places this cluster some distance from centre, proportional
+                % to the correlation between the two clusters.
+                newX = cos(theta).*distance + this.centreX;
+                newY = sin(theta).*distance + this.centreY;
+                this.clusters(clust).recentreCluster(newX, newY);
+            end
         end
     end
     
     methods (Access = private)
        % function tf = isClusterOverlap(cluster1, cluster2)
        
-       function this = makeWordCluster(this, words, counts, correlations)
+       function dists = calculateClusterDistancesFromCentre(~, wordCorrelations, clusterGroups, clusterOrder)
+           % returns array of total distances between all the words in the
+           % central cluster and each satellite clusters.
+           % dists is ordered by cluster population, and is the same order
+           % as this.clusters.
+           nClusters = max(clusterGroups);
+           dists = zeros(1,nClusters);
+           
+           centreClusterWordIdx = (clusterGroups == clusterOrder(1));
+           
+           for clust = 2:nClusters
+                % find correlation distance between centre cluster and current one
+                corr = wordCorrelations(centreClusterWordIdx, ...
+                    (clusterGroups == clusterOrder(clust)) );
+                % scale corr so that 1 = close and -1 = far
+                corr = (corr.*-1) + 1;
+                % sum correlation to get total distance from centre cluster
+                dists(clust) = sum(corr(:));
+            end
+       end
+       
+       function this = makeWordCluster(this, words, counts, correlations, coreColour)
            % find most popular word to put in the centre of the cluster
            [~,mostPopularWord] = max(counts);           
            centreTextHandle = this.makeSingleTextHandle( ...
                words(mostPopularWord), ...
                counts(mostPopularWord), ...
-               [1 0 0], ...
+               coreColour, ...
                sum(correlations(mostPopularWord,:)) );
            
            % add text handle to cluster
@@ -61,7 +107,7 @@ classdef WordCloud
                
                for i = 1:numel(words)
                    textHandles = [textHandles, ...
-                       this.makeSingleTextHandle(words(i), counts(i), [1 0 1], sum(correlations(i,:)) )];
+                       this.makeSingleTextHandle(words(i), counts(i), coreColour, sum(correlations(i,:)) )]; %#ok<AGROW>
                end
                
                % add remaining words to cluster
@@ -71,17 +117,15 @@ classdef WordCloud
        end
        
        function th = makeSingleTextHandle(this, word, wordCount, rgb, totalCorrelation)
-           fontBlockSize = 0.02; % measured in "FontUnits"
+           fontBlockSize = 3; % measured in "FontUnits"
            
            th = text('String', word, ...
                'FontName', this.prettyFonts{randi(numel(this.prettyFonts), 1)}, ... % random pretty font
-               'Color', rand(1,3), ...
+               'Color', rgb, ...
                'Margin', 1, ...
-               'FontUnits', 'normalized', ...
+               'FontUnits', 'point', ... %'normalized', ...
                'FontSize', wordCount*this.fontScaleFactor*fontBlockSize, ...
                'Units', 'data', ... % 'normalized', ... %
-               'VerticalAlignment', 'middle', ...
-               'HorizontalAlignment', 'center', ...
                'Position', [0,0] ...
                );
            

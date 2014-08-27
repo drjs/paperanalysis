@@ -3,7 +3,7 @@ function WordCloudMaker
 clear variables
 % clear classes
 
-load testdata
+load realtestdata
 
 % textHandles = generateTextHandles(words, wordCount, corrMat, tree);
 % T = cluster(tree, 'maxclust', numberClusters);
@@ -15,7 +15,7 @@ gr = cluster(clusterTree, 'maxclust', 8);
 
 cloud = WordCloud(words, wordCount, corrMat, gr);
 
-axis manual
+% axis manual
 % nwords = 30;
 % w = WordCluster(wordarray(1), 0.5, 0.5);
 % randcorr = rand(1,nwords-1); %corrMat(1,2:nwords)
@@ -23,8 +23,8 @@ axis manual
 % w.recalculateLimits()
 
 ax = gca;
-ax.Visible = 'off';
-f.Color = 'black';
+% ax.Visible = 'off';
+% f.Color = 'black';
 
 
 
