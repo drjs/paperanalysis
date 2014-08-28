@@ -214,28 +214,68 @@ title('Pearson (linear) correlations between the documents'); shading flat
 % Use PCA on the X
 [pca_loadings,pca_scores,pca_lambdas] = princomp(DocFreqL2','econ');
 
-% Use NNMF on the X
-[nnmf_U,nnmf_V]= nnmf(DocFreqL2,3);
+% Use NNMF on the X 
+s = RandStream('mlfg6331_64'); 
+opti = statset('UseSubstreams',1,'Streams',s,'Display','off');
+[nnmf_U,nnmf_V]= nnmf(DocFreqL2,3,'replicates',2^11,...
+                            'options',opti, 'algorithm','als');
 
-[x , y ,z] = deal(  nnmf_V(1,:),  nnmf_V(2,:),  nnmf_V(3,:) );
+%% Make surface plot
 
+[x , y ,z] = deal(  nnmf_V(1,:)',  nnmf_V(2,:)',  nnmf_V(3,:)' );
+ 
+% Set up fittype and options.
+ftype = fittype( 'lowess' );
+fopts = fitoptions('Method', 'LowessFit');
+fopts.Normalize = 'on';
+fopts.Robust = 'LAR';
+fopts.Span = 0.3;
 
-%{
+% Fit model to data.
+[fitresult, gof] = fit( [x, y], z, ftype, fopts );
+
+% Plot fit with data.
+figure(11);
+h = plot( fitresult, [x, y], z  );
+legend(h, ['SEFI Papers Semantic Surface'], 'Document Entries', 'Location', 'NorthEast' );
+% Label axes
+xlabel 'education - enginneers'
+ylabel 'learning - teaching - course'
+zlabel 'project - design'
+zlim([ 0.0 0.3]);
+grid on
+view( 47.5, 26.0 );
+
+ figure(12)
+ subplot(2,1,1);
+ plot(nnmf_U,'DisplayName','nnmf_U'); grid on; legend('Semantic Comp. 1', 'Semantic Comp. 3','Semantic Comp. 3')
+ set(gca, 'Xtick',1:numel(Top30words),'XTickLabel',Top30words,'XTickLabelRotation',45); title('NNMF Semantic Insights');
+ 
+ subplot(2,1,2);
+ plot(pca_loadings(:,1:3),'DisplayName','nnmf_U'); grid on; legend('Semantic Comp. 1', 'Semantic Comp. 3','Semantic Comp. 3')
+ set(gca, 'Xtick',1:numel(Top30words),'XTickLabel',Top30words,'XTickLabelRotation',45); title('LSA Semantic Insights');
+ 
+ clear x y z ftype fopts fitresult gof h
+
 
 %% Simple linkage plots for words using LINKAGE
 
-tree_NNMF = linkage(nnmf_scores,'average','cosine');
-D_NNMF = pdist(nnmf_scores,'cosine');
+tree_NNMF = linkage(nnmf_V','average','cosine');
+D_NNMF = pdist(nnmf_V','cosine');
 leafOrder = optimalleaforder(tree_NNMF,D_NNMF);
 figure(5)
-dendrogram(tree_NNMF,'Reorder',leafOrder,'Labels',Top30words,'Orientation','left')
+dendrogram(tree_NNMF,'Reorder',leafOrder); %This visualizes up to 30 points
+title('NNMF generated Hierchical Clustering')
 
 
 tree_PCA = linkage(pca_scores(:,1:3),'average','cosine');
 D_PCA = pdist(pca_scores(:,1:3),'cosine');
 leafOrder = optimalleaforder(tree_PCA,D_PCA);
 figure(6)
-dendrogram(tree_PCA,'Reorder',leafOrder,'Labels',Top30words,'Orientation','left')
+dendrogram(tree_PCA,'Reorder',leafOrder)%This visualizes up to 30 points
+title('LSA generated Hierchical Clustering')
+
+%{
 
 %% k-means plots for word using KMEANS
 
