@@ -217,6 +217,9 @@ title('Pearson (linear) correlations between the documents'); shading flat
 % Use NNMF on the X
 [nnmf_U,nnmf_V]= nnmf(DocFreqL2,3);
 
+[x , y ,z] = deal(  nnmf_V(1,:),  nnmf_V(2,:),  nnmf_V(3,:) );
+
+
 %{
 
 %% Simple linkage plots for words using LINKAGE
