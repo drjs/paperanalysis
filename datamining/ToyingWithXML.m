@@ -110,6 +110,16 @@ Abstracts(133) = {strjoin(ProbAbstracts(ithAbs)')};
 
 clear ithAbs i data ProbAbstracts
 
+Indx.IndxAuthName =IndxAuthName;
+Indx.IndxAuthPref =IndxAuthPref;
+Indx.IndxCategory =IndxCategory;
+Indx.IndxPapAccpt =IndxPapAccpt;
+Indx.IndxPapTitle =IndxPapTitle;
+Indx.IndxProbAbst =IndxProbAbst;
+
+clear IndxAuthName IndxAuthPref IndxCategory ... 
+      IndxPapAccpt IndxPapTitle IndxProbAbst
+
 %% Build the dictionary
 
 WholeBody = strsplit(strjoin(Abstracts));
@@ -149,11 +159,11 @@ clear idx fileid Wcommon WholeBody freq i ans n L2 L
 %% Make frequency count variants for each document/term
  
 Top30words = vocabulary(1:30);
-WordCounts = zeros(30,numel(IndxPapTitle));
+WordCounts = zeros(30,numel(Indx.IndxPapTitle));
 
 % Simple counting Words / Documents
 for i=1:30
-    for j = 1:numel(IndxPapTitle)        
+    for j = 1:numel(Indx.IndxPapTitle)        
         WordCounts(i,j) = nnz(ismember( strsplit(Abstracts{j}) ,Top30words{i}));
     end
 end
@@ -202,10 +212,10 @@ title('Pearson (linear) correlations between the documents'); shading flat
 %% Matrix Decompositions
 
 % Use PCA on the X
-[pca_loadings,pca_scores,pca_lambdas] = princomp(DocFreqL2);
+[pca_loadings,pca_scores,pca_lambdas] = princomp(DocFreqL2','econ');
 
 % Use NNMF on the X
-[nnmf_scores,nnmf_labels]= nnmf(DocFreqL2,3);
+[nnmf_U,nnmf_V]= nnmf(DocFreqL2,3);
 
 
 %% Simple linkage plots for words using LINKAGE
