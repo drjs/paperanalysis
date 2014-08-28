@@ -3,6 +3,7 @@ classdef WordCloud
     properties (Constant = true)
         prettyFonts = {'Century Gothic', 'Cooper Black', 'Magneto Bold'}; 
         fontScaleFactor = 3;
+        satelliteClusterDistanceScaleFactor = 0.5;
     end
     
     properties
@@ -37,7 +38,7 @@ classdef WordCloud
             end
             
             % place the first and biggest cluster in the centre
-            this.clusters(1).recentreCluster(this.centreX, this.centreY);
+            this.clusters(1) = this.clusters(1).recentreCluster(this.centreX, this.centreY);
             
             % find correlation distance between centre cluster and each
             % satellite cluster
@@ -46,7 +47,7 @@ classdef WordCloud
             
             % for the remaining clusters
             for clust = 2:nClusters                
-                distance = ( dists(clust)/max(dists) );
+                distance = ( dists(clust)/max(dists) ) * this.satelliteClusterDistanceScaleFactor;
                 
                 % go in a circle around the centre starting from the top
                 theta = (2*pi*clust/(nClusters-1));
@@ -55,13 +56,31 @@ classdef WordCloud
                 % to the correlation between the two clusters.
                 newX = cos(theta).*distance + this.centreX;
                 newY = sin(theta).*distance + this.centreY;
-                this.clusters(clust).recentreCluster(newX, newY);
+                this.clusters(clust) = this.clusters(clust).recentreCluster(newX, newY);
+                c = this.clusters(clust)
+%                 rectangle('position', [c.left, c.bottom, c.right-c.left, c.top-c.bottom], 'edgecolor', 'r');
             end
+        end
+        
+        function this = boxEachCluster(this)
+            for c = this.clusters
+                rectangle('position', [c.left, c.bottom, c.right-c.left, c.top-c.bottom], 'edgecolor', 'r');
+            end
+            this = recalculateLimits(this);
         end
     end
     
     methods (Access = private)
        % function tf = isClusterOverlap(cluster1, cluster2)
+       function this = recalculateLimits(this)
+            left   = min([this.clusters.left]);
+            right  = max([this.clusters.right]);
+            top    = max([this.clusters.top]);
+            bottom = min([this.clusters.bottom]);
+            rectangle('position', [left, bottom, right-left, top-bottom], 'edgecolor', 'b');
+            % axis([left, right, bottom, top]);
+            % set(gcf, 'Position', [left, bottom, right-left, top-bottom]);
+        end
        
        function dists = calculateClusterDistancesFromCentre(~, wordCorrelations, clusterGroups, clusterOrder)
            % returns array of total distances between all the words in the
@@ -80,7 +99,7 @@ classdef WordCloud
                 % scale corr so that 1 = close and -1 = far
                 corr = (corr.*-1) + 1;
                 % sum correlation to get total distance from centre cluster
-                dists(clust) = sum(corr(:));
+                dists(clust) = mean(corr(:));
             end
        end
        
@@ -123,7 +142,7 @@ classdef WordCloud
                'FontName', this.prettyFonts{randi(numel(this.prettyFonts), 1)}, ... % random pretty font
                'Color', rgb, ...
                'Margin', 1, ...
-               'FontUnits', 'point', ... %'normalized', ...
+               'FontUnit', 'point', ... %'normalized', ...
                'FontSize', wordCount*this.fontScaleFactor*fontBlockSize, ...
                'Units', 'data', ... % 'normalized', ... %
                'Position', [0,0] ...

@@ -101,9 +101,10 @@ classdef WordCluster
         function this = recentreCluster(this, newX, newY)
             dX = newX - this.centreX;
             dY = newY - this.centreY;
-            for row = this.wordRows
-                row = row.repositionRowRelative(dX, dY);
+            for i = 1:numel(this.wordRows)
+                this.wordRows(i) = this.wordRows(i).repositionRowRelative(dX, dY);
             end
+            this = recalculateLimits(this);
             this.centreX = newX;
             this.centreY = newY;
         end
@@ -113,6 +114,7 @@ classdef WordCluster
             this.right  = max([this.wordRows.right]);
             this.top    = max([this.wordRows.top]);
             this.bottom = min([this.wordRows.bottom]);
+            % rectangle('position', [this.left, this.bottom, this.right-this.left, this.top-this.bottom], 'edgecolor', 'r');
         end
     end
     
@@ -169,9 +171,11 @@ classdef WordCluster
                 else
                     this = this.addRowBelow(wordHandles);
                 end
+                return;
             end
             
             switch numel(wordHandles)
+                case 0
                 case 1
                     if isAtTop
                         this.wordRows(end) = ...
