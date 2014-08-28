@@ -229,7 +229,7 @@ ftype = fittype( 'lowess' );
 fopts = fitoptions('Method', 'LowessFit');
 fopts.Normalize = 'on';
 fopts.Robust = 'LAR';
-fopts.Span = 0.3;
+fopts.Span = 0.3; %Changing this will make the surface rougher or smoother
 
 % Fit model to data.
 [fitresult, gof] = fit( [x, y], z, ftype, fopts );
