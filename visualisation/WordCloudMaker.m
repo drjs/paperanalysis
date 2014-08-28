@@ -3,15 +3,19 @@ function WordCloudMaker
 clear variables
 % clear classes
 
-load realtestdata
+load sefiData
 
 % T = cluster(tree, 'maxclust', numberClusters);
 % c = hist(T, numberClusters)
 
 
 % f = figure('Name', 'Word Cloud', 'Position', [50 50 1000 620]);
-f = figure('Name', 'Word Cloud', 'Units','normalized','OuterPosition',[0 0 1 1])
+f = figure('Name', 'Word Cloud', 'Units','normalized','OuterPosition',[0 0 1 1]);
 axis manual
+
+ax = gca;
+ax.Visible = 'off';
+f.Color = 'black';
 
 gr = cluster(clusterTree, 'maxclust', 8);
 cloud = WordCloud(words, wordCount, corrMat, gr);
@@ -19,9 +23,6 @@ cloud = WordCloud(words, wordCount, corrMat, gr);
 
 % testCluster()
 
-ax = gca;
-ax.Visible = 'off';
-f.Color = 'black';
 
 end
 

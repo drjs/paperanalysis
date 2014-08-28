@@ -1,8 +1,22 @@
 classdef WordCloud
     
     properties (Constant = true)
+        % cell array of fonts to use in clouds. Fonts are randomly selected
+        % from this list.
         prettyFonts = {'Century Gothic', 'Cooper Black', 'Magneto Bold'}; 
+        
+        % The colour to make the figure background. This can be a 1x3 RGB 
+        % vector or a standard colour string e.g. 'black' or 'k'.
+        backgroundColour = [0 0 0];
+        
+        % Scale factor controlling the size the fonts are displayed. Adjust
+        % this to make the words bigger or smaller
         fontScaleFactor = 3;
+        
+        % Controls how far the outer word clusters are from the central
+        % cluster. If the words are too close together or far apart,
+        % adjust this value. The distance is proportional to how correlated 
+        % the two clusters are.
         satelliteClusterDistanceScaleFactor = 0.5;
     end
     
@@ -14,6 +28,7 @@ classdef WordCloud
     
     methods
         function this = WordCloud(wordList, wordCounts, wordCorrelations, clusterGroups)
+            % this.initialiseFigure();
             % scale the word counts.
             wordCounts = wordCounts ./ min(wordCounts);
             % initialise clusters
@@ -57,8 +72,6 @@ classdef WordCloud
                 newX = cos(theta).*distance + this.centreX;
                 newY = sin(theta).*distance + this.centreY;
                 this.clusters(clust) = this.clusters(clust).recentreCluster(newX, newY);
-                c = this.clusters(clust)
-%                 rectangle('position', [c.left, c.bottom, c.right-c.left, c.top-c.bottom], 'edgecolor', 'r');
             end
         end
         
@@ -71,8 +84,16 @@ classdef WordCloud
     end
     
     methods (Access = private)
-       % function tf = isClusterOverlap(cluster1, cluster2)
-       function this = recalculateLimits(this)
+        function this = initialiseFigure(this)
+            f = figure('Name', 'Word Cloud', ...
+                'Units','normalized','OuterPosition',[0 0 1 1]);
+            axis manual            
+            ax = gca;
+            ax.Visible = 'off';
+            f.Color = this.backgroundColour;
+        end
+        
+        function this = recalculateLimits(this)
             left   = min([this.clusters.left]);
             right  = max([this.clusters.right]);
             top    = max([this.clusters.top]);
