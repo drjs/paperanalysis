@@ -217,6 +217,7 @@ title('Pearson (linear) correlations between the documents'); shading flat
 % Use NNMF on the X
 [nnmf_U,nnmf_V]= nnmf(DocFreqL2,3);
 
+%{
 
 %% Simple linkage plots for words using LINKAGE
 
@@ -239,3 +240,4 @@ dendrogram(tree_PCA,'Reorder',leafOrder,'Labels',Top30words,'Orientation','left'
 [IDX_PCA,C_PCA,sumd_PCA] = kmeans(pca_scores(:,1:3),3,'Distance','cosine');
 
 %end
+%}
