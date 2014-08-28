@@ -29,7 +29,9 @@ function [words, wordCount, corrMat, tree] = generateRandomWordClusters(varargin
     % how many independent distances are there between nwords points?
     ndistances = sum(1:(nwords-1));
     % generate some random distances (as a vector) for the linkage function
-    distances = (rand(1,ndistances).*2)-1;
+    % use a sin function to make some clusters.
+%     distances = (rand(1,ndistances).*2)-1;
+    distances = sin((10*pi/ndistances).*(1:ndistances));
     % the correlation matrix is a nice square version of these distances
     % where corrMat(word1, word2) gives the correlation between any 2 words
     corrMat = squareform(distances);

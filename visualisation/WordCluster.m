@@ -6,6 +6,11 @@ classdef WordCluster
         wordRows;
         centreX;
         centreY;
+        % the left right top and bottom extent of this word cluster.
+        left   = 0;
+        right  = 0;
+        top    = 0;
+        bottom = 0;
     end
     
     methods
@@ -13,6 +18,7 @@ classdef WordCluster
             this.wordRows = WordClusterRow(centreWordHandle, 'middle', x, y);
             this.centreX  = x;
             this.centreY  = y;
+            this = recalculateLimits(this);
         end
         
         function this = addWords(this, wordHandles, correlationToCentre)
@@ -23,6 +29,7 @@ classdef WordCluster
             % do those first proceedurally
             if numel(wordHandles) < 7;
                 this = this.addFirst7Words(wordHandles);
+                this = respaceRows(this);
                 return;
             end
             this = this.addFirst7Words(wordHandles(1:6));
@@ -32,7 +39,7 @@ classdef WordCluster
             % but randomly start building from either the topR or bottomL
             startAtTop = rand(1)>0.5;
             
-            if startAtTop 
+            if startAtTop
                 % build from the top down before entering main cluster
                 % construction loop
                 if(this.wordRows(end).isFull() && wordAt <= numel(wordHandles))
@@ -42,7 +49,7 @@ classdef WordCluster
                 [this, wordAt] = this.addWordsTopRToBottomR(wordAt, wordHandles);
             end
             
-            while wordAt <= numel(wordHandles)              
+            while wordAt <= numel(wordHandles)
                 % if bottom row is full and there's at least one more word,
                 % create a new row underneath and add next word
                 if(this.wordRows(1).isFull() && wordAt <= numel(wordHandles))
@@ -72,22 +79,42 @@ classdef WordCluster
         end
         
         function this = respaceRows(this)
-           % find the centre row, this is the one that's 'middle' aligned
-           for middleRow = 1:numel(this.wordRows)
-               if isequal(this.wordRows(middleRow).verticalAlignment, 'middle');
-                   break
-               end
-           end
-           % for all above the centre row set the centre to the top limit
-           % of line below
-           for r = (middleRow+1):numel(this.wordRows)
-               dY = this.wordRows(r).centreY - this.wordRows(r-1).top;
-               this.wordRows(r) = this.wordRows(r).repositionRowRelative(0, dY);
-           end
-           for r = (middleRow-1):-1:1
-               dY = this.wordRows(r).centreY - this.wordRows(r+1).bottom;
-               this.wordRows(r) = this.wordRows(r).repositionRowRelative(0, dY);
-           end
+            % find the centre row, this is the one that's 'middle' aligned
+            for middleRow = 1:numel(this.wordRows)
+                if isequal(this.wordRows(middleRow).verticalAlignment, 'middle');
+                    break
+                end
+            end
+            % for all above the centre row set the centre to the top limit
+            % of line below
+            for r = (middleRow+1):numel(this.wordRows)
+                dY = this.wordRows(r).centreY - this.wordRows(r-1).top;
+                this.wordRows(r) = this.wordRows(r).repositionRowRelative(0, dY);
+            end
+            for r = (middleRow-1):-1:1
+                dY = this.wordRows(r).centreY - this.wordRows(r+1).bottom;
+                this.wordRows(r) = this.wordRows(r).repositionRowRelative(0, dY);
+            end
+            this = recalculateLimits(this);
+        end
+        
+        function this = recentreCluster(this, newX, newY)
+            dX = newX - this.centreX;
+            dY = newY - this.centreY;
+            for i = 1:numel(this.wordRows)
+                this.wordRows(i) = this.wordRows(i).repositionRowRelative(dX, dY);
+            end
+            this = recalculateLimits(this);
+            this.centreX = newX;
+            this.centreY = newY;
+        end
+        
+        function this = recalculateLimits(this)
+            this.left   = min([this.wordRows.left]);
+            this.right  = max([this.wordRows.right]);
+            this.top    = max([this.wordRows.top]);
+            this.bottom = min([this.wordRows.bottom]);
+            % rectangle('position', [this.left, this.bottom, this.right-this.left, this.top-this.bottom], 'edgecolor', 'r');
         end
     end
     
@@ -144,9 +171,11 @@ classdef WordCluster
                 else
                     this = this.addRowBelow(wordHandles);
                 end
+                return;
             end
             
             switch numel(wordHandles)
+                case 0
                 case 1
                     if isAtTop
                         this.wordRows(end) = ...
@@ -179,18 +208,20 @@ classdef WordCluster
             end
         end
         
-        function this = addRowAbove(this, word)
+        function this = addRowAbove(this, starterWord)
             lowerEdge = this.wordRows(end).top;
             this.wordRows = [this.wordRows, ...
-                WordClusterRow(word, 'bottom', this.centreX, lowerEdge)];
+                WordClusterRow(starterWord, 'bottom', this.centreX, lowerEdge)];
         end
         
-        function this = addRowBelow(this, word)
+        function this = addRowBelow(this, starterWord)
             upperEdge = this.wordRows(1).bottom;
             this.wordRows = [ ...
-                WordClusterRow(word, 'top', this.centreX, upperEdge), ...
+                WordClusterRow(starterWord, 'top', this.centreX, upperEdge), ...
                 this.wordRows];
-        end   
+        end
+        
+        
     end
     
 end
