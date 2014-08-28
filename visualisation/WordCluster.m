@@ -1,6 +1,5 @@
 classdef WordCluster
-    %WORDCLOUD Summary of this class goes here
-    %   Detailed explanation goes here
+    %WORDCLOUD A single cluster of words within a WordCloud
     
     properties
         wordRows;
