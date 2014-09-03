@@ -22,13 +22,14 @@ classdef WordCloud
     
     properties
         clusters;
+        allTextHandles = [];
         centreX  = 0.5;
         centreY  = 0.5;
     end
     
     methods
         function this = WordCloud(wordList, wordCounts, wordCorrelations, clusterGroups)
-            % this.initialiseFigure();
+            this.initialiseFigure();
             % scale the word counts.
             wordCounts = wordCounts ./ min(wordCounts);
             % initialise clusters
@@ -75,11 +76,10 @@ classdef WordCloud
             end
         end
         
-        function this = boxEachCluster(this)
-            for c = this.clusters
-                rectangle('position', [c.left, c.bottom, c.right-c.left, c.top-c.bottom], 'edgecolor', 'r');
-            end
-            this = recalculateLimits(this);
+        function this = rescaleText(this, newScaleFactor)
+            resizeFcn = @(h)set(h, 'FontSize', ...
+                 h.UserData.wordCount*newScaleFactor*3);
+            arrayfun(resizeFcn, this.allTextHandles);
         end
     end
     
@@ -87,9 +87,8 @@ classdef WordCloud
         function this = initialiseFigure(this)
             f = figure('Name', 'Word Cloud', ...
                 'Units','normalized','OuterPosition',[0 0 1 1]);
-            axis manual            
-            ax = gca;
-            ax.Visible = 'off';
+            axis manual   
+            set(gca, 'Visible', 'off');
             f.Color = this.backgroundColour;
         end
         
@@ -135,6 +134,8 @@ classdef WordCloud
            
            % add text handle to cluster
            this.clusters = [this.clusters, WordCluster(centreTextHandle, 0, 0)];
+           % add text handle to text handles vector
+           this.allTextHandles = [this.allTextHandles, centreTextHandle];
            
            % create text handles for remaining words
            words(mostPopularWord)  = [];
@@ -153,6 +154,9 @@ classdef WordCloud
                % add remaining words to cluster
                this.clusters(end) = ...
                    this.clusters(end).addWords(textHandles, corr2centre);
+               
+               % add all text handles to text handles vector
+               this.allTextHandles = [this.allTextHandles, textHandles];
            end
        end
        
