@@ -3,7 +3,7 @@
 %% Scrape the data from the XML file
 clear
 
-A = xmlread('AbstractsEditted3.xml');
+A = xmlread('AbstractsEditted5.xml');
 allListitems = A.getElementsByTagName('p');
 raw_data = {};
 for indx = 1:allListitems.getLength
@@ -108,7 +108,7 @@ end
 ithAbs = (find ((IndxPapTitle(133) < IndxProbAbst) & (IndxPapTitle(133)+10 > IndxProbAbst )));
 Abstracts(133) = {strjoin(ProbAbstracts(ithAbs)')};
 
-clear ithAbs i data ProbAbstracts
+clear ithAbs i   ProbAbstracts
 
 Indx.IndxAuthName =IndxAuthName;
 Indx.IndxAuthPref =IndxAuthPref;
@@ -168,6 +168,8 @@ for i=1:30
     end
 end
 
+Titles = data(Indx.IndxPapTitle);
+
 % TF-IDF normalization (Term Frequency. * Inverse Docum. Frequency)
 FreqCounts = bsxfun(@rdivide,WordCounts,sum(WordCounts));
 TF = log( FreqCounts + 1);
@@ -183,7 +185,7 @@ clear i j WordFreqNorms DocFreqNorms TF IDF
 %% Try some statistics and do naive visualizations
 
 % Simple rank and linear correlations plots for word terms using CORR
-
+%{
 figure(1);
 subplot(1,2,1)
 makeCorrelationPlot(DocFreqL2','Pearson',Top30words);
@@ -208,6 +210,7 @@ surf( (Corr_Pea)); axis square; view([0 90])
 xlim([1 size(Corr_Pea,1)]); ylim([1 size(Corr_Pea,1)]);
 xlabel('Document Index'); ylabel('Document Index');
 title('Pearson (linear) correlations between the documents'); shading flat
+%}
 
 %% Matrix Decompositions
 
@@ -235,16 +238,58 @@ fopts.Span = 0.3; %Changing this will make the surface rougher or smoother
 [fitresult, gof] = fit( [x, y], z, ftype, fopts );
 
 % Plot fit with data.
-figure(11);
-h = plot( fitresult, [x, y], z  );
-legend(h, ['SEFI Papers Semantic Surface'], 'Document Entries', 'Location', 'NorthEast' );
+h =figure(11);
+h1 = plot( fitresult, [x, y], z  );
+legend(h1, ['SEFI Papers Semantic Surface'], 'Document Entries', 'Location', 'NorthEast' );
+
 % Label axes
 xlabel 'education - enginneers'
 ylabel 'learning - teaching - course'
-zlabel 'project - design'
-zlim([ 0.0 0.3]);
+zlabel 'project - design - skills'
+zlim([ -0.00 0.3]);
 grid on
-view( 47.5, 26.0 );
+view( 47.5, 26.0 ); 
+
+% Read the spell-checked titles
+fileID = fopen('exp_correct.txt','r'); 
+dataArray = textscan(fileID, '%s%[^\n\r]', 'Delimiter', '',  'ReturnOnError', false); 
+fclose(fileID);
+h.UserData = dataArray{1};
+
+% Change the updater for the data cursor
+dcm = datacursormode(h);
+set(dcm,'Enable','on', 'UpdateFcn',@NewCallback);
+
+% Make the plot square / set position 
+axis square;
+set(h, 'Position', [100, 100, 899, 899]);
+
+
+% GET handle to current axes and move the plot axes to the bottom
+ha =gca;
+uistack(ha,'bottom');
+% Creating a new axes for the logo on the current axes
+% To create the logo at the bottom left corner of the plot use 
+% the next two lines
+% haPos = get(ha,'position');
+% ha2=axes('position',[haPos(1:2), .1,.04,]);
+% To place the logo at the bottom left corner of the figure window
+% uncomment the line below and comment the above two lines
+ ha2=axes('position',[0.05,0.05, .1,.1,]);
+% Adding a LOGO to the new axes
+% The logo file(jpeg, png, etc.) must be placed in the working path
+[x1]=imread('peppers.png');
+image(x1)
+% Setting the colormap to the colormap of the imported logo image
+% colormap (map)
+% Turn the handlevisibility off so that we don't inadvertently plot
+% into the axes again. Also, make the axes invisible
+set(ha2,'handlevisibility','off','visible','off')  
+
+
+
+
+%{
 
  figure(12)
  subplot(2,1,1);
@@ -257,7 +302,6 @@ view( 47.5, 26.0 );
  
  clear x y z ftype fopts fitresult gof h
 
-
 %% Simple linkage plots for words using LINKAGE
 
 tree_NNMF = linkage(nnmf_V','average','cosine');
@@ -267,15 +311,12 @@ figure(5)
 dendrogram(tree_NNMF,'Reorder',leafOrder); %This visualizes up to 30 points
 title('NNMF generated Hierchical Clustering')
 
-
 tree_PCA = linkage(pca_scores(:,1:3),'average','cosine');
 D_PCA = pdist(pca_scores(:,1:3),'cosine');
 leafOrder = optimalleaforder(tree_PCA,D_PCA);
 figure(6)
 dendrogram(tree_PCA,'Reorder',leafOrder)%This visualizes up to 30 points
 title('LSA generated Hierchical Clustering')
-
-%{
 
 %% k-means plots for word using KMEANS
 
