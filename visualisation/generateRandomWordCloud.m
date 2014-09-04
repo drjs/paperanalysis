@@ -1,4 +1,4 @@
-function [words, wordCount, corrMat, tree] = generateRandomWordClusters(varargin)
+function [words, wordCounts, distances, clusterGroups] = generateRandomWordCloud(varargin)
     
     %% generate random list using an existing wordlist....
     words = {'apple', 'apricot', 'avocado', 'banana', 'berry', 'blackberry', ...
@@ -11,38 +11,49 @@ function [words, wordCount, corrMat, tree] = generateRandomWordClusters(varargin
         'plum', 'pomegranite', 'prune', 'quince', 'raisin', 'raspberry', ...
         'star fruit', 'strawberry', 'tangelo', 'tangerine', 'watermelon'};
     % pick N or 30 random words
-    if nargin == 0
-        nwords = 30;
-    else
-        nwords = varargin{1};
+    % pick nclusters or random number of clusters
+    switch nargin
+        case 0
+            nwords    = 30;
+            nclusters = 3 + randi(8);
+        case 1
+            nwords = varargin{1};
+            nclusters = 3 + randi(8);
+        case 2
+            nwords = varargin{1};
+            nclusters = varargin{2};
     end
     
     words = words(randperm(nwords));
     
     %% generate random word counts
-    wordCountStd = 25;
-    wordCountMean = 10;
+    wordCountStd = 10;
+    wordCountMean = 2;
     nwords = numel(words);
-    wordCount = round(abs(rand([1,nwords])*wordCountStd + wordCountMean));
+    wordCounts = ceil(abs(randn(1,nwords)*wordCountStd + wordCountMean));
     
     %% generate correlationMatrix values between -1 and 1
-    % how many independent distances are there between nwords points?
-    ndistances = sum(1:(nwords-1));
-    % generate some random distances (as a vector) for the linkage function
-    % use a sin function to make some clusters.
-%     distances = (rand(1,ndistances).*2)-1;
-    distances = sin((10*pi/ndistances).*(1:ndistances));
-    % the correlation matrix is a nice square version of these distances
-    % where corrMat(word1, word2) gives the correlation between any 2 words
-    corrMat = squareform(distances);
+    % generate some random distances (as a matrix). Must be nwords x nwords
+    % and reflected along the diagonal.
+    distances = zeros(nwords, nwords);
+    for i = 1:nwords
+        for j = 1:nwords
+            if i == j
+                distances(i, j) = 1;
+                continue;
+            end
+            distances(i, j) = randn(1);
+            distances(j, i) = distances(i, j);
+        end
+    end
+    % along the diagonal should be 1 because something should be perfectly
+    % correlated with itself.
+    distances(logical(eye(nwords))) = 1;
     
     %% generate clustering
-    % linkage does not like negative numbers and 0 indicates closeness and
-    % 1 difference, so this needs rescaling
-    rescaledDistances = (-0.5*distances+0.5);
-    tree = linkage(rescaledDistances);
-    bestOrder = optimalleaforder(tree, rescaledDistances);
-    hdendro = dendrogram(tree, 'Reorder', bestOrder);
-    set(gca, 'XTickLabel', words(bestOrder), 'XTickLabelRotation',90);
+    % randomly distribute words into different clusters
+    clusterGroups = randi(nclusters, 1, nwords);
     
+    %% generate cloud
+    WordCloud(words, wordCounts, distances, clusterGroups);
 end

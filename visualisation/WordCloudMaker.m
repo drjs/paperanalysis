@@ -10,16 +10,13 @@ load sefiData
 
 
 % f = figure('Name', 'Word Cloud', 'Position', [50 50 1000 620]);
-f = figure('Name', 'Word Cloud', 'Units','normalized','OuterPosition',[0 0 1 1]);
-axis manual
-
-ax = gca;
-ax.Visible = 'off';
-f.Color = 'black';
 
 gr = cluster(clusterTree, 'maxclust', 8);
 cloud = WordCloud(words, wordCount, corrMat, gr);
-% cloud.boxEachCluster();
+
+pause(2);
+
+cloud.rescaleText(2);
 
 % testCluster()
 
