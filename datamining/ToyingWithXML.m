@@ -2,6 +2,8 @@
 
 %% Scrape the data from the XML file
 clear
+close all
+
 
 A = xmlread('AbstractsEditted5.xml');
 allListitems = A.getElementsByTagName('p');
@@ -224,7 +226,7 @@ opti = statset('UseSubstreams',1,'Streams',s,'Display','off');
                             'options',opti, 'algorithm','als');
 
 %% Make surface plot
-
+close all
 [x , y ,z] = deal(  nnmf_V(1,:)',  nnmf_V(2,:)',  nnmf_V(3,:)' );
  
 % Set up fittype and options.
@@ -241,14 +243,12 @@ fopts.Span = 0.3; %Changing this will make the surface rougher or smoother
 h =figure(11);
 h1 = plot( fitresult, [x, y], z  );
 legend(h1, ['SEFI Papers Semantic Surface'], 'Document Entries', 'Location', 'NorthEast' );
-
+set(h1, 'MarkerFaceColor',[0 0 0])
 % Label axes
 xlabel 'education - enginneers'
 ylabel 'learning - teaching - course'
 zlabel 'project - design - skills'
-zlim([ -0.00 0.3]);
 grid on
-view( 47.5, 26.0 ); 
 
 % Read the spell-checked titles
 fileID = fopen('exp_correct.txt','r'); 
@@ -261,33 +261,59 @@ dcm = datacursormode(h);
 set(dcm,'Enable','on', 'UpdateFcn',@NewCallback);
 
 % Make the plot square / set position 
-axis square;
-set(h, 'Position', [100, 100, 899, 899]);
+ 
+set(h, 'Position', [100, 100, 1100, 649]);
 
+view( 47.5, 26.0 ); 
+zlim([ -0.00 0.3]);
 
-% GET handle to current axes and move the plot axes to the bottom
-ha =gca;
-uistack(ha,'bottom');
-% Creating a new axes for the logo on the current axes
-% To create the logo at the bottom left corner of the plot use 
-% the next two lines
-% haPos = get(ha,'position');
-% ha2=axes('position',[haPos(1:2), .1,.04,]);
-% To place the logo at the bottom left corner of the figure window
-% uncomment the line below and comment the above two lines
- ha2=axes('position',[0.05,0.05, .1,.1,]);
-% Adding a LOGO to the new axes
-% The logo file(jpeg, png, etc.) must be placed in the working path
-[x1]=imread('peppers.png');
-image(x1)
-% Setting the colormap to the colormap of the imported logo image
-% colormap (map)
-% Turn the handlevisibility off so that we don't inadvertently plot
-% into the axes again. Also, make the axes invisible
-set(ha2,'handlevisibility','off','visible','off')  
+% Make the made-by-MATLAB logo
 
+L = 40*membrane(1,25);
 
+logoax = axes('CameraPosition', [-193.4013 -265.1546  220.4819],...
+    'CameraTarget',[26 26 10], ...
+    'CameraUpVector',[0 0 1], ...
+    'CameraViewAngle',9.5, ...
+    'DataAspectRatio', [1 1 .9],...
+    'Position',[0.0 0.052 .1 .1], ...
+    'Visible','off', ...
+    'XLim',[1 51], ...
+    'YLim',[1 51], ...
+    'ZLim',[-13 40], ...
+    'parent',h);
+s = surface(L, ...
+    'EdgeColor','none', ...
+    'FaceColor',[0.9 0.2 0.2], ...
+    'FaceLighting','phong', ...
+    'AmbientStrength',0.3, ...
+    'DiffuseStrength',0.6, ... 
+    'Clipping','off',...
+    'BackFaceLighting','lit', ...
+    'SpecularStrength',1, ...
+    'SpecularColorReflectance',1, ...
+    'SpecularExponent',7, ...
+    'Tag','TheMathWorksLogo', ...
+    'parent',logoax);
+l1 = light('Position',[40 100 20], ...
+    'Style','local', ...
+    'Color',[0 0.8 0.8], ...
+    'parent',logoax);
+l2 = light('Position',[.5 -1 .4], ...
+    'Color',[0.8 0.8 0], ...
+    'parent',logoax);
 
+ mTextBox = uicontrol('style','text','Position',[1 00 120 20], 'FontSize', 11);
+ set(mTextBox,'String','Made by MATLAB')
+
+%Rotate the figure
+ 
+%   NumFra = 500;
+%    v = [ linspace(47,-111,NumFra)' linspace(26,22,NumFra)' ];   %# matrix where each row specify Az/El of view
+%    for i=1:size(v,1)
+%        view( h.Children(4), [v(i,:)] ) 
+%        drawnow
+%    end
 
 %{
 
