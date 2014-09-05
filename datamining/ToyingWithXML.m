@@ -234,18 +234,18 @@ ftype = fittype( 'lowess' );
 fopts = fitoptions('Method', 'LowessFit');
 fopts.Normalize = 'on';
 fopts.Robust = 'LAR';
-fopts.Span = 0.3; %Changing this will make the surface rougher or smoother
+fopts.Span = 0.1818; %Changing this will make the surface rougher or smoother
 
 % Fit model to data.
 [fitresult, gof] = fit( [x, y], z, ftype, fopts );
 
 % Plot fit with data.
-h =figure(11);
+h =figure(12);
 h1 = plot( fitresult, [x, y], z  );
 legend(h1, ['SEFI Papers Semantic Surface'], 'Document Entries', 'Location', 'NorthEast' );
 set(h1, 'MarkerFaceColor',[0 0 0])
 % Label axes
-xlabel 'education - enginneers'
+xlabel 'education - engineers'
 ylabel 'learning - teaching - course'
 zlabel 'project - design - skills'
 grid on

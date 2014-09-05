@@ -16,7 +16,7 @@ cloud = WordCloud(words, wordCount, corrMat, gr);
 
 pause(2);
 
-cloud.rescaleText(2);
+% cloud.rescaleText(2);
 
 % testCluster()
 
