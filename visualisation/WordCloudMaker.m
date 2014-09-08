@@ -1,46 +1,21 @@
-function WordCloudMaker
+function cloud = WordCloudMaker
 % cla reset
 clear variables
 % clear classes
 
 load sefiData
 
-% T = cluster(tree, 'maxclust', numberClusters);
-% c = hist(T, numberClusters)
-
-
-% f = figure('Name', 'Word Cloud', 'Position', [50 50 1000 620]);
-
-gr = cluster(clusterTree, 'maxclust', 16);
-cloud = WordCloud(words, wordCount, corrMat, gr);
-
-% pause(2);
-% 
-% cloud.rescaleClusterSeparation(0.5);
+nclusts = 10;
+tree = linkage(correlationMatrix, 'average');
+clusterGroups = cluster(tree, 'maxclust', nclusts);
+% c = hist(clusterGroups, nclusts)
+cloud = WordCloud(words, wordFreq, correlationMatrix, clusterGroups);
+cloud.rescaleText(2.5)
+% cloud.rescaleClusterSeparation(0.2);
 
 addMWLogo;
 
+set(gcf, 'papertype', 'A0', 'renderer', 'painters', 'paperpositionmode', 'auto');
+print -dpng -r500 75WordsCloud
 
 end
-
-function testCluster()
-load realtestdata
-nwords = 9;
-
-textHandles = generateTextHandles(words, wordCount, corrMat, clusterTree);
-arrayfun(@(h) set(h,'Visible','off'), textHandles((nwords+1):end));
-% textHandles((nwords+1):end).Visible = 'off';
-
-w = WordCluster(textHandles(1), 0.5, 0.5);
-line([w.right, w.right], ylim, 'color', 'g');
-randcorr = rand(1,nwords-1); %
-w = w.addWords(textHandles(2:nwords), corrMat(1,2:nwords)); %, wordCount(2:8), corrMat(1, 2:8));]); %
-line([w.right, w.right], ylim, 'color', 'b');
-w = w.recalculateLimits();
-line([w.right, w.right], ylim, 'color', 'r');
-end
-
-function makeRect(clust, col)
-r = rectangle('position', [clust.left, clust.bottom, clust.right-clust.left, clust.top-clust.bottom], 'edgecolor', col);
-end
-
