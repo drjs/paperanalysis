@@ -25,6 +25,7 @@ classdef WordCloud
         allTextHandles = [];
         centreX  = 0.5;
         centreY  = 0.5;
+        satelliteDistances;
     end
     
     methods
@@ -56,30 +57,35 @@ classdef WordCloud
             % place the first and biggest cluster in the centre
             this.clusters(1) = this.clusters(1).recentreCluster(this.centreX, this.centreY);
             
-            % find correlation distance between centre cluster and each
+            % find base correlation distance between centre cluster and each
             % satellite cluster
-            dists = this.calculateClusterDistancesFromCentre(...
+            this.satelliteDistances = this.calculateClusterDistancesFromCentre(...
                 wordCorrelations, clusterGroups, clusterOrder);
             
-            % for the remaining clusters
-            for clust = 2:nClusters                
-                distance = ( dists(clust)/max(dists) ) * this.satelliteClusterDistanceScaleFactor;
-                
-                % go in a circle around the centre starting from the top
-                theta = (2*pi*clust/(nClusters-1));
-                
-                % places this cluster some distance from centre, proportional
-                % to the correlation between the two clusters.
-                newX = cos(theta).*distance + this.centreX;
-                newY = sin(theta).*distance + this.centreY;
-                this.clusters(clust) = this.clusters(clust).recentreCluster(newX, newY);
-            end
+            this = this.rescaleClusterSeparation(this.satelliteClusterDistanceScaleFactor);
         end
         
         function this = rescaleText(this, newScaleFactor)
             resizeFcn = @(h)set(h, 'FontSize', ...
                  h.UserData.wordCount*newScaleFactor*3);
             arrayfun(resizeFcn, this.allTextHandles);
+        end
+        
+        function this = rescaleClusterSeparation(this, newDistanceScaleFactor)            
+            % for the remaining clusters
+            distances = ( this.satelliteDistances./max(this.satelliteDistances) ) .* newDistanceScaleFactor;
+            nClusters = numel(this.clusters);
+            
+            for clust = 2:nClusters
+                % go in a circle around the centre starting from the top
+                theta = (2*pi*clust/(nClusters-1));
+                
+                % places this cluster some distance from centre, proportional
+                % to the correlation between the two clusters.
+                newX = cos(theta).*distances(clust) + this.centreX;
+                newY = sin(theta).*distances(clust) + this.centreY;
+                this.clusters(clust) = this.clusters(clust).recentreCluster(newX, newY);
+            end
         end
     end
     
@@ -119,7 +125,7 @@ classdef WordCloud
                 % scale corr so that 1 = close and -1 = far
                 corr = (corr.*-1) + 1;
                 % sum correlation to get total distance from centre cluster
-                dists(clust) = mean(corr(:));
+                dists(clust) = max(corr(:));
             end
        end
        
