@@ -93,6 +93,7 @@ classdef WordCloud
         function this = initialiseFigure(this)
             f = figure('Name', 'Word Cloud', ...
                 'Units','normalized','OuterPosition',[0 0 1 1]);
+            % f = figure('Name', 'Word Cloud', 'Position', get(groot,'Screensize'));
             axis manual   
             set(gca, 'Visible', 'off');
             f.Color = this.backgroundColour;
@@ -123,6 +124,7 @@ classdef WordCloud
                 corr = wordCorrelations(centreClusterWordIdx, ...
                     (clusterGroups == clusterOrder(clust)) );
                 % scale corr so that 1 = close and -1 = far
+                % changes to 0 = close 2 = far
                 corr = (corr.*-1) + 1;
                 % sum correlation to get total distance from centre cluster
                 dists(clust) = max(corr(:));

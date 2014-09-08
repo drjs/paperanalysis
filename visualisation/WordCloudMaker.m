@@ -11,14 +11,14 @@ load sefiData
 
 % f = figure('Name', 'Word Cloud', 'Position', [50 50 1000 620]);
 
-gr = cluster(clusterTree, 'maxclust', 8);
+gr = cluster(clusterTree, 'maxclust', 16);
 cloud = WordCloud(words, wordCount, corrMat, gr);
 
-pause(2);
+% pause(2);
+% 
+% cloud.rescaleClusterSeparation(0.5);
 
-cloud.rescaleClusterSeparation(0.25);
-
-% testCluster()
+addMWLogo;
 
 
 end
