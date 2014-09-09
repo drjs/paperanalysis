@@ -5,7 +5,8 @@ clear variables
 
 load sefiData
 
-nclusts = 10;
+nclusts = 9;
+rng('shuffle');
 tree = linkage(correlationMatrix, 'average');
 clusterGroups = cluster(tree, 'maxclust', nclusts);
 % c = hist(clusterGroups, nclusts)
@@ -15,7 +16,7 @@ cloud.rescaleText(2.5)
 
 addMWLogo;
 
-set(gcf, 'papertype', 'A0', 'renderer', 'painters', 'paperpositionmode', 'auto');
-print -dpng -r500 75WordsCloud
+set(gcf, 'papertype', 'A0', 'renderer', 'painters', 'paperpositionmode', 'auto', 'InvertHardcopy', 'off');
+% print -dpng -r600 -noui 75WordsCloud
 
 end

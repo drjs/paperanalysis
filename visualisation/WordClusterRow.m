@@ -67,19 +67,50 @@ classdef WordClusterRow
         
         function tf = isFull(this)
             tf = numel(this.allWordHandles) > 2;
-            % tf = (this.right - this.left) > 0.5;
+            tf = tf || (this.right - this.left) > 0.3;
         end
         
         
         function this = shiftAllWords(this, dX, dY)
             % shifts the row centre by the given amount.
             % +x shifts right, -x shifts left
-            % +y shifts up -y shifts down.
+            % +y shifts up, -y shifts down.
             for th = this.allWordHandles
                 th.Position = [th.Position(1)+dX, th.Position(2)+dY];
             end
             % recalculate centre and limits.
-            this = recalculateLimits(this);
+            this = this.recalculateLimits();
+        end
+        
+        function this = respaceWordsInRow(this)
+            % find centre aligned word
+            for centreWordIdx = 1:numel(this.allWordHandles)
+                if strcmp(this.allWordHandles(centreWordIdx).HorizontalAlignment, 'center')
+                    break;
+                end
+            end            
+            
+            % reposition words to left 
+            for i = (centreWordIdx-1):-1:1;
+                newXPos = this.allWordHandles(i+1).Extent(1);
+                newXPos = this.ceilToNearest(newXPos, this.blockSize);
+                newXPos = newXPos - (this.marginLR*this.blockSize);
+                
+                this.allWordHandles(i).Position = [newXPos, this.centreY];
+            end
+            
+            % reposition words to the right
+            for i = (centreWordIdx+1):numel(this.allWordHandles)  
+                newXPos = this.allWordHandles(i-1).Extent(1) ...
+                    + this.allWordHandles(i-1).Extent(3);
+                newXPos = this.ceilToNearest(newXPos, this.blockSize);
+                newXPos = newXPos + (this.marginLR*this.blockSize);
+                
+                this.allWordHandles(i).Position = [newXPos, this.centreY];
+            end
+            
+            % recalculate centre and limits.
+            this = this.recalculateLimits();
         end
         
         function this = repositionRowAbsolute(this, newX, newY)
@@ -126,10 +157,10 @@ classdef WordClusterRow
             this.top   = this.ceilToNearest(max(T), this.blockSize);
             
             % add margin padding to each word.
-            this.left   = this.left - (this.marginLR*this.blockSize);
+            this.left   = this.left   - (this.marginLR*this.blockSize);
             this.bottom = this.bottom - (this.marginTB*this.blockSize);
-            this.right  = this.right + (this.marginLR*this.blockSize);
-            this.top    = this.top + (this.marginTB*this.blockSize);
+            this.right  = this.right  + (this.marginLR*this.blockSize);
+            this.top    = this.top    + (this.marginTB*this.blockSize);
             
             % rectangle('position', [this.left, this.bottom, this.right-this.left, this.top-this.bottom], 'edgecolor', 'g');
         end

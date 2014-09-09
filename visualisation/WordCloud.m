@@ -7,7 +7,7 @@ classdef WordCloud
         
         % The colour to make the figure background. This can be a 1x3 RGB 
         % vector or a standard colour string e.g. 'black' or 'k'.
-        backgroundColour = [1 1 1];
+        backgroundColour = [0 0 0];
         
         % Scale factor controlling the size the fonts are displayed. Adjust
         % this to make the words bigger or smaller
@@ -38,8 +38,7 @@ classdef WordCloud
             
             % process the largest cluster first and smaller ones last
             % find the right order to do the custers in
-            [sizeCluster,~]  = histcounts(clusterGroups);
-            [~,clusterOrder] = sort(sizeCluster, 'descend');
+            clusterOrder = this.sortClustersBySize(clusterGroups, wordCounts);
             nClusters = numel(clusterOrder);    
             
             % generate colours for each cluster
@@ -69,6 +68,10 @@ classdef WordCloud
             resizeFcn = @(h)set(h, 'FontSize', ...
                  h.UserData.wordCount*newScaleFactor*3);
             arrayfun(resizeFcn, this.allTextHandles);
+            for cl = this.clusters % is there no way to vectorise this?
+               cl.respaceRowsHorizontally(); 
+               %cl.respaceRowsVertically(); 
+            end
         end
         
         function this = rescaleClusterSeparation(this, newDistanceScaleFactor)            
@@ -77,8 +80,8 @@ classdef WordCloud
             nClusters = numel(this.clusters);
             
             for clust = 2:nClusters
-                % go in a circle around the centre starting from the top
-                theta = (2*pi*clust/(nClusters-1));
+                % go in a circle around the centre starting from ~45deg
+                theta = (2*pi*clust/(nClusters-1)) + (pi/4);
                 
                 % places this cluster some distance from centre, proportional
                 % to the correlation between the two clusters.
@@ -99,14 +102,21 @@ classdef WordCloud
             f.Color = this.backgroundColour;
         end
         
+        function newOrder = sortClustersBySize(this, clusterGroups, wordCounts)
+            nclusters = max(clusterGroups);
+            groupSizes = zeros(1, nclusters);
+            for i = 1:nclusters
+                groupSizes(i) = sum(wordCounts(clusterGroups == i));
+            end
+            [~,newOrder] = sort(groupSizes, 'descend');
+        end
+        
         function this = recalculateLimits(this)
             left   = min([this.clusters.left]);
             right  = max([this.clusters.right]);
             top    = max([this.clusters.top]);
             bottom = min([this.clusters.bottom]);
-            rectangle('position', [left, bottom, right-left, top-bottom], 'edgecolor', 'b');
-            % axis([left, right, bottom, top]);
-            % set(gcf, 'Position', [left, bottom, right-left, top-bottom]);
+            % rectangle('position', [left, bottom, right-left, top-bottom], 'edgecolor', 'b');
         end
        
        function dists = calculateClusterDistancesFromCentre(~, wordCorrelations, clusterGroups, clusterOrder)

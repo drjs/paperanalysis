@@ -1,6 +1,6 @@
 f = gcf;
-% if background is white, use dark logo else use white text logo
-if sum(f.Color) > 2
+% if background is light, use dark logo else use white text logo
+if sum(f.Color) > 1.5
     logofile = 'MATLAB_RGB.png';
     % MathWorks Blue: http://www.mathworks.co.uk/brandguide/visual/color.html
     fontColour = [18, 86, 135] ./255;
