@@ -7,7 +7,14 @@ Analyze conference papers in MATLAB
 Visualisation
 -------------
 
-To visualise the SEFI conference data run the `WordCloudMaker` [script](./visualisation/WordCloudMaker.m).
+To visualise the SEFI conference data run the `GenerateSEFIWordCloud` [script](./visualisation/GenerateSEFIWordCloud.m).
+
+[visualisation/GenerateSEFIWordCloud.pdf](./visualisation/GenerateSEFIWordCloud.pdf) contains a short description of how the Word Cloud clustering and visualisation is performed.
+
+Example word cloud:
+![alt-text](https://raw.githubusercontent.com/drjs/paperanalysis/master/visualisation/75WordsCloudBlack.png "sample word cloud")
+
+### Customisation
 
 To customise the WordCloud settings so that it looks how you want, edit the Constant properties in [WordCloud.m](./visualisation/WordCloud.m).
 These are:
@@ -19,12 +26,10 @@ These are:
 
 ### Visualisation TODO
 
-1. Finish [generateRandomWordCloud.m](./visualisation/generateRandomWordCloud.m).
-2. improve word cloud creation to work without correlation matrix
-3. improve word cloud creation to work without groups (puts all words into one cluster).
+1. Optimise word clouds for [generateRandomWordCloud.m](./visualisation/generateRandomWordCloud.m).
+2. create word cloud factory for easily customising clouds.
 4. remove all usage of the statistics toolbox. Or replace with alternatives using random numbers. Word clouds should be possible without it.
-5. add helpful title/author tooltips to datamining scatter3 plot.
-6. add "Made with MATLAB" logo.
+
 
     
 
