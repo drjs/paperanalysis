@@ -11,7 +11,7 @@ classdef WordCloud
         
         % Scale factor controlling the size the fonts are displayed. Adjust
         % this to make the words bigger or smaller
-        fontScaleFactor = 1;
+        fontScaleFactor = 2;
         
         % Controls how far the outer word clusters are from the central
         % cluster. If the words are too close together or far apart,
