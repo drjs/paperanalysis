@@ -11,7 +11,7 @@ classdef WordCloud
         
         % Scale factor controlling the size the fonts are displayed. Adjust
         % this to make the words bigger or smaller
-        fontScaleFactor = 3;
+        fontScaleFactor = 1;
         
         % Controls how far the outer word clusters are from the central
         % cluster. If the words are too close together or far apart,
@@ -68,9 +68,10 @@ classdef WordCloud
             resizeFcn = @(h)set(h, 'FontSize', ...
                  h.UserData.wordCount*newScaleFactor*3);
             arrayfun(resizeFcn, this.allTextHandles);
-            for cl = this.clusters % is there no way to vectorise this?
-               cl.respaceRowsHorizontally(); 
-               %cl.respaceRowsVertically(); 
+
+            for cl = 1:numel(this.clusters) % is there no way to vectorise this?
+               this.clusters(cl) = this.clusters(cl).respaceRowsHorizontally(); 
+               this.clusters(cl) = this.clusters(cl).respaceRowsVertically(); 
             end
         end
         

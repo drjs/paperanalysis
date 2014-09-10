@@ -13,10 +13,13 @@ end
 newX = 0.15;
 newY = newX * size(im, 1) / size(im, 2);
 logoax = axes('Position', [1-newX 0.01 newX, newY], ...
-    'Color', 'none', 'Clipping', 'off', 'Layer', 'top', 'Parent', f, 'Visible', 'off', 'Units', 'normalized');
+    'Color', 'none', 'Clipping', 'off', 'Layer', 'top', ...
+    'Parent', f, 'Visible', 'off', 'Units', 'normalized');
 
 logoHandle = image(im, 'AlphaData', alpha);
 logoText   = text(0.9, 1.2, 'Made with', 'Parent', logoax, ...
-    'HorizontalAlignment', 'right', 'Units', 'normalized', 'FontUnits', 'normalized', 'FontSize', 0.5, 'Color', fontColour);
+    'HorizontalAlignment', 'right', 'Units', 'normalized', ...
+    'FontUnits', 'normalized', 'FontSize', 0.5, 'Color', fontColour);
+
 axis(logoax, 'image')
 axis(logoax, 'off')

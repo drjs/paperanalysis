@@ -5,13 +5,13 @@ clear variables
 
 load sefiData
 
-nclusts = 9;
+nclusts = 8;
 rng('shuffle');
 tree = linkage(correlationMatrix, 'average');
 clusterGroups = cluster(tree, 'maxclust', nclusts);
 % c = hist(clusterGroups, nclusts)
 cloud = WordCloud(words, wordFreq, correlationMatrix, clusterGroups);
-cloud.rescaleText(2.5)
+% cloud = cloud.rescaleText(4.5);
 % cloud.rescaleClusterSeparation(0.2);
 
 addMWLogo;

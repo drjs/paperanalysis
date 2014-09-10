@@ -72,18 +72,22 @@ classdef WordCluster
         function this = respaceRowsVertically(this)
             % find the centre row, this is the one that's 'middle' aligned
             for middleRow = 1:numel(this.wordRows)
-                if isequal(this.wordRows(middleRow).verticalAlignment, 'middle');
+                if strcmp(this.wordRows(middleRow).verticalAlignment, 'middle');
+                    % recalculate middle row limits
+                    this.wordRows(middleRow) = ...
+                        this.wordRows(middleRow).repositionRowRelative(0,0);
                     break
                 end
             end
             % for all above the centre row set the centre to the top limit
             % of line below
             for r = (middleRow+1):numel(this.wordRows)
-                dY = this.wordRows(r).centreY - this.wordRows(r-1).top;
+                %line(xlim, [this.wordRows(r-1).top, this.wordRows(r-1).top]);
+                dY = this.wordRows(r-1).top - this.wordRows(r).refPosY;
                 this.wordRows(r) = this.wordRows(r).repositionRowRelative(0, dY);
             end
             for r = (middleRow-1):-1:1
-                dY = this.wordRows(r).centreY - this.wordRows(r+1).bottom;
+                dY = this.wordRows(r+1).bottom - this.wordRows(r).refPosY;
                 this.wordRows(r) = this.wordRows(r).repositionRowRelative(0, dY);
             end
             this = this.recalculateLimits();

@@ -19,22 +19,22 @@ classdef WordClusterRow
         marginLR = 3;
         marginTB = 0;
         % where is the row currently centred
-        centreX = 0;
-        centreY = 0;
+        refPosX = 0;
+        refPosY = 0;
     end
     
     methods
         function this = WordClusterRow(centreWordHandle, alignment, varargin)
             if nargin == 4
-                this.centreX = varargin{1};
-                this.centreY = varargin{2};
+                this.refPosX = varargin{1};
+                this.refPosY = varargin{2};
             end
             
             this.verticalAlignment = alignment;
             this.allWordHandles = centreWordHandle;
             % place centre word in centre
             this.placeWordAtLocation(centreWordHandle, ...
-                this.centreX, this.centreY, 'center', this.verticalAlignment);
+                this.refPosX, this.refPosY, 'center', this.verticalAlignment);
             % recalculate left, right, top and bottom extent of the row.
             this = this.recalculateLimits();
         end
@@ -45,7 +45,7 @@ classdef WordClusterRow
             this.allWordHandles = [newWordHandle, this.allWordHandles];
             % add to row
             this.placeWordAtLocation(newWordHandle, ...
-                this.left, this.centreY, 'right', this.verticalAlignment);
+                this.left, this.refPosY, 'right', this.verticalAlignment);
             % recalculate limits
             this = this.recalculateLimits();
             % recentre the row
@@ -58,7 +58,7 @@ classdef WordClusterRow
             this.allWordHandles = [this.allWordHandles, newWordHandle];
             % add to row
             this.placeWordAtLocation(newWordHandle, ...
-                this.right, this.centreY, 'left', this.verticalAlignment);
+                this.right, this.refPosY, 'left', this.verticalAlignment);
             % recalculate limits
             this = this.recalculateLimits();
             % recentre the row
@@ -96,7 +96,7 @@ classdef WordClusterRow
                 newXPos = this.ceilToNearest(newXPos, this.blockSize);
                 newXPos = newXPos - (this.marginLR*this.blockSize);
                 
-                this.allWordHandles(i).Position = [newXPos, this.centreY];
+                this.allWordHandles(i).Position = [newXPos, this.refPosY];
             end
             
             % reposition words to the right
@@ -106,27 +106,28 @@ classdef WordClusterRow
                 newXPos = this.ceilToNearest(newXPos, this.blockSize);
                 newXPos = newXPos + (this.marginLR*this.blockSize);
                 
-                this.allWordHandles(i).Position = [newXPos, this.centreY];
+                this.allWordHandles(i).Position = [newXPos, this.refPosY];
             end
             
             % recalculate centre and limits.
             this = this.recalculateLimits();
+            this = this.reAlignRow();
         end
         
         function this = repositionRowAbsolute(this, newX, newY)
-            dX = newX - this.centreX;
-            dY = newY - this.centreY;
+            dX = newX - this.refPosX;
+            dY = newY - this.refPosY;
             this = this.shiftAllWords(dX, dY);
             
-            this.centreX = newX;
-            this.centreY = newY;
+            this.refPosX = newX;
+            this.refPosY = newY;
         end
         
         function this = repositionRowRelative(this, dX, dY)
             this = this.shiftAllWords(dX, dY);
             
-            this.centreX = this.centreX + dX;
-            this.centreY = this.centreY + dY;
+            this.refPosX = this.refPosX + dX;
+            this.refPosY = this.refPosY + dY;
         end
         
     end
@@ -137,7 +138,7 @@ classdef WordClusterRow
             % the centre X coordinate.
             % take L and R limits and find the midpoint
             % offset the x position of all words by midpoint
-            offsetX = this.centreX - (this.left + this.right)/2;
+            offsetX = this.refPosX - (this.left + this.right)/2;
             this = this.shiftAllWords(offsetX, 0);
         end
         
