@@ -14,26 +14,29 @@
 % # Parse all paper abstracts for dictionary of unique conference keywords 
 % (3633 keywords), and their total count across all paper abstracts.
 % # For most frequent N words, it counts how many times each keyword was used in each abstract.
-% # This gives a histogram of keyword occurences for each abstract.
-% # Then from that histogram MATLAB calculates the correlation coefficient between all N words.
-% So we get an NxN matrix of correlation coefficients.
+% # This gives a normalised histogram of keyword occurences for each abstract.
+% # From that histogram, MATLAB calculates the correlation coefficient between all N words, 
+% and we get an NxN matrix of correlation coefficients.
 
 clear variables
 load sefiData
 
 %% Forming the Clusters
 % Clustering is calculated using inbuilt <http://www.mathworks.com/help/stats/hierarchical-clustering.html hierarchical clustering> 
-% algorithms from MATLAB statistics toolbox.
+% algorithms <http://www.mathworks.com/help/stats/linkage.html linkage> and
+% <http://www.mathworks.com/help/stats/cluster.html cluster> from MATLAB statistics toolbox.
 % 
-% # Correlation is used as a distance measure between the words.
-% # The algorithms works through word list, and pairs words that are most
-% correlated, i.e. nearest.
+% # Correlation is used as a distance measure between the words, so
+% words that are perfectly positively correlated will have zero distance, and
+% perfectly negatively correlated words have a large distance.
+% # The algorithms works through word list, and pairs words that are
+% closest together.
 % # The pairs can then be combined with other words or pairs which are
-% near.
+% close to each other.
 % # the process repeats until all words are grouped together into a tree.
 % # This pairing is ususally shown in a diagram called a dendrogram. It
-% shows how words are paired and the height of the link shows how close the
-% two words being linked are.
+% shows how words have been paired and the height of the link shows how
+% close the two words being linked are.
 % 
 % This is the <http://www.mathworks.com/help/stats/dendrogram.html dendrogram> for the SEFI conference data:
 
@@ -51,9 +54,8 @@ if license('test', 'statistics_toolbox')
 end
 
 %% How are Clusters Displayed as Word Clouds?
-% The script is manually sets the cloud to display nine clusters. So the clustering
-% algorithm will stop linking words together once there are nine groups of
-% words.
+% The word cloud script manually sets the cloud to display nine clusters.
+% So the clustering algorithm is stopped once there are nine groups of words.
 % 
 % *Formatting:*
 % 
@@ -80,7 +82,7 @@ end
 % in the cluster) goes in the centre of the figure.
 % Remaining clusters are places evenly around the edge. Their distance
 % from the centre is proportional to the mean correlation between the words
-% in the cluster and the central cluster.
+% in the satellite cluster and the central cluster.
 
 rng('shuffle');
 cloud = WordCloud(words, wordFreq, correlationMatrix, clusterGroups);
