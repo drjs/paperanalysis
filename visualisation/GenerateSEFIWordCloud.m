@@ -88,6 +88,7 @@ rng('shuffle');
 cloud = WordCloud(words, wordFreq, correlationMatrix, clusterGroups);
 
 addMWLogo;
+% addMWMembraneLogo;
 
 set(gcf, 'papertype', 'A0', 'renderer', 'painters', 'paperpositionmode', 'auto', 'InvertHardcopy', 'off');
 % print -dpng -r600 -noui 75WordsCloud
