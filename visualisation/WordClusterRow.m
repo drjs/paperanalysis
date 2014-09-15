@@ -19,22 +19,22 @@ classdef WordClusterRow
         marginLR = 3;
         marginTB = 0;
         % where is the row currently centred
-        centreX = 0;
-        centreY = 0;
+        refPosX = 0;
+        refPosY = 0;
     end
     
     methods
         function this = WordClusterRow(centreWordHandle, alignment, varargin)
             if nargin == 4
-                this.centreX = varargin{1};
-                this.centreY = varargin{2};
+                this.refPosX = varargin{1};
+                this.refPosY = varargin{2};
             end
             
             this.verticalAlignment = alignment;
             this.allWordHandles = centreWordHandle;
             % place centre word in centre
             this.placeWordAtLocation(centreWordHandle, ...
-                this.centreX, this.centreY, 'center', this.verticalAlignment);
+                this.refPosX, this.refPosY, 'center', this.verticalAlignment);
             % recalculate left, right, top and bottom extent of the row.
             this = this.recalculateLimits();
         end
@@ -45,7 +45,7 @@ classdef WordClusterRow
             this.allWordHandles = [newWordHandle, this.allWordHandles];
             % add to row
             this.placeWordAtLocation(newWordHandle, ...
-                this.left, this.centreY, 'right', this.verticalAlignment);
+                this.left, this.refPosY, 'right', this.verticalAlignment);
             % recalculate limits
             this = this.recalculateLimits();
             % recentre the row
@@ -58,7 +58,7 @@ classdef WordClusterRow
             this.allWordHandles = [this.allWordHandles, newWordHandle];
             % add to row
             this.placeWordAtLocation(newWordHandle, ...
-                this.right, this.centreY, 'left', this.verticalAlignment);
+                this.right, this.refPosY, 'left', this.verticalAlignment);
             % recalculate limits
             this = this.recalculateLimits();
             % recentre the row
@@ -67,35 +67,67 @@ classdef WordClusterRow
         
         function tf = isFull(this)
             tf = numel(this.allWordHandles) > 2;
-            % tf = (this.right - this.left) > 0.5;
+            tf = tf || (this.right - this.left) > 0.3;
         end
         
         
         function this = shiftAllWords(this, dX, dY)
             % shifts the row centre by the given amount.
             % +x shifts right, -x shifts left
-            % +y shifts up -y shifts down.
+            % +y shifts up, -y shifts down.
             for th = this.allWordHandles
                 th.Position = [th.Position(1)+dX, th.Position(2)+dY];
             end
             % recalculate centre and limits.
-            this = recalculateLimits(this);
+            this = this.recalculateLimits();
+        end
+        
+        function this = respaceWordsInRow(this)
+            % find centre aligned word
+            for centreWordIdx = 1:numel(this.allWordHandles)
+                if strcmp(this.allWordHandles(centreWordIdx).HorizontalAlignment, 'center')
+                    break;
+                end
+            end            
+            
+            % reposition words to left 
+            for i = (centreWordIdx-1):-1:1;
+                newXPos = this.allWordHandles(i+1).Extent(1);
+                newXPos = this.ceilToNearest(newXPos, this.blockSize);
+                newXPos = newXPos - (this.marginLR*this.blockSize);
+                
+                this.allWordHandles(i).Position = [newXPos, this.refPosY];
+            end
+            
+            % reposition words to the right
+            for i = (centreWordIdx+1):numel(this.allWordHandles)  
+                newXPos = this.allWordHandles(i-1).Extent(1) ...
+                    + this.allWordHandles(i-1).Extent(3);
+                newXPos = this.ceilToNearest(newXPos, this.blockSize);
+                newXPos = newXPos + (this.marginLR*this.blockSize);
+                
+                this.allWordHandles(i).Position = [newXPos, this.refPosY];
+            end
+            
+            % recalculate centre and limits.
+            this = this.recalculateLimits();
+            this = this.reAlignRow();
         end
         
         function this = repositionRowAbsolute(this, newX, newY)
-            dX = newX - this.centreX;
-            dY = newY - this.centreY;
+            dX = newX - this.refPosX;
+            dY = newY - this.refPosY;
             this = this.shiftAllWords(dX, dY);
             
-            this.centreX = newX;
-            this.centreY = newY;
+            this.refPosX = newX;
+            this.refPosY = newY;
         end
         
         function this = repositionRowRelative(this, dX, dY)
             this = this.shiftAllWords(dX, dY);
             
-            this.centreX = this.centreX + dX;
-            this.centreY = this.centreY + dY;
+            this.refPosX = this.refPosX + dX;
+            this.refPosY = this.refPosY + dY;
         end
         
     end
@@ -106,7 +138,7 @@ classdef WordClusterRow
             % the centre X coordinate.
             % take L and R limits and find the midpoint
             % offset the x position of all words by midpoint
-            offsetX = this.centreX - (this.left + this.right)/2;
+            offsetX = this.refPosX - (this.left + this.right)/2;
             this = this.shiftAllWords(offsetX, 0);
         end
         
@@ -126,10 +158,10 @@ classdef WordClusterRow
             this.top   = this.ceilToNearest(max(T), this.blockSize);
             
             % add margin padding to each word.
-            this.left   = this.left - (this.marginLR*this.blockSize);
+            this.left   = this.left   - (this.marginLR*this.blockSize);
             this.bottom = this.bottom - (this.marginTB*this.blockSize);
-            this.right  = this.right + (this.marginLR*this.blockSize);
-            this.top    = this.top + (this.marginTB*this.blockSize);
+            this.right  = this.right  + (this.marginLR*this.blockSize);
+            this.top    = this.top    + (this.marginTB*this.blockSize);
             
             % rectangle('position', [this.left, this.bottom, this.right-this.left, this.top-this.bottom], 'edgecolor', 'g');
         end

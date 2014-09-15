@@ -1,4 +1,4 @@
-function [words, wordCounts, distances, clusterGroups] = generateRandomWordCloud(varargin)
+function cloud = generateRandomWordCloud(varargin)
     
     %% generate random list using an existing wordlist....
     words = {'apple', 'apricot', 'avocado', 'banana', 'berry', 'blackberry', ...
@@ -19,18 +19,28 @@ function [words, wordCounts, distances, clusterGroups] = generateRandomWordCloud
         case 1
             nwords = varargin{1};
             nclusters = 3 + randi(8);
+            if nwords > numel(words)
+                nwords = numel(words);
+            end
         case 2
             nwords = varargin{1};
             nclusters = varargin{2};
+            if nwords > numel(words)
+                nwords = numel(words);
+            end
     end
     
+    % pick a random set of nwords words from the list.
+    rng('shuffle'); % seed the rng so it's different each time
     words = words(randperm(nwords));
     
     %% generate random word counts
-    wordCountStd = 10;
-    wordCountMean = 2;
+    wordCountStd = 100;
+    wordCountMean = 20;
     nwords = numel(words);
-    wordCounts = ceil(abs(randn(1,nwords)*wordCountStd + wordCountMean));
+    wordCounts = abs(randn(1,nwords).^2*wordCountStd + wordCountMean);
+    wordCounts = ceil(wordCounts);
+    % hist(wordCounts, 20);
     
     %% generate correlationMatrix values between -1 and 1
     % generate some random distances (as a matrix). Must be nwords x nwords
@@ -55,5 +65,5 @@ function [words, wordCounts, distances, clusterGroups] = generateRandomWordCloud
     clusterGroups = randi(nclusters, 1, nwords);
     
     %% generate cloud
-    WordCloud(words, wordCounts, distances, clusterGroups);
+    cloud = WordCloud(words, wordCounts, distances, clusterGroups);
 end

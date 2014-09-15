@@ -11,7 +11,7 @@ classdef WordCloud
         
         % Scale factor controlling the size the fonts are displayed. Adjust
         % this to make the words bigger or smaller
-        fontScaleFactor = 3;
+        fontScaleFactor = 2;
         
         % Controls how far the outer word clusters are from the central
         % cluster. If the words are too close together or far apart,
@@ -25,6 +25,7 @@ classdef WordCloud
         allTextHandles = [];
         centreX  = 0.5;
         centreY  = 0.5;
+        satelliteDistances;
     end
     
     methods
@@ -37,8 +38,7 @@ classdef WordCloud
             
             % process the largest cluster first and smaller ones last
             % find the right order to do the custers in
-            [sizeCluster,~]  = histcounts(clusterGroups);
-            [~,clusterOrder] = sort(sizeCluster, 'descend');
+            clusterOrder = this.sortClustersBySize(clusterGroups, wordCounts);
             nClusters = numel(clusterOrder);    
             
             % generate colours for each cluster
@@ -56,30 +56,40 @@ classdef WordCloud
             % place the first and biggest cluster in the centre
             this.clusters(1) = this.clusters(1).recentreCluster(this.centreX, this.centreY);
             
-            % find correlation distance between centre cluster and each
+            % find base correlation distance between centre cluster and each
             % satellite cluster
-            dists = this.calculateClusterDistancesFromCentre(...
+            this.satelliteDistances = this.calculateClusterDistancesFromCentre(...
                 wordCorrelations, clusterGroups, clusterOrder);
             
-            % for the remaining clusters
-            for clust = 2:nClusters                
-                distance = ( dists(clust)/max(dists) ) * this.satelliteClusterDistanceScaleFactor;
-                
-                % go in a circle around the centre starting from the top
-                theta = (2*pi*clust/(nClusters-1));
-                
-                % places this cluster some distance from centre, proportional
-                % to the correlation between the two clusters.
-                newX = cos(theta).*distance + this.centreX;
-                newY = sin(theta).*distance + this.centreY;
-                this.clusters(clust) = this.clusters(clust).recentreCluster(newX, newY);
-            end
+            this = this.rescaleClusterSeparation(this.satelliteClusterDistanceScaleFactor);
         end
         
         function this = rescaleText(this, newScaleFactor)
             resizeFcn = @(h)set(h, 'FontSize', ...
                  h.UserData.wordCount*newScaleFactor*3);
             arrayfun(resizeFcn, this.allTextHandles);
+
+            for cl = 1:numel(this.clusters) % is there no way to vectorise this?
+               this.clusters(cl) = this.clusters(cl).respaceRowsHorizontally(); 
+               this.clusters(cl) = this.clusters(cl).respaceRowsVertically(); 
+            end
+        end
+        
+        function this = rescaleClusterSeparation(this, newDistanceScaleFactor)            
+            % for the remaining clusters
+            distances = ( this.satelliteDistances./max(this.satelliteDistances) ) .* newDistanceScaleFactor;
+            nClusters = numel(this.clusters);
+            
+            for clust = 2:nClusters
+                % go in a circle around the centre starting from ~45deg
+                theta = (2*pi*clust/(nClusters-1)) + (pi/4);
+                
+                % places this cluster some distance from centre, proportional
+                % to the correlation between the two clusters.
+                newX = cos(theta).*distances(clust) + this.centreX;
+                newY = sin(theta).*distances(clust) + this.centreY;
+                this.clusters(clust) = this.clusters(clust).recentreCluster(newX, newY);
+            end
         end
     end
     
@@ -87,9 +97,19 @@ classdef WordCloud
         function this = initialiseFigure(this)
             f = figure('Name', 'Word Cloud', ...
                 'Units','normalized','OuterPosition',[0 0 1 1]);
+            % f = figure('Name', 'Word Cloud', 'Position', get(groot,'Screensize'));
             axis manual   
             set(gca, 'Visible', 'off');
             f.Color = this.backgroundColour;
+        end
+        
+        function newOrder = sortClustersBySize(this, clusterGroups, wordCounts)
+            nclusters = max(clusterGroups);
+            groupSizes = zeros(1, nclusters);
+            for i = 1:nclusters
+                groupSizes(i) = sum(wordCounts(clusterGroups == i));
+            end
+            [~,newOrder] = sort(groupSizes, 'descend');
         end
         
         function this = recalculateLimits(this)
@@ -97,9 +117,7 @@ classdef WordCloud
             right  = max([this.clusters.right]);
             top    = max([this.clusters.top]);
             bottom = min([this.clusters.bottom]);
-            rectangle('position', [left, bottom, right-left, top-bottom], 'edgecolor', 'b');
-            % axis([left, right, bottom, top]);
-            % set(gcf, 'Position', [left, bottom, right-left, top-bottom]);
+            % rectangle('position', [left, bottom, right-left, top-bottom], 'edgecolor', 'b');
         end
        
        function dists = calculateClusterDistancesFromCentre(~, wordCorrelations, clusterGroups, clusterOrder)
@@ -117,9 +135,10 @@ classdef WordCloud
                 corr = wordCorrelations(centreClusterWordIdx, ...
                     (clusterGroups == clusterOrder(clust)) );
                 % scale corr so that 1 = close and -1 = far
+                % changes to 0 = close 2 = far
                 corr = (corr.*-1) + 1;
                 % sum correlation to get total distance from centre cluster
-                dists(clust) = mean(corr(:));
+                dists(clust) = max(corr(:));
             end
        end
        
