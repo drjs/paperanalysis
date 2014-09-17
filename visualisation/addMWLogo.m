@@ -10,16 +10,16 @@ else
 end
 
 [im,~,alpha] = imread(logofile);
-newX = 0.15;
+newX = 0.20;
 newY = newX * size(im, 1) / size(im, 2);
 logoax = axes('Position', [1-newX 0.01 newX, newY], ...
     'Color', 'none', 'Clipping', 'off', 'Layer', 'top', ...
     'Parent', f, 'Visible', 'off', 'Units', 'normalized');
 
 logoHandle = image(im, 'AlphaData', alpha);
-logoText   = text(0.9, 1.2, 'Made with', 'Parent', logoax, ...
+logoText   = text(0.9, 1.35, 'Made with', 'Parent', logoax, ...
     'HorizontalAlignment', 'right', 'Units', 'normalized', ...
-    'FontUnits', 'normalized', 'FontSize', 0.5, 'Color', fontColour);
+    'FontUnits', 'normalized', 'FontSize', 0.7, 'Color', fontColour);
 
 axis(logoax, 'image')
 axis(logoax, 'off')
