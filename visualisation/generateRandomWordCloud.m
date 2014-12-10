@@ -1,4 +1,10 @@
 function cloud = generateRandomWordCloud(varargin)
+%GENERATERANDOMWORDCLOUD creates some random data and makes a word cloud
+%from it.
+% inputs: nwords, nclusters
+% no inputs: 30 word cloud with a random number of clusters
+% one input: specified number of words, random number of clusters
+% two inputs: specified number of words and clusters.
     
     %% generate random list using an existing wordlist....
     words = {'apple', 'apricot', 'avocado', 'banana', 'berry', 'blackberry', ...
@@ -10,6 +16,7 @@ function cloud = generateRandomWordCloud(varargin)
         'passion fruit', 'peach', 'pear', 'persimmon', 'pineapple', 'plantain', ...
         'plum', 'pomegranite', 'prune', 'quince', 'raisin', 'raspberry', ...
         'star fruit', 'strawberry', 'tangelo', 'tangerine', 'watermelon'};
+    
     % pick N or 30 random words
     % pick nclusters or random number of clusters
     switch nargin
@@ -40,11 +47,13 @@ function cloud = generateRandomWordCloud(varargin)
     nwords = numel(words);
     wordCounts = abs(randn(1,nwords).^2*wordCountStd + wordCountMean);
     wordCounts = ceil(wordCounts);
-    % hist(wordCounts, 20);
-    
+    % wordCounts is a 1xnwords vector. wordCounts(x) is the number of times
+    % words(x) occured in the text.
+        
     %% generate correlationMatrix values between -1 and 1
     % generate some random distances (as a matrix). Must be nwords x nwords
     % and reflected along the diagonal.
+    % this is used to determine what words are in the clusters.
     distances = zeros(nwords, nwords);
     for i = 1:nwords
         for j = 1:nwords

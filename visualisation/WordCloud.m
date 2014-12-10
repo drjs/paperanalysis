@@ -3,8 +3,8 @@ classdef WordCloud
     properties (Constant = true)
         % cell array of fonts to use in clouds. Fonts are randomly selected
         % from this list.
-        %prettyFonts = {'Century Gothic', 'Cooper Black', 'Magneto Bold'}; 
-        prettyFonts = { 'Century Gothic Bold'};
+        prettyFonts = {'Century Gothic', 'Cooper Black', 'Magneto Bold'}; 
+        %prettyFonts = { 'Century Gothic Bold'};
         
         % The colour to make the figure background. This can be a 1x3 RGB 
         % vector or a standard colour string e.g. 'black' or 'k'.
