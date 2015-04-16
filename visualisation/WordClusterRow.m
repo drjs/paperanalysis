@@ -24,13 +24,10 @@ classdef WordClusterRow
     end
     
     methods
-        function this = WordClusterRow(centreWordHandle, alignment, varargin)
-            if nargin == 4
-                this.refPosX = varargin{1};
-                this.refPosY = varargin{2};
-            end
-            
+        function this = WordClusterRow(centreWordHandle, alignment, refX, refY)
             this.verticalAlignment = alignment;
+            this.refPosX = refX;
+            this.refPosY = refY;
             this.allWordHandles = centreWordHandle;
             % place centre word in centre
             this.placeWordAtLocation(centreWordHandle, ...
@@ -68,8 +65,12 @@ classdef WordClusterRow
         function tf = isFull(this)
             tf = numel(this.allWordHandles) > 2;
             tf = tf || (this.right - this.left) > 0.3;
+            tf = false;
         end
         
+        function width = getWidth(this)
+            width = this.right - this.left;
+        end
         
         function this = shiftAllWords(this, dX, dY)
             % shifts the row centre by the given amount.
@@ -88,9 +89,9 @@ classdef WordClusterRow
                 if strcmp(this.allWordHandles(centreWordIdx).HorizontalAlignment, 'center')
                     break;
                 end
-            end            
+            end
             
-            % reposition words to left 
+            % reposition words to left
             for i = (centreWordIdx-1):-1:1;
                 newXPos = this.allWordHandles(i+1).Extent(1);
                 newXPos = this.ceilToNearest(newXPos, this.blockSize);
@@ -100,7 +101,7 @@ classdef WordClusterRow
             end
             
             % reposition words to the right
-            for i = (centreWordIdx+1):numel(this.allWordHandles)  
+            for i = (centreWordIdx+1):numel(this.allWordHandles)
                 newXPos = this.allWordHandles(i-1).Extent(1) ...
                     + this.allWordHandles(i-1).Extent(3);
                 newXPos = this.ceilToNearest(newXPos, this.blockSize);
@@ -165,8 +166,8 @@ classdef WordClusterRow
             
             % rectangle('position', [this.left, this.bottom, this.right-this.left, this.top-this.bottom], 'edgecolor', 'g');
         end
-            
-       
+        
+        
         function this = placeWordAtLocation(this, wh, x, y, halign, valign)
             wh.HorizontalAlignment = halign;
             wh.VerticalAlignment   = valign;
