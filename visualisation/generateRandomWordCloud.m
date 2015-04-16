@@ -42,7 +42,7 @@ function cloud = generateRandomWordCloud(varargin)
     words = words(randperm(nwords));
     
     %% generate random word counts
-    wordCountStd = 100;
+    wordCountStd = 50;
     wordCountMean = 20;
     nwords = numel(words);
     wordCounts = abs(randn(1,nwords).^2*wordCountStd + wordCountMean);

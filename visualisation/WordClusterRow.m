@@ -62,12 +62,6 @@ classdef WordClusterRow
             this = this.reAlignRow();
         end
         
-        function tf = isFull(this)
-            tf = numel(this.allWordHandles) > 2;
-            tf = tf || (this.right - this.left) > 0.3;
-            tf = false;
-        end
-        
         function width = getWidth(this)
             width = this.right - this.left;
         end

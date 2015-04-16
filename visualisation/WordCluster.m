@@ -10,6 +10,8 @@ classdef WordCluster
         right  = 0;
         top    = 0;
         bottom = 0;
+        % the ideal width:height ratio of a word cluster
+        widthHeightRatio = 3/1; % width is ~2.5 * height
     end
     
     methods
@@ -26,24 +28,10 @@ classdef WordCluster
             wordHandles = wordHandles(sortOrderIdx);
             wordAt = 1; % current word to add to cluster
             
-            % this build algorithm will populate the cluster in a spiral
-            % but randomly start building from either the topR or bottomL
-            startAtTop = rand(1)>0.5;
-            
-            if startAtTop
-                % build from the top down before entering main cluster
-                % construction loop
-                if(this.wordRows(end).isFull() && wordAt <= numel(wordHandles))
-                    this = addRowAbove(this, wordHandles(wordAt));
-                    wordAt = wordAt + 1;
-                end
-                [this, wordAt] = this.addWordsTopRToBottomR(wordAt, wordHandles);
-            end
-            
             while wordAt <= numel(wordHandles)
                 % if bottom row is full and there's at least one more word,
                 % create a new row underneath and add next word
-                if(this.wordRows(1).isFull() && wordAt <= numel(wordHandles))
+                if(this.isRowFull(1) && wordAt <= numel(wordHandles))    
                     this = addRowBelow(this, wordHandles(wordAt));
                     wordAt = wordAt + 1;
                 end
@@ -55,7 +43,8 @@ classdef WordCluster
                 
                 % if top row is full and there's at least one more word,
                 % create a new row above and add next word
-                if(this.wordRows(end).isFull() && wordAt <= numel(wordHandles))
+                if(this.isRowFull(numel(this.wordRows)) && ...
+                        wordAt <= numel(wordHandles))
                     this = addRowAbove(this, wordHandles(wordAt));
                     wordAt = wordAt + 1;
                 end
@@ -127,7 +116,7 @@ classdef WordCluster
             r = 1;
             while (r <= numel(this.wordRows)) && (wordAt <= numel(wordHandles))
                 % if there is space in the row, add another word
-                if(~this.wordRows(r).isFull())
+                if(~this.isRowFull(r))  
                     this.wordRows(r) = ...
                         this.wordRows(r).addWordLeft(wordHandles(wordAt));
                     wordAt = wordAt + 1;
@@ -139,7 +128,7 @@ classdef WordCluster
         function [this, wordAt] = addWordsTopRToBottomR(this, wordAt, wordHandles)
             r = numel(this.wordRows);
             while (r > 0) && (wordAt <= numel(wordHandles))
-                if(~this.wordRows(r).isFull())
+                if(~this.isRowFull(r))    
                     this.wordRows(r) = ...
                         this.wordRows(r).addWordRight(wordHandles(wordAt));
                     wordAt = wordAt + 1;
@@ -148,6 +137,12 @@ classdef WordCluster
             end
         end
         
+        function isfull = isRowFull(this, r)
+            clusterHeight = this.top - this.bottom;
+            % if the width of row r exceeds idea ratio for current height
+            % then it is full
+            isfull = this.wordRows(r).getWidth > clusterHeight * this.widthHeightRatio;
+        end
         
         function this = addRowAbove(this, starterWord)
             lowerEdge = this.wordRows(end).top;
