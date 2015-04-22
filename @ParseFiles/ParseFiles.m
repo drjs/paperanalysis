@@ -21,8 +21,7 @@ classdef ParseFiles < handle
             
             % output should be something like a 2D matrix of word counts
             % one dimension indexed by project keywords
-            % other dimension indexed by paper title
-            % inde
+            % other dimension indexed by paper title 
         end
     end
     
