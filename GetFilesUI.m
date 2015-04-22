@@ -22,7 +22,7 @@ function varargout = GetFilesUI(varargin)
 
 % Edit the above text to modify the response to help GetFilesUI
 
-% Last Modified by GUIDE v2.5 22-Apr-2015 14:06:31
+% Last Modified by GUIDE v2.5 22-Apr-2015 17:06:24
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -117,6 +117,11 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+function manualpath_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to add_manualpath_btn (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+add_manualpath_btn_Callback(hObject, eventdata, handles);
 
 % --- Executes on button press in add_manualpath_btn.
 function add_manualpath_btn_Callback(hObject, eventdata, handles)
@@ -173,6 +178,43 @@ function add_plaintext_btn_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+% create input dialogue to get plain text info
+inputBoxSizes = [1, 53; 10, 50];
+dialogueOutput = {'';''};
+% loop box checks until some valid input is found.
+% valid inputs are :
+% - cancel input dlg
+% - nothing (in which case cancel)
+% - both fields are filled.
+
+while isempty(dialogueOutput{1}) || isempty(dialogueOutput{2})
+    dialogueOutput = inputdlg({'Title', 'Text'}, 'Enter Plain Text', inputBoxSizes, dialogueOutput);
+    % check for valid inputs
+    if isempty(dialogueOutput) % user cancelled
+        return;
+    elseif isempty(dialogueOutput{1}) && isempty(dialogueOutput{2}) % no data entered.
+        return;
+    elseif isempty(dialogueOutput{1}) % no title
+         uiwait(msgbox('No title entered!', 'No title warning'));
+    elseif isempty(dialogueOutput{2}) % no text
+         uiwait(msgbox('No text entered!', 'No text warning'));
+    end
+end
+
+% getting here means that the user entered a title and some text.
+% save this as a txt file 
+savefolder = getappdata(handles.mainFig, 'LastFolderViewed');
+filename = fullfile(savefolder, [dialogueOutput{1}, '.txt'])
+fid = fopen(filename, 'w');
+% write text to file row by row.
+for row = 1:size(dialogueOutput{2}, 1)
+    fprintf(fid, dialogueOutput{2}(row,:) );
+    fprintf(fid, '\n');
+end
+fclose(fid);
+% add new file to file list
+appendToFileList(handles, filename);
+
 
 % --- Executes on button press in remove_btn.
 function remove_btn_Callback(hObject, eventdata, handles)
@@ -191,11 +233,19 @@ setappdata(handles.file_listbox, 'FileList', flist);
 setListBoxString(handles, flist);
 
 
-% --- Executes on button press in generate_btn.
-function generate_btn_Callback(hObject, eventdata, handles)
-% hObject    handle to generate_btn (see GCBO)
+% --- Executes on button press in generate_cloud_btn.
+function generate_cloud_btn_Callback(hObject, eventdata, handles)
+% hObject    handle to generate_cloud_btn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in generate_surface_btn.
+function generate_surface_btn_Callback(hObject, eventdata, handles)
+% hObject    handle to generate_surface_btn (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
 
 
 function addFolderToFileList(handles, folder)
@@ -235,3 +285,4 @@ function setListBoxString(handles, fileList)
 handles.file_listbox.String = strcat(names, exts);
 % update list box with new file list INCLUDING full path name
 % handles.file_listbox.String = fileList;
+
