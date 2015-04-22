@@ -6,7 +6,7 @@ Analyze conference papers in MATLAB
 How The Package Works
 ----------------------
 
-1. Get list of files to parse from user
+1. Get list of files to parse from user using GetFilesUI.
 2. For each file get a list of words and count number of times a word occurs (MAP)
 3. Collate list of unique words across all papers, and recalculate word counts for each paper based on new list (REDUCE)
 4. Displays a word cloud. 
@@ -40,9 +40,9 @@ These are:
 ### Visualisation TODO
 
 1. Optimise word clouds for [generateRandomWordCloud.m](./visualisation/generateRandomWordCloud.m).
-2. create word cloud factory for easily customising clouds.
-4. remove all usage of the statistics toolbox. Or replace with alternatives using random numbers. Word clouds should be possible without it.
-
-
+2. Create GUI for visually editing Word Cloud properties
+3. Change GetFilesUI to not take manual paths, instead use editbox to get project title. This will allow the project to save parsed project data and/or cloud settings with a project name.
+4. Write parser.
+5. Make parser use MATLAB's big data functionality for maximum efficiency.
     
 

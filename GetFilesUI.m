@@ -22,7 +22,7 @@ function varargout = GetFilesUI(varargin)
 
 % Edit the above text to modify the response to help GetFilesUI
 
-% Last Modified by GUIDE v2.5 22-Apr-2015 17:06:24
+% Last Modified by GUIDE v2.5 22-Apr-2015 17:20:26
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -136,6 +136,9 @@ if exist(str, 'dir')
     % convert to absolute path
     folder = System.IO.Path.GetFullPath(str);
     addFolderToFileList(handles, char(folder));
+elseif exist(str, 'file')
+    filename = System.IO.Path.GetFullPath(str);
+    appendToFileList(handles, char(filename) );
 end
 
 % --- Executes on button press in add_file_btn.
@@ -285,4 +288,3 @@ function setListBoxString(handles, fileList)
 handles.file_listbox.String = strcat(names, exts);
 % update list box with new file list INCLUDING full path name
 % handles.file_listbox.String = fileList;
-
