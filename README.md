@@ -3,6 +3,19 @@ paperanalysis
 
 Analyze conference papers in MATLAB
 
+How The Package Works
+----------------------
+
+1. Get list of files to parse from user
+2. For each file get a list of words and count number of times a word occurs (MAP)
+3. Collate list of unique words across all papers, and recalculate word counts for each paper based on new list (REDUCE)
+4. Displays a word cloud. 
+  * Word clusters indicate words that occured frequently together across different papers. 
+  * Word size indicates how often the word occurs
+  * Words are coloured by cluster
+  * Font is random
+5. Adjust word cloud so that it displays nicely and save cloud to image or to mat file.
+
 
 Visualisation
 -------------
