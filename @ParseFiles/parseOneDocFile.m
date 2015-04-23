@@ -1,13 +1,16 @@
-function [docTitle, allWords] = parseOneDocFile(filename)
+function [allWords, docTitle] = parseOneDocFile(filename)
 %PARSEONEDOCFILE Parses a Microsoft word file and returns its title and a
 %cell array containing all words in the text file (one cell per word)
+
+% get document title from filename
+[~, docTitle] = fileparts(filename);
 
 % save word doc text to temporary plain text file
 tempPlainTextFile = [tempname '.txt'];
 saveWordAsText(filename, tempPlainTextFile);
 
-% scan as text file.
-[docTitle, allWords] = parseOneTextFile(tempPlainTextFile);
+% scan text file.
+allWords = parseOneTextFile(tempPlainTextFile);
 delete(tempPlainTextFile);
 end
 
@@ -21,16 +24,7 @@ function txtFile = saveWordAsText(docFile,txtFile)
 % URL: http://www.mathworks.com/matlabcentral/fileexchange/2668-save-word-as-text
 
 % Locate DOC-file.
-if ~isempty(dir(fullfile(pwd,docFile)))
-    % Relative path.
-    docFile = fullfile(pwd,docFile);
-elseif ~isempty(dir(docFile))
-    % Absolute path.
-    docFile = docFile;
-elseif ~isempty(which(docFile))
-    % On the MATLAB path.
-    docFile = which(docFile);
-else
+if ~exist(docFile, 'file')
     error('Cannot find "%s".',docFile);
 end
 

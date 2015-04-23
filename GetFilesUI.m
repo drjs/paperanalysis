@@ -133,7 +133,7 @@ function add_manualpath_btn_Callback(hObject, eventdata, handles)
 str = handles.manualpath_edit.String;
 % is it a folder or a file?
 if exist(str, 'dir')
-    % convert to absolute path
+    % convert to absolute path, this function only works in windows. FIX!!
     folder = System.IO.Path.GetFullPath(str);
     addFolderToFileList(handles, char(folder));
 elseif exist(str, 'file')
