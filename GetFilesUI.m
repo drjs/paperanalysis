@@ -150,11 +150,17 @@ function add_file_btn_Callback(hObject, eventdata, handles)
 % open UI to select a file
 startfolder = getappdata(handles.mainFig, 'LastFolderViewed');
 formats = getappdata(handles.mainFig, 'SupportedFormats');
-[f,p] = uigetfile(formats, 'Select File to add to Word Cloud', startfolder);
+[f,p] = uigetfile(formats, 'Select File to add to Word Cloud', startfolder, 'MultiSelect', 'on');
 
 if ~isequal(f,0) % if the user actually selected a file instead of cancelling
+    % if they selected more than 1 file...
+    if iscell(f)
+        filelist = fullfile(p,f)';
+    else
+        filelist = fullfile(p,f);
+    end
     % add file to file list
-    appendToFileList(handles, fullfile(p,f));
+    appendToFileList(handles, filelist);
     % tell next thing to open in the selected folder.
     setappdata(handles.mainFig, 'LastFolderViewed', p);
 end

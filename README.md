@@ -3,6 +3,7 @@ paperanalysis
 
 Analyze conference papers in MATLAB
 
+
 How The Package Works
 ----------------------
 
@@ -15,6 +16,11 @@ How The Package Works
   * Words are coloured by cluster
   * Font is random
 5. Adjust word cloud so that it displays nicely and save cloud to image or to mat file.
+
+
+Prerequisites
+-------------
+To be able to read PDFs you need to install the free Xpdf utility from (http://www.foolabs.com/xpdf/download.html).
 
 
 Visualisation
@@ -40,9 +46,10 @@ These are:
 ### Visualisation TODO
 
 1. Optimise word clouds for [generateRandomWordCloud.m](./visualisation/generateRandomWordCloud.m).
-2. Create GUI for visually editing Word Cloud properties
+2. Create GUI for interactive customisation of Word Cloud
 3. Change GetFilesUI to not take manual paths, instead use editbox to get project title. This will allow the project to save parsed project data and/or cloud settings with a project name.
 4. Write parser.
 5. Make parser use MATLAB's big data functionality for maximum efficiency.
+6. Add warning about needing to install pdftotext
     
 
