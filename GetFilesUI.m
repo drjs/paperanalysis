@@ -233,7 +233,7 @@ function remove_btn_Callback(hObject, eventdata, handles)
 flist = getappdata(handles.file_listbox, 'FileList');
 selected = handles.file_listbox.Value;
 
-% default "selected" value is 1, even if there are no files so this fails
+% default "selected" value is 1, even if there are no files so it errors
 % if you click the remove button without files in the list box.
 % so only perform the delete if the "selected" variables are all valid.
 if all(selected <= numel(flist))
