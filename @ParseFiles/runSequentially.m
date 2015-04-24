@@ -6,15 +6,21 @@ numFiles = numel(obj.fileList);
 % get list of common words
 fid = fopen('CommonWords.txt');
 Wcommon = textscan(fid, '%s');
-if fid ~=-1
-    fclose(fid);
-end
+fclose(fid);
 Wcommon = Wcommon{1};
+
+% create project folder (if there isn't one)
+projectFolder = fullfile(pwd, obj.projectName);
+if ~exist(projectFolder, 'dir')
+    mkdir(projectFolder);
+end
 
 % for each file
 for fileIndex = 1:numFiles
-    % get document type
-    [~,~,ext] = fileparts(obj.fileList{fileIndex});
+    % get document name and type
+    [~, filename, ext] = fileparts(obj.fileList{fileIndex});
+    % check file has not already been parsed
+    
     % use relevant parse script to get list of words and title
     switch ext
         case '.txt'
@@ -43,6 +49,8 @@ for fileIndex = 1:numFiles
     % sort word list and counts alphabetically
     [uniqueKeywords, idx] = sort(uniqueKeywords);
     keywordCount = keywordCount(idx);
+
+    % saved parsed data into a mat file
 end % stop looping through all files
 
 % find unique keywords for whole project

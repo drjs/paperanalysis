@@ -22,7 +22,7 @@ function varargout = GetFilesUI(varargin)
 
 % Edit the above text to modify the response to help GetFilesUI
 
-% Last Modified by GUIDE v2.5 22-Apr-2015 17:20:26
+% Last Modified by GUIDE v2.5 24-Apr-2015 16:55:11
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -106,8 +106,8 @@ end
 handles.file_listbox.Value = [];
 
 % --- Executes during object creation, after setting all properties.
-function manualpath_edit_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to manualpath_edit (see GCBO)
+function projectname_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to projectname_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -117,29 +117,11 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-function manualpath_edit_Callback(hObject, eventdata, handles)
-% hObject    handle to add_manualpath_btn (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-add_manualpath_btn_Callback(hObject, eventdata, handles);
-
-% --- Executes on button press in add_manualpath_btn.
-function add_manualpath_btn_Callback(hObject, eventdata, handles)
+function projectname_edit_Callback(hObject, eventdata, handles)
 % hObject    handle to add_manualpath_btn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% get text string from edit box
-str = handles.manualpath_edit.String;
-% is it a folder or a file?
-if exist(str, 'dir')
-    % convert to absolute path, this function only works in windows. FIX!!
-    folder = System.IO.Path.GetFullPath(str);
-    addFolderToFileList(handles, char(folder));
-elseif exist(str, 'file')
-    filename = System.IO.Path.GetFullPath(str);
-    appendToFileList(handles, char(filename) );
-end
 
 % --- Executes on button press in add_file_btn.
 function add_file_btn_Callback(hObject, eventdata, handles)
@@ -253,13 +235,22 @@ function generate_cloud_btn_Callback(hObject, eventdata, handles)
 % hObject    handle to generate_cloud_btn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+% get the file list
 flist = getappdata(handles.file_listbox, 'FileList');
-if ~isempty(flist)
-    ParseFiles.ParseFiles(flist);
-else
+% get the project name
+name = handles.projectname_edit.String;
+
+if isempty(flist)
     % if there are no files in the project, do nothing!
     uiwait(warndlg('No files to parse!'));
+elseif isempty(name)
+    uiwait(warndlg('Please enter a project name.'));
+else
+    docparser = ParseFiles(flist, name);
+    docparser.runSequentially();
 end
+
 
 % --- Executes on button press in generate_surface_btn.
 function generate_surface_btn_Callback(hObject, eventdata, handles)
