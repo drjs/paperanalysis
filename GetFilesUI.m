@@ -103,7 +103,7 @@ function file_listbox_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
+handles.file_listbox.Value = [];
 
 % --- Executes during object creation, after setting all properties.
 function manualpath_edit_CreateFcn(hObject, eventdata, handles)
@@ -232,14 +232,20 @@ function remove_btn_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 flist = getappdata(handles.file_listbox, 'FileList');
 selected = handles.file_listbox.Value;
-% delete selected files
-flist(selected) = [];
-% clear all values, otherwise this can cause a value to be larger than
-% number of strings in the listbox, causing an error.
-handles.file_listbox.Value = []; 
-% update file list internally and in the listbox display
-setappdata(handles.file_listbox, 'FileList', flist);
-setListBoxString(handles, flist);
+
+% default "selected" value is 1, even if there are no files so this fails
+% if you click the remove button without files in the list box.
+% so only perform the delete if the "selected" variables are all valid.
+if all(selected <= numel(flist))
+    % delete selected files
+    flist(selected) = [];
+    % clear all values, otherwise this can cause a value to be larger than
+    % number of strings in the listbox, causing an error.
+    handles.file_listbox.Value = [];
+    % update file list internally and in the listbox display
+    setappdata(handles.file_listbox, 'FileList', flist);
+    setListBoxString(handles, flist);
+end
 
 
 % --- Executes on button press in generate_cloud_btn.
