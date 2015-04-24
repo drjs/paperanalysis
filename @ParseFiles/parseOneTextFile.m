@@ -1,4 +1,4 @@
-function [allWords, varargout] = parseOneTextFile(filename)
+function [allWords, varargout] = parseOneTextFile(obj, filename)
 %PARSEONETEXTFILE Parses a single text file and returns its title and a
 %cell array containing all words in the text file (one cell per word).
 % allWords = parseOneTextFile(__) returns a cell array of all the words in the txt

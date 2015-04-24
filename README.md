@@ -50,6 +50,9 @@ These are:
 3. Change GetFilesUI to not take manual paths, instead use editbox to get project title. This will allow the project to save parsed project data and/or cloud settings with a project name.
 4. Write parser.
 5. Make parser use MATLAB's big data functionality for maximum efficiency.
-6. Add warning about needing to install pdftotext
+6. Improve doc parsing speed by opening microsoft word only once per project. Would need to:
+  * sort files from user by extension
+  * open word THEN parse all doc files THEN close word when finished
+  * would also need to check that the computer is a pc
     
 

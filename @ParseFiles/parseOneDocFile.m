@@ -1,4 +1,4 @@
-function [allWords, docTitle] = parseOneDocFile(filename)
+function [allWords, docTitle] = parseOneDocFile(obj, filename)
 %PARSEONEDOCFILE Parses a Microsoft word file and returns its title and a
 %cell array containing all words in the text file (one cell per word)
 
@@ -10,12 +10,11 @@ tempPlainTextFile = [tempname '.txt'];
 saveWordAsText(filename, tempPlainTextFile);
 
 % scan text file.
-allWords = parseOneTextFile(tempPlainTextFile);
+allWords = obj.parseOneTextFile(tempPlainTextFile);
 delete(tempPlainTextFile);
 end
 
 function txtFile = saveWordAsText(docFile,txtFile)
-% txtFile = saveWordAsText(docFile)
 % txtFile = saveWordAsText(docFile,txtFile)
 %
 % Requires that Word be installed on your system.

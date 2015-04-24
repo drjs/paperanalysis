@@ -1,4 +1,4 @@
-function [allWords, docTitle] = parseOnePDFFile(filename, pdfParserLocation)
+function [allWords, docTitle] = parseOnePDFFile(obj, filename)
 %PARSEONEPDFFILE Parses a pdf file and returns its title and a
 %cell array containing all words in the text file (one cell per word)
 
@@ -8,10 +8,10 @@ function [allWords, docTitle] = parseOnePDFFile(filename, pdfParserLocation)
 % save converted pdf to temp drive
 tempPlainTextFile = [tempname '.txt'];
 % call utility to convert pdf
-eval(['!', pdfParserLocation, ' "', filename, '" "', tempPlainTextFile, '"']);
+eval(['!', obj.pdfConverter, ' "', filename, '" "', tempPlainTextFile, '"']);
 
 % parse text file.
-allWords = parseOneTextFile(tempPlainTextFile);
+allWords = obj.parseOneTextFile(tempPlainTextFile);
 delete(tempPlainTextFile);
 end
 
