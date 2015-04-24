@@ -247,7 +247,13 @@ function generate_cloud_btn_Callback(hObject, eventdata, handles)
 % hObject    handle to generate_cloud_btn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+flist = getappdata(handles.file_listbox, 'FileList');
+if ~isempty(flist)
+    ParseFiles.ParseFiles(flist);
+else
+    % if there are no files in the project, do nothing!
+    uiwait(warndlg('No files to parse!'));
+end
 
 % --- Executes on button press in generate_surface_btn.
 function generate_surface_btn_Callback(hObject, eventdata, handles)

@@ -4,19 +4,23 @@ classdef ParseFiles < handle
     
     properties
         fileList;
-        pdfConverter;
+        pdfConverter='';
     end
     
     methods
         function obj = ParseFiles(fileList)
+            if ~iscell(fileList)
+                fileList = {fileList};
+            end
             obj.fileList = fileList;
             % check for pdf files
-            for f = obj.fileList
+            for i = 1:numel(obj.fileList)
                 % if pdf files are in the project ...
-                [~,~,ext] = fileparts(f);
+                [~,~,ext] = fileparts(obj.fileList{i});
                 if strcmp(ext, '.pdf')
-                    obj.pdfConverter = obj.getPDFConverterLocationFromUser();
-                    break;
+                    % find where the pdf converter is on this computer
+                    obj.locatePDFConverter();
+                    break; % stop searching filelist for pdfs
                 end
             end
         end
@@ -39,6 +43,51 @@ classdef ParseFiles < handle
             % other dimension indexed by paper title
         end
         
+        function obj = locatePDFConverter(obj)
+            % check for saved temp file containing pdftotext location
+            obj.pdfConverter = obj.getPDFConverterFromTempDrive();
+            % if there is no path saved to temp (or it was invalid)
+            if isempty(obj.pdfConverter)
+                % prompt the user for the converter's location
+                obj.pdfConverter = obj.getPDFConverterLocationFromUser();
+                % if we got the pdf converter from the user, save it
+                if ~isempty(obj.pdfConverter)
+                    obj.savePDFConverterToTempDrive(obj.pdfConverter);
+                else
+                    % If we still don't have a location after
+                    % asking the user for one then we cancel the
+                    % parse command with an error
+                    errordlg(['MATLAB cannot parse pdf files without', ...
+                        'the pdftotext function installed.', ...
+                        'Either install Xpdf or remove PDFs from project']);
+                end
+            end
+        end
+        
+        function location = getPDFConverterFromTempDrive(~)
+            location = '';
+            tempfilename = fullfile(tempdir, 'pdftotextlocation.txt');
+            
+            % if the temp file exists, read it in
+            if exist(tempfilename, 'file')
+                fid = fopen(tempfilename, 'r');
+                cachedLocation = fgetl(fid);
+                fclose(fid);
+                % check the file location is still valid
+                if exist(cachedLocation, 'file')
+                    % return cached location if it is still valid
+                    location = cachedLocation;
+                end
+            end
+        end
+        
+        function savePDFConverterToTempDrive(~, location)
+            tempfilename = fullfile(tempdir, 'pdftotextlocation.txt');
+            fid = fopen(tempfilename, 'w');
+            fprintf(fid, '%s', location);
+            fclose(fid);
+        end
+        
         function location = getPDFConverterLocationFromUser(~)
             % locate pdf conversion utility
             dialogueString = {'There is a PDF file in your project.', ...
@@ -59,18 +108,16 @@ classdef ParseFiles < handle
                     end
                     % deal with the case where user cancelled
                     if isequal(f,0)
-                        location = 0;
+                        location = '';
                     else
                         % return pdftotext location
                         location = fullfile(p,f);
                     end
-                    break;
                 case 'Open Website'
                     web('http://www.foolabs.com/xpdf/download.html', '-browser');
-                    break;
+                    location = '';
                 case 'Cancel'
-                    location = 0;
-                    break;
+                    location = '';
             end
         end
     end
