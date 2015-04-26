@@ -15,11 +15,23 @@ if ~exist(projectFolder, 'dir')
     mkdir(projectFolder);
 end
 
+% maintain a list of the preparsed data files
+parsedFileList = {};
+
 % for each file
 for fileIndex = 1:numFiles
     % get document name and type
     [~, filename, ext] = fileparts(obj.fileList{fileIndex});
-    % check file has not already been parsed
+    % use filename and project dir to decide where to save the parsed data
+    parsedDataSaveFile = fullfile(projectFolder, [filename, '.mat']);
+    parsedFileList = [parsedFileList, parsedDataSaveFile];
+    
+    % check file has not already been parsed and saved    
+    if exist(parsedDataSaveFile, 'file')
+        % if there is a preparsed version of this paper in the project
+        % folder then continue to the next paper
+        continue;
+    end
     
     % use relevant parse script to get list of words and title
     switch ext
@@ -51,6 +63,7 @@ for fileIndex = 1:numFiles
     keywordCount = keywordCount(idx);
 
     % saved parsed data into a mat file
+    save(parsedDataSaveFile, 'uniqueKeywords', 'keywordCount', 'paperTitle');
 end % stop looping through all files
 
 % find unique keywords for whole project
