@@ -249,6 +249,7 @@ elseif isempty(name)
 else
     docparser = ParseFiles(flist, name);
     docparser.runSequentially();
+    generateWordCloud(docparser.uniqueWords, docparser.wordCounts);
 end
 
 
