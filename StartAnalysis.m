@@ -10,8 +10,6 @@ testfiles = { ...
 docparser = ParseFiles(testfiles, 'TestProject');
 docparser.runSequentially();
 
-
-GetFilesUI();
     
 end
 

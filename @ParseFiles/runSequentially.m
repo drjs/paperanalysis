@@ -4,10 +4,8 @@ disp('parsing files sequentially'); % For testing
 numFiles = numel(obj.fileList);
 
 % get list of common words
-fid = fopen('CommonWords.txt');
-Wcommon = textscan(fid, '%s');
-fclose(fid);
-Wcommon = Wcommon{1};
+wCommon = load('CommonWords.mat');
+wCommon = wCommon.wCommon;
 
 % create project folder (if there isn't one)
 projectFolder = fullfile(pwd, obj.projectName);
@@ -44,20 +42,24 @@ for fileIndex = 1:numFiles
         otherwise
             error('Found unparsable file "%s", aborting.', obj.fileList{fileIndex});
     end
-    % find valid words
+    % find short words, and words containing numbers or characters
     validWordIdx = cellfun(@checkWordIsValid, words);
     % remove all invalid words and make everything lower case.
     words = lower(words(validWordIdx));
        
     % convert complete word list to categorical array
     allWords = categorical(words);
+    
+    % remove common words
+    allWords = removecats(allWords, categories(wCommon));
+    allWords = allWords(~isundefined(allWords));
+    
     % from categorical get list of unique keywords and their counts
-%     uniqueKeywords = categories(words);
-%     keywordCount = countcats(words);
+    keywordCount = countcats(allWords);
 
-    % saved parsed data into a mat file
+    % saved parsed data into a mat fileia
 %     save(parsedDataSaveFile, 'uniqueKeywords', 'keywordCount', 'paperTitle');
-    save(parsedDataSaveFile, 'allWords', 'paperTitle');
+    save(parsedDataSaveFile, 'allWords', 'keywordCount', 'paperTitle');
 end % stop looping through all files
 
 % find unique keywords for whole project
@@ -77,11 +79,8 @@ function isValid = checkWordIsValid(oldWord)
     if length(oldWord) > 3
         % remove all words containing non alphabet characters or empties
         if isempty(regexpi(oldWord, '[^a-z]', 'once'));
-            % Check if word appears in common word list
-            if ~ismember(lower(oldWord),Wcommon)
                 % more clever regular expression stuff?
                 isValid = true;
-            end
         end
     end
 end
