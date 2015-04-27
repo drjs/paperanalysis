@@ -1,6 +1,22 @@
 classdef ParseFiles < handle
-    %PARSEFILES Summary of this class goes here
-    %   Detailed explanation goes here
+    %PARSEFILES Takes a cell array of file names and counts the number of
+    %times each unique word appears.
+    % FILELIST list of files to parse. If there is only one file it can be
+    % a single string. Otherwise store the file list in a vertical cell
+    % array. 
+    % This will ignore any words containing non-alphabet characters (e.g.
+    % "don't". It also filters out any words with 3 or fewer letters.
+    % 
+    % Example:
+    % p = ParseFiles('data\mydoc.txt')
+    % p = ParseFiles({'data\mydoc1.txt'; data\mydoc2.txt'});
+    %
+    % See also:
+    % GetFileUI.m
+    %
+    % Author: Jenny Owen
+    % Copyright: MathWorks 2015
+    
     
     properties
         fileList;

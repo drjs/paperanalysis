@@ -21,7 +21,11 @@ end
 containsDoc = false;
 if any(ismember({'.doc', '.docx'}, fileExtensions))
     containsDoc = true;
-    obj.wordApplication = actxserver('Word.Application');
+    try
+        obj.wordApplication = actxserver('Word.Application');
+    catch exc
+        error('Could not open Microsoft Word to scan doc file');
+    end
 end
 
 completeWordList = [];
