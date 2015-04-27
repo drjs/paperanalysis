@@ -1,4 +1,4 @@
-function [allWords, docTitle] = parseOnePDFFile(obj, filename)
+function [allWords, docTitle] = readOnePDFFile(obj, filename)
 %PARSEONEPDFFILE Parses a pdf file and returns its title and a
 %cell array containing all words in the text file (one cell per word)
 
@@ -11,7 +11,7 @@ tempPlainTextFile = [tempname '.txt'];
 eval(['!', obj.pdfConverter, ' "', filename, '" "', tempPlainTextFile, '"']);
 
 % parse text file.
-allWords = obj.parseOneTextFile(tempPlainTextFile);
+allWords = obj.readOneTextFile(tempPlainTextFile);
 delete(tempPlainTextFile);
 end
 

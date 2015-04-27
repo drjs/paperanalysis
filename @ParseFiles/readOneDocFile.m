@@ -1,4 +1,4 @@
-function [allWords, docTitle] = parseOneDocFile(obj, filename)
+function [allWords, docTitle] = readOneDocFile(obj, filename)
 %PARSEONEDOCFILE Parses a Microsoft word file and returns its title and a
 %cell array containing all words in the text file (one cell per word)
 
@@ -7,14 +7,14 @@ function [allWords, docTitle] = parseOneDocFile(obj, filename)
 
 % save word doc text to temporary plain text file
 tempPlainTextFile = [tempname '.txt'];
-saveWordAsText(filename, tempPlainTextFile);
+saveWordAsText(obj, filename, tempPlainTextFile);
 
 % scan text file.
-allWords = obj.parseOneTextFile(tempPlainTextFile);
+allWords = obj.readOneTextFile(tempPlainTextFile);
 delete(tempPlainTextFile);
 end
 
-function txtFile = saveWordAsText(docFile,txtFile)
+function txtFile = saveWordAsText(obj, docFile,txtFile)
 % txtFile = saveWordAsText(docFile,txtFile)
 %
 % Requires that Word be installed on your system.
@@ -43,13 +43,13 @@ if ~isempty(dir(txtFile))
 end
 
 % Open Word.
-wordApplication = actxserver('Word.Application');
+% wordApplication = actxserver('Word.Application');
 
 % Uncomment this for debugging.
 %set(wordApplication,'Visible',1);
 
 % Get a handle to the documents object.
-documents = wordApplication.Documents;
+documents = obj.wordApplication.Documents;
 
 % Open the Document.
 d = documents.Open(docFile);
@@ -62,5 +62,5 @@ d.SaveAs2(txtFile,wdFormatText);
 d.Close;
 
 % Close Word.
-wordApplication.Quit;
+% wordApplication.Quit;
 end

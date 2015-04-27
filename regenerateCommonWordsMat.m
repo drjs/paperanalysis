@@ -1,7 +1,7 @@
 fid = fopen(fullfile('@ParseFiles','CommonWords.txt'), 'r');
-wCommon = textscan(fid, '%s');
+commonWords = textscan(fid, '%s');
 fclose(fid);
 
-wCommon = categorical(wCommon{1});
+commonWords = categorical(commonWords{1});
 
-save(fullfile('@ParseFiles','CommonWords.mat'), 'wCommon');
+save(fullfile('@ParseFiles','CommonWords.mat'), 'commonWords');
