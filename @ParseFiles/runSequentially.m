@@ -44,26 +44,20 @@ for fileIndex = 1:numFiles
         otherwise
             error('Found unparsable file "%s", aborting.', obj.fileList{fileIndex});
     end
-    
+    % find valid words
     validWordIdx = cellfun(@checkWordIsValid, words);
+    % remove all invalid words and make everything lower case.
     words = lower(words(validWordIdx));
        
-    % Construct list of unique keywords
-    [uniqueKeywords, ~, idx] = unique(words);
-    
-    % find word count for each unique keyword
-    keywordCount = zeros(numel(uniqueKeywords, 1));
-    for i = 1:numel(uniqueKeywords)
-        matches  = ~logical(idx - i);
-        keywordCount(i) = nnz(matches);
-    end
-    
-    % sort word list and counts alphabetically
-    [uniqueKeywords, idx] = sort(uniqueKeywords);
-    keywordCount = keywordCount(idx);
+    % convert complete word list to categorical array
+    allWords = categorical(words);
+    % from categorical get list of unique keywords and their counts
+%     uniqueKeywords = categories(words);
+%     keywordCount = countcats(words);
 
     % saved parsed data into a mat file
-    save(parsedDataSaveFile, 'uniqueKeywords', 'keywordCount', 'paperTitle');
+%     save(parsedDataSaveFile, 'uniqueKeywords', 'keywordCount', 'paperTitle');
+    save(parsedDataSaveFile, 'allWords', 'paperTitle');
 end % stop looping through all files
 
 % find unique keywords for whole project
