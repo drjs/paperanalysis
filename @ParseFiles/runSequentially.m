@@ -43,7 +43,11 @@ end
 
 % find unique keywords for whole project
 obj.uniqueWords = categories(completeWordList);
-% totalWordCounts = countcats(completeWordList);
+totalWordCounts = countcats(completeWordList);
+
+% sort unique words by their popularity
+[~, newOrder] = sort(totalWordCounts, 'descend');
+obj.uniqueWords = obj.uniqueWords(newOrder);
 
 % create matrix of word counts for each document
 obj.wordCounts = zeros(numel(obj.uniqueWords), numFiles);
@@ -53,7 +57,7 @@ obj.wordCounts = zeros(numel(obj.uniqueWords), numFiles);
 for fileIndex = 1:numFiles
     data = load(parsedFileList{fileIndex});
     paperWords = data.allWords;
-    paperWords = setcats(paperWords, uniqueWords);
+    paperWords = setcats(paperWords, obj.uniqueWords);
     obj.wordCounts(:,fileIndex) = countcats(paperWords);
 end
 

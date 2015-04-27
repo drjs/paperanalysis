@@ -10,7 +10,7 @@ testfiles = { ...
 
 docparser = ParseFiles(testfiles, 'TestProject');
 docparser.runSequentially();
-
+generateWordCloud(docparser.uniqueWords, docparser.wordCounts);
     
 end
 
