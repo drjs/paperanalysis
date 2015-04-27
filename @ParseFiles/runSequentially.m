@@ -9,8 +9,8 @@ commonWords = commonWords.commonWords;
 
 % for each file, get the file's title and the location to save the parsed
 % data
-[~, docTitles, fileExtensions] = cellfun(@fileparts, obj.fileList, 'UniformOutput', false);
-parsedFileList = fullfile(obj.projectFolder, strcat(docTitles, '.mat'));
+[~, obj.documentTitles, fileExtensions] = cellfun(@fileparts, obj.fileList, 'UniformOutput', false);
+parsedFileList = fullfile(obj.projectFolder, strcat(obj.documentTitles, '.mat'));
 
 % if there are pdf files to parse, locate the pdf to text converter
 if ismember('.pdf', fileExtensions)
@@ -42,12 +42,21 @@ if containsDoc
 end
 
 % find unique keywords for whole project
+obj.uniqueWords = categories(completeWordList);
+% totalWordCounts = countcats(completeWordList);
+
+% create matrix of word counts for each document
+obj.wordCounts = zeros(numel(obj.uniqueWords), numFiles);
+
 % reorder each paper's word counts so they are the same order
 % as the new unique keyword list
+for fileIndex = 1:numFiles
+    data = load(parsedFileList{fileIndex});
+    paperWords = data.allWords;
+    paperWords = setcats(paperWords, uniqueWords);
+    obj.wordCounts(:,fileIndex) = countcats(paperWords);
+end
 
-% output should be something like a 2D matrix of word counts
-% one dimension indexed by project keywords
-% other dimension indexed by paper title
 
 end
 

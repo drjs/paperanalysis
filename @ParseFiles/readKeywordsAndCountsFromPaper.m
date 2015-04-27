@@ -38,7 +38,7 @@ else
     
     % saved parsed data into a mat fileia
     %     save(parsedDataSaveFile, 'uniqueKeywords', 'keywordCount', 'paperTitle');
-    save(fileToSaveWordDataInto, 'allWords', 'keywordCount', 'paperTitle');
+    save(fileToSaveWordDataInto, 'allWords', 'paperTitle');
 end
 end
 

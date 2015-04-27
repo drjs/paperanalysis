@@ -5,12 +5,15 @@ classdef ParseFiles < handle
     properties
         fileList;
         projectName;
-        projectFolder;
+        wordCounts;
+        documentTitles;
+        uniqueWords;
     end
     
     properties (Access = private)
         pdfConverter=''; % utility for converting pdfs, if required
         wordApplication; % COM connection to MS Word, for converting doc files
+        projectFolder;
     end
     
     methods
