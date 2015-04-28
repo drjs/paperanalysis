@@ -32,8 +32,8 @@ correlationMatrix = correlationMatrix(1:nwords, 1:nwords);
 % generate cluster tree
 tree = linkage(correlationMatrix, 'average');
 % uncomment if you want to see a dendrogram of the data:
-[~, ~, displayOrder] = dendrogram(tree);
-set(gca, 'XTickLabel', topNWords(displayOrder), 'XTickLabelRotation', 90);
+% [~, ~, displayOrder] = dendrogram(tree);
+% set(gca, 'XTickLabel', topNWords(displayOrder), 'XTickLabelRotation', 90);
 % split tree into nclusts distinct clusters
 clusterGroups = cluster(tree, 'maxclust', nclusts);
 
