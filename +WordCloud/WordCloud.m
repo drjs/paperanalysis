@@ -153,7 +153,7 @@ classdef WordCloud
                sum(correlations(mostPopularWord,:)) );
            
            % add text handle to cluster
-           this.clusters = [this.clusters, WordCluster(centreTextHandle, 0, 0)];
+           this.clusters = [this.clusters, WordCloud.WordCluster(centreTextHandle, 0, 0)];
            % add text handle to text handles vector
            this.allTextHandles = [this.allTextHandles, centreTextHandle];
            

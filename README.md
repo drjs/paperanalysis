@@ -45,14 +45,9 @@ These are:
 
 ### Visualisation TODO
 
-1. Optimise word clouds for [generateRandomWordCloud.m](./visualisation/generateRandomWordCloud.m).
 2. Create GUI for interactive customisation of Word Cloud
-3. Change GetFilesUI to not take manual paths, instead use editbox to get project title. This will allow the project to save parsed project data and/or cloud settings with a project name.
-4. Write parser.
 5. Make parser use MATLAB's big data functionality for maximum efficiency.
-6. Improve doc parsing speed by opening microsoft word only once per project. Would need to:
-  * sort files from user by extension
-  * open word THEN parse all doc files THEN close word when finished
-  * would also need to check that the computer is a pc
+6. Figure out how to make the Semantic Surface code generalisable and compatible with the GetFilesUI
+
     
 

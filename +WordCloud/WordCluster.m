@@ -16,7 +16,7 @@ classdef WordCluster
     
     methods
         function this = WordCluster(centreWordHandle, x, y)
-            this.wordRows = WordClusterRow(centreWordHandle, 'middle', x, y);
+            this.wordRows = WordCloud.WordClusterRow(centreWordHandle, 'middle', x, y);
             this.centreX  = x;
             this.centreY  = y;
             this = recalculateLimits(this);
@@ -147,13 +147,13 @@ classdef WordCluster
         function this = addRowAbove(this, starterWord)
             lowerEdge = this.wordRows(end).top;
             this.wordRows = [this.wordRows, ...
-                WordClusterRow(starterWord, 'bottom', this.centreX, lowerEdge)];
+                WordCloud.WordClusterRow(starterWord, 'bottom', this.centreX, lowerEdge)];
         end
         
         function this = addRowBelow(this, starterWord)
             upperEdge = this.wordRows(1).bottom;
             this.wordRows = [ ...
-                WordClusterRow(starterWord, 'top', this.centreX, upperEdge), ...
+                WordCloud.WordClusterRow(starterWord, 'top', this.centreX, upperEdge), ...
                 this.wordRows];
         end
         

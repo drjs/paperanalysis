@@ -38,8 +38,8 @@ tree = linkage(correlationMatrix, 'average');
 clusterGroups = cluster(tree, 'maxclust', nclusts);
 
 rng('shuffle');
-addpath('visualisation');
-cloud = WordCloud(keywords, wordCounts, correlationMatrix, clusterGroups);
+% addpath('visualisation');
+cloud = WordCloud.WordCloud(keywords, wordCounts, correlationMatrix, clusterGroups);
 
 end
 
