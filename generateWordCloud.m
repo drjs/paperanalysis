@@ -4,8 +4,8 @@ function cloud = generateWordCloud(keywords, wordCounts)
 
 % === Pantelis code ===
 
-numWords = size(wordCounts, 1);
-numDocs  = size(wordCounts, 2);
+numWords = size(wordCounts, 1)
+numDocs  = size(wordCounts, 2)
 
 % TF-IDF normalization (Term Frequency. * Inverse Docum. Frequency)
 FreqCounts = bsxfun(@rdivide, wordCounts, sum(wordCounts));

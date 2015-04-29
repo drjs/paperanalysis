@@ -11,7 +11,7 @@ classdef WordCluster
         top    = 0;
         bottom = 0;
         % the ideal width:height ratio of a word cluster
-        widthHeightRatio = 3/1; % width is ~2.5 * height
+        widthHeightRatio = 3/1;
     end
     
     methods
@@ -139,7 +139,7 @@ classdef WordCluster
         
         function isfull = isRowFull(this, r)
             clusterHeight = this.top - this.bottom;
-            % if the width of row r exceeds idea ratio for current height
+            % if the width of row r exceeds ideal ratio for current height
             % then it is full
             isfull = this.wordRows(r).getWidth > clusterHeight * this.widthHeightRatio;
         end
