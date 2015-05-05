@@ -58,6 +58,16 @@ s = RandStream('mlfg6331_64');
 opti = statset('UseSubstreams',1,'Streams',s,'Display','off');
 [nnmf_U,nnmf_V]= nnmf(DocFreqL2,3,'replicates',2^11,...
                             'options',opti, 'algorithm','als');
+                        
+% find axis labels from NNMF
+[m,i] = max(nnmf_U);
+label = topNWords(i);
+nnmf_U(i,:) = [];
+w = topNWords;
+w(i) = [];
+[m,i] = max(nnmf_U);
+label = [label; w(i)]';
+clear w, nnmf_U;
 
 %% Make surface plot
 close all
@@ -79,9 +89,12 @@ h1 = plot( fitresult, [x, y], z  );
 legend(h1, ['SEFI Papers Semantic Surface'], 'Document Entries', 'Location', 'NorthEast' );
 set(h1, 'MarkerFaceColor',[0 0 0])
 % Label axes
-xlabel 'education - engineers'
-ylabel 'learning - teaching - course'
-zlabel 'project - design - skills'
+xlabel([label{1,1}, ' / ', label{1,2}]);
+ylabel([label{2,1}, ' / ', label{2,2}]);
+zlabel([label{3,1}, ' / ', label{3,2}]);
+% xlabel 'education - engineers'
+% ylabel 'learning - teaching - course'
+% zlabel 'project - design - skills'
 grid on
 
 % Read the spell-checked titles
