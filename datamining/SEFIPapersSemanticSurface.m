@@ -59,7 +59,7 @@ opti = statset('UseSubstreams',1,'Streams',s,'Display','off');
 [nnmf_U,nnmf_V]= nnmf(DocFreqL2,3,'replicates',2^11,...
                             'options',opti, 'algorithm','als');
                         
-% find axis labels from NNMF
+% find axis labels from NNMF_U column peaks
 [m,i] = max(nnmf_U);
 label = topNWords(i);
 nnmf_U(i,:) = [];

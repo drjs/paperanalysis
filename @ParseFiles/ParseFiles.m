@@ -21,9 +21,10 @@ classdef ParseFiles < handle
     properties
         fileList;
         projectName;
-        wordCounts;
         documentTitles;
         uniqueWords;
+        wordCounts;
+        normalisedWordCounts;        
     end
     
     properties (Access = private)

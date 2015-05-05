@@ -259,6 +259,21 @@ function generate_surface_btn_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+% get the file list
+flist = getappdata(handles.file_listbox, 'FileList');
+% get the project name
+name = handles.projectname_edit.String;
+
+if isempty(flist)
+    % if there are no files in the project, do nothing!
+    uiwait(warndlg('No files to parse!'));
+elseif isempty(name)
+    uiwait(warndlg('Please enter a project name.'));
+else
+    docparser = ParseFiles(flist, name);
+    docparser.runSequentially();
+    generateSemanticSurface(docparser, 1000);
+end
 
 
 function addFolderToFileList(handles, folder)

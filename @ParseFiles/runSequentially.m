@@ -32,7 +32,7 @@ completeWordList = [];
 
 for fileIndex = 1:numFiles
     obj.fileList{fileIndex};
-    allWords = obj.readKeywordsAndCountsFromPaper(...
+    allWords = obj.readKeywordsAndCountsFromFiles(...
         obj.fileList{fileIndex}, ...
         fileExtensions{fileIndex}, ...
         parsedFileList{fileIndex}, ...
@@ -65,6 +65,9 @@ for fileIndex = 1:numFiles
     obj.wordCounts(:,fileIndex) = countcats(paperWords);
 end
 
+obj.calculateNormalisedWordFrequencies();
 
+save(fullfile(obj.projectFolder, 'preparsed.mat'), 'obj')
+disp('saved parser')
 end
 
