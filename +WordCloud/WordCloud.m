@@ -29,7 +29,7 @@ classdef WordCloud
         satelliteDistances;
     end
     
-    methods
+    methods        
         function this = WordCloud(wordList, wordCounts, wordCorrelations, clusterGroups)
             this.initialiseFigure();
             % scale the word counts.
@@ -45,7 +45,7 @@ classdef WordCloud
             % generate colours for each cluster
             cols = flip(parula(nClusters));
             
-            % process the clusters in order
+            % process the clusters in order of size
             for clust = clusterOrder
                 idx = (clusterGroups == clust);
                 counts = wordCounts(idx);

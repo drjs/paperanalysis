@@ -49,6 +49,8 @@ These are:
 
 1. Modify section where word counts are analysed for correllation so that it only analyses most popular N words instead of them all (out of memory errors otherwise).
 2. Create GUI for interactive customisation of Word Cloud. Make these things editable:
+  * number of clusters
+  * number of words
   * background colour
   * word colours? coloured randomly, by cluster or by correllated-to-other-words-ness (have transparency represent correllation maybe?)
   * Fonts. My choices are not always present on the system. Use UISETFONT function.

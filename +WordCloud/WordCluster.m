@@ -157,7 +157,6 @@ classdef WordCluster
                 this.wordRows];
         end
         
-        
     end
     
 end
