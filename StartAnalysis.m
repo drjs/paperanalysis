@@ -11,8 +11,8 @@ testfiles = { ...
 }';
 
 docparser = ParseFiles(testfiles, 'TestProject');
-docparser.runSequentially();
-generateSemanticSurface(docparser)
+% docparser.runSequentially();
+% generateSemanticSurface(docparser)
 % generateWordCloud(docparser.uniqueWords, docparser.wordCounts);
     
 end

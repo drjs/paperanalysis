@@ -58,7 +58,6 @@ These are:
   * cluster width/height ratio?
   * presence of MATLAB logo?
 5. Make parser use MATLAB's big data functionality for maximum efficiency.
-6. Figure out how to make the Semantic Surface code generalisable and compatible with the GetFilesUI
 
     
 
