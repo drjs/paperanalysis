@@ -58,6 +58,7 @@ These are:
   * cluster width/height ratio?
   * presence of MATLAB logo?
 5. Make parser use MATLAB's big data functionality for maximum efficiency.
+6. Add checks to GetFilesUI to disable semantic surface with less than 5 papers. The surface is not meaningful otherwise.
 
     
 

@@ -249,7 +249,7 @@ elseif isempty(name)
 else
     docparser = ParseFiles(flist, name);
     docparser.runSequentially();
-    generateWordCloud(docparser.uniqueWords, docparser.wordCounts);
+    generateWordCloud(docparser, 100);
 end
 
 
@@ -271,7 +271,7 @@ elseif isempty(name)
     uiwait(warndlg('Please enter a project name.'));
 else
     docparser = ParseFiles(flist, name);
-    docparser.runSequentially();
+    docparser.run();
     generateSemanticSurface(docparser, 1000);
 end
 

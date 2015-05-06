@@ -7,8 +7,7 @@ numFiles = numel(obj.fileList);
 commonWords = load('CommonWords.mat');
 commonWords = commonWords.commonWords;
 
-% for each file, get the file's title and the location to save the parsed
-% data
+% for each file, get the file's title and the location to save the parsed data
 [~, obj.documentTitles, fileExtensions] = cellfun(@fileparts, obj.fileList, 'UniformOutput', false);
 parsedFileList = fullfile(obj.projectFolder, strcat(obj.documentTitles, '.mat'));
 
@@ -31,13 +30,13 @@ end
 completeWordList = [];
 
 for fileIndex = 1:numFiles
-    obj.fileList{fileIndex};
     allWords = obj.readKeywordsAndCountsFromFiles(...
         obj.fileList{fileIndex}, ...
         fileExtensions{fileIndex}, ...
         parsedFileList{fileIndex}, ...
         commonWords);   
     completeWordList = [completeWordList; allWords];
+    fprintf('Parsed %s\n', obj.fileList{fileIndex});
 end
 
 % close MS Word if we used it
@@ -67,7 +66,7 @@ end
 
 obj.calculateNormalisedWordFrequencies();
 
-save(fullfile(obj.projectFolder, 'preparsed.mat'), 'obj')
+save(fullfile(obj.projectFolder, 'ParsedWordData.mat'), 'obj')
 disp('saved parser')
 end
 

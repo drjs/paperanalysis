@@ -2,12 +2,15 @@ function h = generateSemanticSurface(parserObject, nwords)
 %GENERATESEMANTICSURFACE Creates Semantic surface showing relationship
 %between papers.
 
+if nwords > size(parserObject.normalisedWordCounts, 1)
+    nwords = size(parserObject.normalisedWordCounts, 1);
+end
 normalisedWordCounts = parserObject.normalisedWordCounts(1:nwords,:);
 topNWords = parserObject.uniqueWords(1:nwords);
 
 % === Pantelis code ===
 
-% Use NNMF on the X 
+% Use NNMF on the normalised word counts
 s = RandStream('mlfg6331_64'); 
 opti = statset('UseSubstreams',1,'Streams',s,'Display','off');
 [nnmf_U,nnmf_V]= nnmf(normalisedWordCounts, 3, ...
