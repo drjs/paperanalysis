@@ -6,6 +6,8 @@ classdef ParseFiles < handle
     % array. 
     % This will ignore any words containing non-alphabet characters (e.g.
     % "don't". It also filters out any words with 3 or fewer letters.
+    % PROJECTNAME the name you want to give the project. This is used for
+    % caching parsed data locally into mat files.
     % 
     % Example:
     % p = ParseFiles('data\mydoc.txt')
