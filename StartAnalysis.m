@@ -1,18 +1,15 @@
 function StartAnalysis()
 
 
-testfiles = { ...
-'C:\Users\owenj\matlab_workspace\paperanalysis\testdata\SEFI2014_0025_final.pdf', ...
-'C:\Users\owenj\matlab_workspace\paperanalysis\testdata\SEFI2014_0140_final.pdf', ...
-'C:\Users\owenj\matlab_workspace\paperanalysis\testdata\SEFI2014_0062_final.pdf', ...
-'C:\Users\owenj\matlab_workspace\paperanalysis\testdata\SEFI2014_0029_final.txt', ...
-'C:\Users\owenj\matlab_workspace\paperanalysis\testdata\SEFI2014_0002_final.doc', ...
-'C:\Users\owenj\matlab_workspace\paperanalysis\testdata\SEFI2014_0011_final.docx' ...
-}';
+testfiles = dir('testdata');
+testfiles = {testfiles.name};
+testfiles = {testfiles{3:end}}';
+
 
 docparser = ParseFiles(testfiles, 'TestProject');
 docparser.run();
-generateWordCloud(docparser, 100);
+% generateWordCloud(docparser, 100);
+generateSemanticSurface(docparser, 100);
     
 end
 

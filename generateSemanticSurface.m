@@ -5,32 +5,11 @@ function h = generateSemanticSurface(parserObject, nwords)
 if nwords > size(parserObject.normalisedWordCounts, 1)
     nwords = size(parserObject.normalisedWordCounts, 1);
 end
-normalisedWordCounts = parserObject.normalisedWordCounts(1:nwords,:);
+% normalisedWordCounts = parserObject.normalisedWordCounts(1:nwords,:);
 topNWords = parserObject.uniqueWords(1:nwords);
 
-% === Pantelis code ===
-
-% Use NNMF on the normalised word counts
-s = RandStream('mlfg6331_64'); 
-opti = statset('UseSubstreams',1,'Streams',s,'Display','off');
-[nnmf_U,nnmf_V]= nnmf(normalisedWordCounts, 3, ...
-                      'replicates',2^11,...
-                      'options',opti, ...
-                      'algorithm','als');
-                        
-% find axis labels from NNMF_U column peaks
-[~,i] = max(nnmf_U);
-axisLabels = topNWords(i);
-
-nnmf_U(i,:) = [];
-tempWords = topNWords;
-tempWords(i) = [];
-[~,i] = max(nnmf_U);
-axisLabels = strcat(axisLabels, '/', tempWords(i));
-
-
-% Make surface plot
-[x , y ,z] = deal(  nnmf_V(1,:)',  nnmf_V(2,:)',  nnmf_V(3,:)' );
+% [x,y,z, axisLabels] = usePCAOnData(normalisedWordCounts, topNWords);
+[x,y,z, axisLabels] = usePCAOnData(parserObject.wordCounts(1:nwords,:), topNWords);
  
 % Set up fittype and options.
 ftype = fittype( 'lowess' );
@@ -41,6 +20,7 @@ fopts.Span = 0.1818; %Changing this will make the surface rougher or smoother
 
 % Fit model to data.
 [fitresult, gof] = fit( [x, y], z, ftype, fopts );
+% [fitresult, ~] = fit( [x, y], z, 'cubicinterp' );
 
 % Plot fit with data.
 figTitle = [parserObject.projectName, ' Semantic Surface'];
@@ -82,6 +62,56 @@ titleIndex = intersect( intersect( find(abs(abs(event_obj.Target.XData)-abs(pos(
     find(abs(abs(event_obj.Target.YData)-abs(pos(2)))< 0.001));
 
 output_txt = handles{ titleIndex } ;
+
+end
+
+function [x,y,z, axisLabels] = usePCAOnData(counts, words)
+% Use pca on the normalised word counts
+[pca_loadings,pca_scores] = pca(counts', 'NumComponents', 10);
+
+% find axis labels from pca scores column peaks
+[~,i] = max(pca_loadings);
+axisLabels = words(i);
+
+pca_loadings(i,:) = [];
+tempWords = words;
+tempWords(i) = [];
+[~,i] = max(pca_loadings);
+axisLabels = strcat(axisLabels, '/', tempWords(i))
+
+% plot(pca_loadings);
+% set(gca, 'xtick', 1:numel(words), 'xticklabels', words, 'xticklabelrotation', 90);
+
+z = pca_scores(:,3);
+y = pca_scores(:,2);
+x = pca_scores(:,1);
+
+end
+
+function [x,y,z, axisLabels] = useNNMFOnData(counts, words)
+% === Pantelis code ===
+
+% Use NNMF on the normalised word counts
+s = RandStream('mlfg6331_64'); 
+opti = statset('UseSubstreams',1,'Streams',s,'Display','off');
+[nnmf_U,nnmf_V]= nnmf(counts, 3, ...
+                      'replicates',2^11,...
+                      'options',opti, ...
+                      'algorithm','als');
+                        
+% find axis labels from NNMF_U column peaks
+[~,i] = max(nnmf_U);
+axisLabels = words(i);
+
+nnmf_U(i,:) = [];
+tempWords = words;
+tempWords(i) = [];
+[~,i] = max(nnmf_U);
+axisLabels = strcat(axisLabels, '/', tempWords(i));
+
+
+% Make surface plot
+[x , y ,z] = deal(  nnmf_V(1,:)',  nnmf_V(2,:)',  nnmf_V(3,:)' );
 
 end
 
