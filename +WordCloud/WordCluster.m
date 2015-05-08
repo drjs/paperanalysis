@@ -3,6 +3,7 @@ classdef WordCluster
     
     properties
         textHandles;
+        numWords;
         wordRows;
         centreX;
         centreY;
@@ -21,6 +22,7 @@ classdef WordCluster
             this.wordRows    = WordCloud.WordClusterRow(centreWordHandle, 'middle', x, y);
             this.centreX     = x;
             this.centreY     = y;
+            this.numWords    = numel(this.textHandles);
             this = recalculateLimits(this);
         end
         
@@ -34,7 +36,7 @@ classdef WordCluster
             while wordAt <= numel(wordHandles)
                 % if bottom row is full and there's at least one more word,
                 % create a new row underneath and add next word
-                if(this.isRowFull(1) && wordAt <= numel(wordHandles))    
+                if(this.isRowFull(1) && wordAt <= numel(wordHandles))
                     this = addRowBelow(this, wordHandles(wordAt));
                     wordAt = wordAt + 1;
                 end
@@ -59,38 +61,7 @@ classdef WordCluster
                 
             end
             this = respaceRowsVertically(this);
-        end
-        
-        function this = respaceRowsVertically(this)
-            % find the centre row, this is the one that's 'middle' aligned
-            for middleRow = 1:numel(this.wordRows)
-                if strcmp(this.wordRows(middleRow).verticalAlignment, 'middle');
-                    % recalculate middle row limits
-                    this.wordRows(middleRow) = ...
-                        this.wordRows(middleRow).repositionRowRelative(0,0);
-                    break
-                end
-            end
-            % for all above the centre row set the centre to the top limit
-            % of line below
-            for r = (middleRow+1):numel(this.wordRows)
-                %line(xlim, [this.wordRows(r-1).top, this.wordRows(r-1).top]);
-                dY = this.wordRows(r-1).top - this.wordRows(r).refPosY;
-                this.wordRows(r) = this.wordRows(r).repositionRowRelative(0, dY);
-            end
-            for r = (middleRow-1):-1:1
-                dY = this.wordRows(r+1).bottom - this.wordRows(r).refPosY;
-                this.wordRows(r) = this.wordRows(r).repositionRowRelative(0, dY);
-            end
-            this = this.recalculateLimits();
-        end
-        
-        
-        function this = respaceRowsHorizontally(this)
-            for r = 1:numel(this.wordRows)
-                this.wordRows(r) = this.wordRows(r).respaceWordsInRow();
-            end
-            this = this.recalculateLimits();
+            this.numWords = numel(this.textHandles);
         end
         
         function this = recentreCluster(this, newX, newY)
@@ -104,6 +75,30 @@ classdef WordCluster
             this.centreY = newY;
         end
         
+        function this = reColourCluster(this, newColours)
+            if size(newColours, 1) == 1
+                % if there is only 1 colour in newColours, make all words the
+                % same colour.
+                for i = 1:numel(this.textHandles)
+                    this.textHandles(i).Color = newColours;
+                end
+            else
+                % otherwise recolour all words the corresponding colour
+                for i = 1:numel(this.textHandles)
+                    this.textHandles(i).Color = newColours(i,:);
+                end
+            end
+        end
+        
+        function this = rescaleText(this, newScaleFactor)
+            resizeFcn = @(h)set(h, 'FontSize', ...
+                h.UserData.wordCount*newScaleFactor);
+%             this.textHandles = arrayfun(resizeFcn, this.textHandles);
+            arrayfun(resizeFcn, this.textHandles);
+            
+            this = this.respaceRowsHorizontally();
+            this = this.respaceRowsVertically();
+        end
         
         function this = recalculateLimits(this)
             this.left   = min([this.wordRows.left]);
@@ -119,7 +114,7 @@ classdef WordCluster
             r = 1;
             while (r <= numel(this.wordRows)) && (wordAt <= numel(wordHandles))
                 % if there is space in the row, add another word
-                if(~this.isRowFull(r))  
+                if(~this.isRowFull(r))
                     this.wordRows(r) = ...
                         this.wordRows(r).addWordLeft(wordHandles(wordAt));
                     wordAt = wordAt + 1;
@@ -131,7 +126,7 @@ classdef WordCluster
         function [this, wordAt] = addWordsTopRToBottomR(this, wordAt, wordHandles)
             r = numel(this.wordRows);
             while (r > 0) && (wordAt <= numel(wordHandles))
-                if(~this.isRowFull(r))    
+                if(~this.isRowFull(r))
                     this.wordRows(r) = ...
                         this.wordRows(r).addWordRight(wordHandles(wordAt));
                     wordAt = wordAt + 1;
@@ -160,6 +155,36 @@ classdef WordCluster
                 this.wordRows];
         end
         
+        function this = respaceRowsVertically(this)
+            % find the centre row, this is the one that's 'middle' aligned
+            for middleRow = 1:numel(this.wordRows)
+                if strcmp(this.wordRows(middleRow).verticalAlignment, 'middle');
+                    % recalculate middle row limits
+                    this.wordRows(middleRow) = ...
+                        this.wordRows(middleRow).repositionRowRelative(0,0);
+                    break
+                end
+            end
+            % for all above the centre row set the centre to the top limit
+            % of line below
+            for r = (middleRow+1):numel(this.wordRows)
+                %line(xlim, [this.wordRows(r-1).top, this.wordRows(r-1).top]);
+                dY = this.wordRows(r-1).top - this.wordRows(r).refPosY;
+                this.wordRows(r) = this.wordRows(r).repositionRowRelative(0, dY);
+            end
+            for r = (middleRow-1):-1:1
+                dY = this.wordRows(r+1).bottom - this.wordRows(r).refPosY;
+                this.wordRows(r) = this.wordRows(r).repositionRowRelative(0, dY);
+            end
+            this = this.recalculateLimits();
+        end
+        
+        function this = respaceRowsHorizontally(this)
+            for r = 1:numel(this.wordRows)
+                this.wordRows(r) = this.wordRows(r).respaceWordsInRow();
+            end
+            this = this.recalculateLimits();
+        end
     end
     
 end

@@ -56,7 +56,7 @@ classdef WordCloud
             
             % generate colours for each cluster
             cols = flip(parula(nClusters));
-            cols = rand(numel(wordList), 3);
+            cols = jet(numel(wordList));
             
             % process the clusters in order of size
             for clust = clusterOrder
@@ -79,13 +79,16 @@ classdef WordCloud
         end
         
         function this = rescaleText(this, newScaleFactor)
-            resizeFcn = @(h)set(h, 'FontSize', ...
-                 h.UserData.wordCount*newScaleFactor*3);
+%             resizeFcn = @(h)set(h, 'FontSize', ...
+%                  h.UserData.wordCount*newScaleFactor*3);
 %             arrayfun(resizeFcn, this.allTextHandles);
-
-            for cl = 1:numel(this.clusters) % is there no way to vectorise this?
-               this.clusters(cl) = this.clusters(cl).respaceRowsHorizontally(); 
-               this.clusters(cl) = this.clusters(cl).respaceRowsVertically(); 
+% 
+%             for cl = 1:numel(this.clusters) % is there no way to vectorise this?
+%                this.clusters(cl) = this.clusters(cl).respaceRowsHorizontally(); 
+%                this.clusters(cl) = this.clusters(cl).respaceRowsVertically(); 
+%             end
+            for cl = 1:numel(this.clusters)
+                this.clusters(cl) = this.clusters(cl).rescaleText(newScaleFactor);
             end
         end
         
@@ -157,13 +160,13 @@ classdef WordCloud
             end
        end
        
-       function this = makeWordCluster(this, words, counts, correlations, coreColours)
+       function this = makeWordCluster(this, words, counts, correlations, wordColours)
            % find most popular word to put in the centre of the cluster
            [~,mostPopularWord] = max(counts);           
            centreTextHandle = this.makeSingleTextHandle( ...
                words(mostPopularWord), ...
                counts(mostPopularWord), ...
-               coreColours(mostPopularWord, :), ...
+               wordColours(mostPopularWord, :), ...
                sum(correlations(mostPopularWord,:)) );
            
            % add text handle to cluster
@@ -180,7 +183,7 @@ classdef WordCloud
                
                for i = 1:numel(words)
                    textHandles = [textHandles, ...
-                       this.makeSingleTextHandle(words(i), counts(i), coreColours(i,:), sum(correlations(i,:)) )]; %#ok<AGROW>
+                       this.makeSingleTextHandle(words(i), counts(i), wordColours(i,:), sum(correlations(i,:)) )]; %#ok<AGROW>
                end
                
                % add remaining words to cluster
