@@ -12,6 +12,7 @@ classdef WordCloudSettings
     
     properties
         backgroundColour;
+        textColour;
         colourMap;
         fonts;
         colourMode;
@@ -25,10 +26,11 @@ classdef WordCloudSettings
     properties (SetAccess = private)
         possibleColourMapNames = {'parula', 'jet', 'hsv', 'hot', 'cool', 'spring', ...
                     'summer', 'autumn', 'winter', 'gray', 'bone', 'copper', 'pink'};
-        colouringModes = {'Colour by cluster', ... 
+        colouringModes = {'Uniform clusters', ... 
+                          'Colour within cluster', ...
                           'Colour by word', ...
-                          'Random colouring', ...
-                          'Uniform colouring'};
+                          'Random word colouring', ...
+                          'Uniform word colouring'};
     end
     
     properties (Access = private)
@@ -40,6 +42,7 @@ classdef WordCloudSettings
     methods
         function obj = WordCloudSettings()
             obj.backgroundColour       = getpref(obj.prefgroup, 'backgroundColour', [0 0 0]);
+            obj.textColour             = getpref(obj.prefgroup, 'textColour', [1 1 1]);
             obj.colourMap              = getpref(obj.prefgroup, 'colourMap', @parula);
             obj.fonts                  = getpref(obj.prefgroup, 'fonts', {'Times New Roman'});
             obj.colourMode             = getpref(obj.prefgroup, 'colourMode', 1);  
@@ -51,6 +54,7 @@ classdef WordCloudSettings
         
         function obj = clearAllPreferences(obj)
             rmpref(obj.prefgroup, 'backgroundColour');
+            rmpref(obj.prefgroup, 'textColour');
             rmpref(obj.prefgroup, 'colourMap');
             rmpref(obj.prefgroup, 'fonts');
             rmpref(obj.prefgroup, 'colourMode');  

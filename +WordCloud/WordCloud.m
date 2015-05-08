@@ -1,31 +1,33 @@
 classdef WordCloud
     
-    properties (Constant = true)
+    properties
         % cell array of fonts to use in clouds. Fonts are randomly selected
         % from this list.
-        prettyFonts = {'Century Gothic', 'Cooper Black', 'Magneto Bold'}; 
-        %prettyFonts = { 'Century Gothic Bold'};
+%         prettyFonts = {'Century Gothic', 'Cooper Black', 'Magneto Bold'}; 
+%         prettyFonts;
         
         % The colour to make the figure background. This can be a 1x3 RGB 
         % vector or a standard colour string e.g. 'black' or 'k'.
-        backgroundColour = [1 1 1];
+%         backgroundColour = [1 1 1];
         
         % Scale factor controlling the size the fonts are displayed. Adjust
         % this to make the words bigger or smaller
-        fontScaleFactor = 2;
+%         fontScaleFactor;
         
         % Controls how far the outer word clusters are from the central
         % cluster. If the words are too close together or far apart,
         % adjust this value. The distance is proportional to how correlated 
         % the two clusters are.
-        satelliteClusterDistanceScaleFactor = 0.5;
+%         satelliteClusterDistanceScaleFactor;
     end
     
     properties
+        settings;
         clusters;
         centreX  = 0.5;
         centreY  = 0.5;
         satelliteDistances;
+        numWords;
     end
     
     % TODO! 
@@ -43,6 +45,12 @@ classdef WordCloud
     
     methods        
         function this = WordCloud(wordList, wordCounts, wordCorrelations, clusterGroups, settings)
+%             this.prettyFonts = settings.fonts;
+%             this.fontScaleFactor = settings.textScaleFactor;
+%             this.satelliteClusterDistanceScaleFactor = settings.clusterDistanceFactor;
+            this.settings = settings;
+            this.numWords = numel(wordList);
+            
             this.initialiseFigure(settings);
             % scale the word counts.
             wordCounts = wordCounts ./ min(wordCounts);
@@ -75,7 +83,7 @@ classdef WordCloud
             this.satelliteDistances = this.calculateClusterDistancesFromCentre(...
                 wordCorrelations, clusterGroups, clusterOrder);
             
-            this = this.rescaleClusterSeparation(this.satelliteClusterDistanceScaleFactor);
+            this = this.rescaleClusterSeparation(this.settings.clusterDistanceFactor);
         end
         
         function this = rescaleText(this, newScaleFactor)
@@ -100,6 +108,42 @@ classdef WordCloud
                 this.clusters(clust) = this.clusters(clust).recentreCluster(newX, newY);
             end
         end
+        
+        function this = recolourUniformClusters(this)
+            colours = this.settings.colourMap(numel(this.clusters));
+            for i = 1:numel(this.clusters)
+                this.clusters(i) = this.clusters(i).reColourCluster(colours(i,:));
+            end
+        end
+        
+        function this = recolourWithinClusters(this)
+            for c = this.clusters
+                colours = this.settings.colourMap(c.numWords);
+                c.reColourCluster(colours);
+            end
+        end
+        
+        function this = recolourByWord(this)
+            colours = this.settings.colourMap(this.numWords);
+            colourAt = 1;
+            for c = this.clusters
+                c.reColourCluster(colours(colourAt:(colourAt+c.numWords-1), :));
+                colourAt = colourAt + c.numWords;
+            end
+        end
+        
+        function this = recolourRandomly(this)
+            for c = this.clusters
+                colours = rand(c.numWords, 3);
+                c.reColourCluster(colours);
+            end
+        end
+        
+        function this = recolourWordsUniformly(this)
+            for c = this.clusters
+                c.reColourCluster(this.settings.textColour);
+            end
+        end  
     end
     
     methods (Access = private)
@@ -113,7 +157,7 @@ classdef WordCloud
             set(gca, 'Visible', 'off');
         end
         
-        function newOrder = sortClustersBySize(this, clusterGroups, wordCounts)
+        function newOrder = sortClustersBySize(~, clusterGroups, wordCounts)
             nclusters = max(clusterGroups);
             groupSizes = zeros(1, nclusters);
             for i = 1:nclusters
@@ -121,15 +165,7 @@ classdef WordCloud
             end
             [~,newOrder] = sort(groupSizes, 'descend');
         end
-        
-%         function this = recalculateLimits(this)
-%             left   = min([this.clusters.left]);
-%             right  = max([this.clusters.right]);
-%             top    = max([this.clusters.top]);
-%             bottom = min([this.clusters.bottom]);
-%             % rectangle('position', [left, bottom, right-left, top-bottom], 'edgecolor', 'b');
-%         end
-       
+             
        function dists = calculateClusterDistancesFromCentre(~, wordCorrelations, clusterGroups, clusterOrder)
            % returns array of total distances between all the words in the
            % central cluster and each satellite clusters.
@@ -188,11 +224,11 @@ classdef WordCloud
            fontBlockSize = 3; % measured in "FontUnits"
            
            th = text('String', word, ...
-               'FontName', this.prettyFonts{randi(numel(this.prettyFonts), 1)}, ... % random pretty font
+               'FontName', this.settings.fonts{randi(numel(this.settings.fonts), 1)}, ... % random pretty font
                'Color', rgb, ...
                'Margin', 1, ...
                'FontUnit', 'point', ... %'normalized', ...
-               'FontSize', wordCount*this.fontScaleFactor*fontBlockSize, ...
+               'FontSize', wordCount*this.settings.textScaleFactor*fontBlockSize, ...
                'Units', 'data', ... % 'normalized', ... %
                'Position', [0,0] ...
                );

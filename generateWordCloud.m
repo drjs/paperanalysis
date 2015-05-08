@@ -11,7 +11,7 @@ wordCounts = sum(wordCounts, 2);
 normalisedWordCounts = parserObject.normalisedWordCounts(1:nwords, :);
 correlationMatrix = corr(normalisedWordCounts', 'type', 'Pearson');
 
-nclusts = 1;
+nclusts = 3;
 
 
 % generate cluster tree

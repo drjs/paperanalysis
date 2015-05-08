@@ -99,11 +99,20 @@ classdef WordCluster
         function this = rescaleText(this, newScaleFactor)
             resizeFcn = @(h)set(h, 'FontSize', ...
                 h.UserData.wordCount*newScaleFactor);
-%             this.textHandles = arrayfun(resizeFcn, this.textHandles);
             arrayfun(resizeFcn, this.textHandles);
             
             this = this.respaceRowsHorizontally();
             this = this.respaceRowsVertically();
+            
+            % if the cluster no longer fits the ideal width/height ratio
+            % then rebuild it.
+            width  = this.right - this.left;
+            height = this.top - this.bottom;
+%             if width > height * this.widthHeightRatio
+%                 disp('rebuilding cluster')
+%                 delete(this.wordRows);
+%                 this = this.buildCluster();
+%             end
         end
         
         function this = recalculateLimits(this)

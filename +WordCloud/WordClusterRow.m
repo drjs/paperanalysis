@@ -1,4 +1,4 @@
-classdef WordClusterRow
+classdef WordClusterRow < handle
     %WORDCLUSTERROW Class for managing words in a single row in the word
     %cloud.
     
