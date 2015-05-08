@@ -22,6 +22,7 @@ classdef WordCloud
     end
     
     properties
+        figHandle;
         clusters;
         centreX  = 0.5;
         centreY  = 0.5;
@@ -131,7 +132,7 @@ classdef WordCloud
     
     methods (Access = private)
         function this = initialiseFigure(this, settings)
-            f = figure('Name', 'Word Cloud', ...
+            this.figHandle = figure('Name', 'Word Cloud', ...
                        'Units','normalized', ...
                        'OuterPosition',[0 0 1 1], ...
                        'Color', settings.backgroundColour);
