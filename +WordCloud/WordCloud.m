@@ -22,33 +22,15 @@ classdef WordCloud
     end
     
     properties
-%         settings;
         clusters;
         centreX  = 0.5;
         centreY  = 0.5;
         satelliteDistances;
         numWords;
     end
-    
-    % TODO! 
-    % refactor wordcloud and wordcluster so that the clusters store the
-    % text handles not the entire cloud.
-    % For colouring the words in sequence....?
-    % - initially sort words by.... size/correllation
-    % - words will need to know where they rank in the whole sorted
-    % sequence
-    % - cluster will need to know how many words there are altogether.
-    % OR pass each cluster a subset of the colourmap? when you change the
-    % colourmap, send the new colourmap only to the cluster?
-    % eg cloudmap = parula(totalNumWords);
-    % clusterXcolourmap = cloudmap(clustergroups == clusterXIdx)
-    
+        
     methods        
         function this = WordCloud(wordList, wordCounts, wordCorrelations, clusterGroups, settings)
-%             this.prettyFonts = settings.fonts;
-%             this.fontScaleFactor = settings.textScaleFactor;
-%             this.satelliteClusterDistanceScaleFactor = settings.clusterDistanceFactor;
-%             this.settings = settings;
             this.numWords = numel(wordList);
             
             this.initialiseFigure(settings);
@@ -140,8 +122,11 @@ classdef WordCloud
             end
         end  
         
-%         function this = changeFonts(this, newFonts)
-%         end
+        function this = changeFonts(this, newFonts)
+            for c = this.clusters
+                c.changeFonts(newFonts);
+            end
+        end
     end
     
     methods (Access = private)

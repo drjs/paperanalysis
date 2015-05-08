@@ -106,13 +106,21 @@ classdef WordCluster
             
             % if the cluster no longer fits the ideal width/height ratio
             % then rebuild it.
-            width  = this.right - this.left;
-            height = this.top - this.bottom;
+%             width  = this.right - this.left;
+%             height = this.top - this.bottom;
 %             if width > height * this.widthHeightRatio
 %                 disp('rebuilding cluster')
 %                 delete(this.wordRows);
 %                 this = this.buildCluster();
 %             end
+        end
+        
+        function this = changeFonts(this, newFonts)
+            changeFontFcn = @(h) set(h, 'FontName', newFonts{randi(numel(newFonts), 1)});
+            arrayfun(changeFontFcn, this.textHandles);
+            
+            this = this.respaceRowsHorizontally();
+            this = this.respaceRowsVertically();
         end
         
         function this = recalculateLimits(this)
