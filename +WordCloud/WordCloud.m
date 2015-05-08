@@ -22,7 +22,7 @@ classdef WordCloud
     end
     
     properties
-        settings;
+%         settings;
         clusters;
         centreX  = 0.5;
         centreY  = 0.5;
@@ -48,7 +48,7 @@ classdef WordCloud
 %             this.prettyFonts = settings.fonts;
 %             this.fontScaleFactor = settings.textScaleFactor;
 %             this.satelliteClusterDistanceScaleFactor = settings.clusterDistanceFactor;
-            this.settings = settings;
+%             this.settings = settings;
             this.numWords = numel(wordList);
             
             this.initialiseFigure(settings);
@@ -59,20 +59,15 @@ classdef WordCloud
             
             % process the largest cluster first and smaller ones last
             % find the right order to do the custers in
-            clusterOrder = this.sortClustersBySize(clusterGroups, wordCounts);
-            nClusters = numel(clusterOrder);    
-            
-            % generate colours for each cluster
-            cols = flip(parula(nClusters));
-            cols = jet(numel(wordList));
-            
+            clusterOrder = this.sortClustersBySize(clusterGroups, wordCounts);           
+           
             % process the clusters in order of size
             for clust = clusterOrder
                 idx = (clusterGroups == clust);
                 counts = wordCounts(idx);
                 words  = wordList(idx);
                 correlations = wordCorrelations(idx, idx);
-                this = this.makeWordCluster(words, counts, correlations, cols(idx,:));  
+                this = this.makeWordCluster(words, counts, correlations, settings);  
             end
             
             % place the first and biggest cluster in the centre
@@ -83,7 +78,7 @@ classdef WordCloud
             this.satelliteDistances = this.calculateClusterDistancesFromCentre(...
                 wordCorrelations, clusterGroups, clusterOrder);
             
-            this = this.rescaleClusterSeparation(this.settings.clusterDistanceFactor);
+            this = this.rescaleClusterSeparation(settings.clusterDistanceFactor);
         end
         
         function this = rescaleText(this, newScaleFactor)
@@ -109,22 +104,22 @@ classdef WordCloud
             end
         end
         
-        function this = recolourUniformClusters(this)
-            colours = this.settings.colourMap(numel(this.clusters));
+        function this = recolourUniformClusters(this, colourMapFcn)
+            colours = colourMapFcn(numel(this.clusters));
             for i = 1:numel(this.clusters)
                 this.clusters(i) = this.clusters(i).reColourCluster(colours(i,:));
             end
         end
         
-        function this = recolourWithinClusters(this)
+        function this = recolourWithinClusters(this, colourMapFcn)
             for c = this.clusters
-                colours = this.settings.colourMap(c.numWords);
+                colours = colourMapFcn(c.numWords);
                 c.reColourCluster(colours);
             end
         end
         
-        function this = recolourByWord(this)
-            colours = this.settings.colourMap(this.numWords);
+        function this = recolourByWord(this, colourMapFcn)
+            colours = colourMapFcn(this.numWords);
             colourAt = 1;
             for c = this.clusters
                 c.reColourCluster(colours(colourAt:(colourAt+c.numWords-1), :));
@@ -139,11 +134,14 @@ classdef WordCloud
             end
         end
         
-        function this = recolourWordsUniformly(this)
+        function this = recolourWordsUniformly(this, textColour)
             for c = this.clusters
-                c.reColourCluster(this.settings.textColour);
+                c.reColourCluster(textColour);
             end
         end  
+        
+%         function this = changeFonts(this, newFonts)
+%         end
     end
     
     methods (Access = private)
@@ -188,14 +186,16 @@ classdef WordCloud
             end
        end
        
-       function this = makeWordCluster(this, words, counts, correlations, wordColours)
+       function this = makeWordCluster(this, words, counts, correlations, settings)
            % find most popular word to put in the centre of the cluster
            [~,mostPopularWord] = max(counts);           
            centreTextHandle = this.makeSingleTextHandle( ...
                words(mostPopularWord), ...
                counts(mostPopularWord), ...
-               wordColours(mostPopularWord, :), ...
-               sum(correlations(mostPopularWord,:)) );
+               [1 1 1], ...
+               sum(correlations(mostPopularWord,:)), ...
+               settings.fonts, ...
+               settings.textScaleFactor);
            
            % add text handle to cluster
            this.clusters = [this.clusters, WordCloud.WordCluster(centreTextHandle, 0, 0)];
@@ -211,7 +211,10 @@ classdef WordCloud
                
                for i = 1:numel(words)
                    textHandles = [textHandles, ...
-                       this.makeSingleTextHandle(words(i), counts(i), wordColours(i,:), sum(correlations(i,:)) )]; %#ok<AGROW>
+                       this.makeSingleTextHandle(...
+                            words(i), counts(i), ...
+                            [1 1 1], sum(correlations(i,:)), ...
+                            settings.fonts, settings.textScaleFactor)]; %#ok<AGROW>
                end
                
                % add remaining words to cluster
@@ -220,15 +223,15 @@ classdef WordCloud
            end
        end
        
-       function th = makeSingleTextHandle(this, word, wordCount, rgb, totalCorrelation)
+       function th = makeSingleTextHandle(~, word, wordCount, rgb, totalCorrelation, fonts, textScaleFactor)
            fontBlockSize = 3; % measured in "FontUnits"
            
            th = text('String', word, ...
-               'FontName', this.settings.fonts{randi(numel(this.settings.fonts), 1)}, ... % random pretty font
+               'FontName', fonts{randi(numel(fonts), 1)}, ... % random pretty font
                'Color', rgb, ...
                'Margin', 1, ...
                'FontUnit', 'point', ... %'normalized', ...
-               'FontSize', wordCount*this.settings.textScaleFactor*fontBlockSize, ...
+               'FontSize', wordCount*textScaleFactor*fontBlockSize, ...
                'Units', 'data', ... % 'normalized', ... %
                'Position', [0,0] ...
                );

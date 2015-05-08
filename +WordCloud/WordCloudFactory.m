@@ -1,4 +1,4 @@
-classdef WordCloudSettings
+classdef WordCloudFactory
     %WORDCLOUDSETTINGS Holds settings for the word cloud. 
     % Automatically finds the defaults on startup.
     %   * background colour
@@ -40,7 +40,7 @@ classdef WordCloudSettings
     end
     
     methods
-        function obj = WordCloudSettings()
+        function obj = WordCloudFactory()
             obj.backgroundColour       = getpref(obj.prefgroup, 'backgroundColour', [0 0 0]);
             obj.textColour             = getpref(obj.prefgroup, 'textColour', [1 1 1]);
             obj.colourMap              = getpref(obj.prefgroup, 'colourMap', @parula);
