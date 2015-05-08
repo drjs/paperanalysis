@@ -47,7 +47,6 @@ These are:
 
 ### Visualisation TODO
 
-1. Modify section where word counts are analysed for correllation so that it only analyses most popular N words instead of them all (out of memory errors otherwise).
 2. Create GUI for interactive customisation of Word Cloud. Make these things editable:
   * number of clusters
   * number of words
@@ -61,6 +60,4 @@ These are:
   * presence of MATLAB logo?
 5. Make parser use MATLAB's big data functionality for maximum efficiency.
 6. Add checks to GetFilesUI to disable semantic surface with less than 5 papers. The surface is not meaningful otherwise.
-
-    
-
+7. Make it possible to load a project from file.

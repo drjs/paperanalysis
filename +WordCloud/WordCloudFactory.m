@@ -71,9 +71,18 @@ classdef WordCloudFactory
             wordCounts = sum(wordCounts, 2);
             normalisedWordCounts = docParser.normalisedWordCounts(1:numWords, :);
             
-            correlationMatrix = corr(normalisedWordCounts', 'type', 'Pearson');
-            tree = linkage(correlationMatrix, 'average');
-            clusterGroups = cluster(tree, 'maxclust', obj.numClusters);
+            % if the statistics toolbox is present then statistial analysis
+            % is possible
+            if license('test', 'Statistics_Toolbox') == 1
+                correlationMatrix = corr(normalisedWordCounts', 'type', 'Pearson');
+                tree = linkage(correlationMatrix, 'average');
+                clusterGroups = cluster(tree, 'maxclust', obj.numClusters);
+            else
+                % otherwise only one cluster is possible
+                correlationMatrix = randn(numWords, numWords);
+                % correlationMatrix = ones(numWords, numWords);
+                clusterGroups = ones(numWords, 1);
+            end
             
             obj.cloud = WordCloud.WordCloud(keywords, wordCounts, correlationMatrix, clusterGroups, obj);
             obj.recolourCloud();
