@@ -79,14 +79,6 @@ classdef WordCloud
         end
         
         function this = rescaleText(this, newScaleFactor)
-%             resizeFcn = @(h)set(h, 'FontSize', ...
-%                  h.UserData.wordCount*newScaleFactor*3);
-%             arrayfun(resizeFcn, this.allTextHandles);
-% 
-%             for cl = 1:numel(this.clusters) % is there no way to vectorise this?
-%                this.clusters(cl) = this.clusters(cl).respaceRowsHorizontally(); 
-%                this.clusters(cl) = this.clusters(cl).respaceRowsVertically(); 
-%             end
             for cl = 1:numel(this.clusters)
                 this.clusters(cl) = this.clusters(cl).rescaleText(newScaleFactor);
             end

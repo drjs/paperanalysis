@@ -166,7 +166,6 @@ classdef WordClusterRow
             wh.HorizontalAlignment = halign;
             wh.VerticalAlignment   = valign;
             wh.Position            = [x y];
-            % wh.Parent              = this.transformGroup;
         end
         
         function y = ceilToNearest(~, x, acc)

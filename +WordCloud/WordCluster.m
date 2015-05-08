@@ -19,11 +19,9 @@ classdef WordCluster
     methods
         function this = WordCluster(centreWordHandle, x, y)
             this.textHandles = centreWordHandle;
-            this.wordRows    = WordCloud.WordClusterRow(centreWordHandle, 'middle', x, y);
             this.centreX     = x;
             this.centreY     = y;
             this.numWords    = numel(this.textHandles);
-            this = recalculateLimits(this);
         end
         
         function this = addWords(this, wordHandles, correlationToCentre)
@@ -31,37 +29,45 @@ classdef WordCluster
             [~, sortOrderIdx] = sort(correlationToCentre, 'descend');
             wordHandles = wordHandles(sortOrderIdx);
             this.textHandles = [this.textHandles, wordHandles];
-            wordAt = 1; % current word to add to cluster
+            this.numWords = numel(this.textHandles);
+            this = this.buildCluster();
+        end
+        
+        function this = buildCluster(this)
+            % Centre row is the only middle aligned row
+            this.wordRows    = WordCloud.WordClusterRow(this.textHandles(1), 'middle', this.centreX, this.centreY);
+            this = this.recalculateLimits();
             
-            while wordAt <= numel(wordHandles)
+            wordAt = 2; % current word to add to cluster
+            
+            while wordAt <= numel(this.textHandles)
                 % if bottom row is full and there's at least one more word,
                 % create a new row underneath and add next word
-                if(this.isRowFull(1) && wordAt <= numel(wordHandles))
-                    this = addRowBelow(this, wordHandles(wordAt));
+                if(this.isRowFull(1) && wordAt <= this.numWords)
+                    this = addRowBelow(this, this.textHandles(wordAt));
                     wordAt = wordAt + 1;
                 end
                 
                 % start in the bottom row add words to the left
                 % move up to next row and add word to the left
-                [this, wordAt] = this.addWordsBottomLToTopL(wordAt, wordHandles);
+                [this, wordAt] = this.addWordsBottomLToTopL(wordAt);
                 
                 
                 % if top row is full and there's at least one more word,
                 % create a new row above and add next word
                 if(this.isRowFull(numel(this.wordRows)) && ...
-                        wordAt <= numel(wordHandles))
-                    this = addRowAbove(this, wordHandles(wordAt));
+                        wordAt <= this.numWords)
+                    this = addRowAbove(this, this.textHandles(wordAt));
                     wordAt = wordAt + 1;
                 end
                 
                 % start in the top row. Add a word to the right hand side
                 % move down to next row add next word.
                 % until adding to the right on the bottom row.
-                [this, wordAt] = this.addWordsTopRToBottomR(wordAt, wordHandles);
+                [this, wordAt] = this.addWordsTopRToBottomR(wordAt);
                 
             end
-            this = respaceRowsVertically(this);
-            this.numWords = numel(this.textHandles);
+            this = this.respaceRowsVertically();
         end
         
         function this = recentreCluster(this, newX, newY)
@@ -110,25 +116,25 @@ classdef WordCluster
     end
     
     methods (Access = private)
-        function [this, wordAt] = addWordsBottomLToTopL(this, wordAt, wordHandles)
+        function [this, wordAt] = addWordsBottomLToTopL(this, wordAt)
             r = 1;
-            while (r <= numel(this.wordRows)) && (wordAt <= numel(wordHandles))
+            while (r <= numel(this.wordRows)) && (wordAt <= this.numWords)
                 % if there is space in the row, add another word
                 if(~this.isRowFull(r))
                     this.wordRows(r) = ...
-                        this.wordRows(r).addWordLeft(wordHandles(wordAt));
+                        this.wordRows(r).addWordLeft(this.textHandles(wordAt));
                     wordAt = wordAt + 1;
                 end
                 r = r + 1;
             end
         end
         
-        function [this, wordAt] = addWordsTopRToBottomR(this, wordAt, wordHandles)
+        function [this, wordAt] = addWordsTopRToBottomR(this, wordAt)
             r = numel(this.wordRows);
-            while (r > 0) && (wordAt <= numel(wordHandles))
+            while (r > 0) && (wordAt <= this.numWords)
                 if(~this.isRowFull(r))
                     this.wordRows(r) = ...
-                        this.wordRows(r).addWordRight(wordHandles(wordAt));
+                        this.wordRows(r).addWordRight(this.textHandles(wordAt));
                     wordAt = wordAt + 1;
                 end
                 r = r-1;
