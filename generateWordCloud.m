@@ -22,7 +22,8 @@ tree = linkage(correlationMatrix, 'average');
 % split tree into nclusts distinct clusters
 clusterGroups = cluster(tree, 'maxclust', nclusts);
 
-cloud = WordCloud.WordCloud(keywords, wordCounts, correlationMatrix, clusterGroups);
+settings = WordCloud.WordCloudSettings();
+cloud = WordCloud.WordCloud(keywords, wordCounts, correlationMatrix, clusterGroups, settings);
 
 end
 

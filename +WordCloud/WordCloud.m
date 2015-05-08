@@ -23,7 +23,6 @@ classdef WordCloud
     
     properties
         clusters;
-        allTextHandles = [];
         centreX  = 0.5;
         centreY  = 0.5;
         satelliteDistances;
@@ -43,8 +42,8 @@ classdef WordCloud
     % clusterXcolourmap = cloudmap(clustergroups == clusterXIdx)
     
     methods        
-        function this = WordCloud(wordList, wordCounts, wordCorrelations, clusterGroups)
-            this.initialiseFigure();
+        function this = WordCloud(wordList, wordCounts, wordCorrelations, clusterGroups, settings)
+            this.initialiseFigure(settings);
             % scale the word counts.
             wordCounts = wordCounts ./ min(wordCounts);
             % initialise clusters
@@ -57,6 +56,7 @@ classdef WordCloud
             
             % generate colours for each cluster
             cols = flip(parula(nClusters));
+            cols = rand(numel(wordList), 3);
             
             % process the clusters in order of size
             for clust = clusterOrder
@@ -64,7 +64,7 @@ classdef WordCloud
                 counts = wordCounts(idx);
                 words  = wordList(idx);
                 correlations = wordCorrelations(idx, idx);
-                this = this.makeWordCluster(words, counts, correlations, cols(clust,:));  
+                this = this.makeWordCluster(words, counts, correlations, cols(idx,:));  
             end
             
             % place the first and biggest cluster in the centre
@@ -81,7 +81,7 @@ classdef WordCloud
         function this = rescaleText(this, newScaleFactor)
             resizeFcn = @(h)set(h, 'FontSize', ...
                  h.UserData.wordCount*newScaleFactor*3);
-            arrayfun(resizeFcn, this.allTextHandles);
+%             arrayfun(resizeFcn, this.allTextHandles);
 
             for cl = 1:numel(this.clusters) % is there no way to vectorise this?
                this.clusters(cl) = this.clusters(cl).respaceRowsHorizontally(); 
@@ -108,13 +108,14 @@ classdef WordCloud
     end
     
     methods (Access = private)
-        function this = initialiseFigure(this)
+        function this = initialiseFigure(this, settings)
             f = figure('Name', 'Word Cloud', ...
-                'Units','normalized','OuterPosition',[0 0 1 1]);
+                       'Units','normalized', ...
+                       'OuterPosition',[0 0 1 1], ...
+                       'Color', settings.backgroundColour);
             % f = figure('Name', 'Word Cloud', 'Position', get(groot,'Screensize'));
             axis manual   
             set(gca, 'Visible', 'off');
-            f.Color = this.backgroundColour;
         end
         
         function newOrder = sortClustersBySize(this, clusterGroups, wordCounts)
@@ -126,13 +127,13 @@ classdef WordCloud
             [~,newOrder] = sort(groupSizes, 'descend');
         end
         
-        function this = recalculateLimits(this)
-            left   = min([this.clusters.left]);
-            right  = max([this.clusters.right]);
-            top    = max([this.clusters.top]);
-            bottom = min([this.clusters.bottom]);
-            % rectangle('position', [left, bottom, right-left, top-bottom], 'edgecolor', 'b');
-        end
+%         function this = recalculateLimits(this)
+%             left   = min([this.clusters.left]);
+%             right  = max([this.clusters.right]);
+%             top    = max([this.clusters.top]);
+%             bottom = min([this.clusters.bottom]);
+%             % rectangle('position', [left, bottom, right-left, top-bottom], 'edgecolor', 'b');
+%         end
        
        function dists = calculateClusterDistancesFromCentre(~, wordCorrelations, clusterGroups, clusterOrder)
            % returns array of total distances between all the words in the
@@ -156,19 +157,17 @@ classdef WordCloud
             end
        end
        
-       function this = makeWordCluster(this, words, counts, correlations, coreColour)
+       function this = makeWordCluster(this, words, counts, correlations, coreColours)
            % find most popular word to put in the centre of the cluster
            [~,mostPopularWord] = max(counts);           
            centreTextHandle = this.makeSingleTextHandle( ...
                words(mostPopularWord), ...
                counts(mostPopularWord), ...
-               coreColour, ...
+               coreColours(mostPopularWord, :), ...
                sum(correlations(mostPopularWord,:)) );
            
            % add text handle to cluster
            this.clusters = [this.clusters, WordCloud.WordCluster(centreTextHandle, 0, 0)];
-           % add text handle to text handles vector
-           this.allTextHandles = [this.allTextHandles, centreTextHandle];
            
            % create text handles for remaining words
            words(mostPopularWord)  = [];
@@ -181,15 +180,12 @@ classdef WordCloud
                
                for i = 1:numel(words)
                    textHandles = [textHandles, ...
-                       this.makeSingleTextHandle(words(i), counts(i), coreColour, sum(correlations(i,:)) )]; %#ok<AGROW>
+                       this.makeSingleTextHandle(words(i), counts(i), coreColours(i,:), sum(correlations(i,:)) )]; %#ok<AGROW>
                end
                
                % add remaining words to cluster
                this.clusters(end) = ...
                    this.clusters(end).addWords(textHandles, corr2centre);
-               
-               % add all text handles to text handles vector
-               this.allTextHandles = [this.allTextHandles, textHandles];
            end
        end
        

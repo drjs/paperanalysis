@@ -2,6 +2,7 @@ classdef WordCluster
     %WORDCLOUD A single cluster of words within a WordCloud
     
     properties
+        textHandles;
         wordRows;
         centreX;
         centreY;
@@ -16,9 +17,10 @@ classdef WordCluster
     
     methods
         function this = WordCluster(centreWordHandle, x, y)
-            this.wordRows = WordCloud.WordClusterRow(centreWordHandle, 'middle', x, y);
-            this.centreX  = x;
-            this.centreY  = y;
+            this.textHandles = centreWordHandle;
+            this.wordRows    = WordCloud.WordClusterRow(centreWordHandle, 'middle', x, y);
+            this.centreX     = x;
+            this.centreY     = y;
             this = recalculateLimits(this);
         end
         
@@ -26,6 +28,7 @@ classdef WordCluster
             % sort words according to how correlated they are to the centre
             [~, sortOrderIdx] = sort(correlationToCentre, 'descend');
             wordHandles = wordHandles(sortOrderIdx);
+            this.textHandles = [this.textHandles, wordHandles];
             wordAt = 1; % current word to add to cluster
             
             while wordAt <= numel(wordHandles)
