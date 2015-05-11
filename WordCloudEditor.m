@@ -56,7 +56,7 @@ function WordCloudEditor_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.output = hObject;
 
 % check if there is a statistics toolbox license.
-if license('test', 'Statistics_Toolbox') == 1
+if license('test', 'Statistics_Toolbox') ~= 1
     % If not disable cluster options and change panel tooltip to explanation.
     set(handles.cluster_options_panel.Children, 'Enable', 'off');
     set(handles.cluster_options_panel.Children, 'TooltipString', ...
@@ -138,7 +138,6 @@ function colourmap_menu_Callback(hObject, eventdata, handles)
 %        contents{get(hObject,'Value')} returns selected item from colourmap_menu
 fac = getappdata(handles.wordcloud_editor_figure, 'factory');
 fac = fac.setColourMap(get(hObject,'Value'));
-fac = fac.recolourCloud();
 setappdata(handles.wordcloud_editor_figure, 'factory', fac);
 
 
@@ -166,7 +165,6 @@ function colour_mode_menu_Callback(hObject, eventdata, handles)
 fac = getappdata(handles.wordcloud_editor_figure, 'factory');
 fac = fac.setColourMode(get(hObject,'Value'));
 setSelectTextButtonState(handles, fac.colourMode);
-fac = fac.recolourCloud();
 setappdata(handles.wordcloud_editor_figure, 'factory', fac);
 
 
@@ -191,7 +189,6 @@ function select_text_colour_btn_Callback(hObject, eventdata, handles)
 handles.select_text_colour_btn.BackgroundColor = uisetcolor;
 fac = getappdata(handles.wordcloud_editor_figure, 'factory');
 fac = fac.setTextColour(handles.select_text_colour_btn.BackgroundColor);
-fac = fac.recolourCloud();
 setappdata(handles.wordcloud_editor_figure, 'factory', fac);
 
 
@@ -207,13 +204,14 @@ setappdata(handles.wordcloud_editor_figure, 'factory', fac);
 
 
 % --- Executes on selection change in fonts_list.
-function fonts_list_Callback(hObject, eventdata, handles)
+% function fonts_list_Callback(hObject, eventdata, handles)
 % hObject    handle to fonts_list (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns fonts_list contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from fonts_list
+
 
 
 % --- Executes during object creation, after setting all properties.
@@ -234,6 +232,24 @@ function remove_fonts_btn_Callback(hObject, eventdata, handles)
 % hObject    handle to remove_fonts_btn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+selectedFonts = get(handles.fonts_list,'Value');
+
+% Do not delete all the fonts or the cloud will break
+% if the user wants to delete all the fonts, they must be educated.
+if  numel(selectedFonts) < numel(handles.fonts_list.String)
+    % clear all values, otherwise this can cause a value to be larger than
+    % number of strings in the listbox, causing an error.
+    handles.fonts_list.Value = [];
+    % delete selected files
+    handles.fonts_list.String(selectedFonts) = [];
+    % update fonts in cloud
+    fac = getappdata(handles.wordcloud_editor_figure, 'factory');
+    fac = fac.setFonts(handles.fonts_list.String);
+    setappdata(handles.wordcloud_editor_figure, 'factory', fac);
+else
+    warndlg({'Deleting all the fonts means the word cloud cannot render.'; ...
+        'Do not delete all the fonts at the same time.'});
+end
 
 
 % --- Executes on button press in add_fonts_btn.
@@ -241,6 +257,15 @@ function add_fonts_btn_Callback(hObject, eventdata, handles)
 % hObject    handle to add_fonts_btn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+% get new font and add to listbox
+fontinfo = uisetfont;
+handles.fonts_list.String = [handles.fonts_list.String; fontinfo.FontName];
+handles.fonts_list.String = unique(handles.fonts_list.String);
+% get fonts in listbox and give to factory.
+fac = getappdata(handles.wordcloud_editor_figure, 'factory');
+fac = fac.setFonts(handles.fonts_list.String);
+setappdata(handles.wordcloud_editor_figure, 'factory', fac);
 
 
 % --- Executes on slider movement.
@@ -251,6 +276,10 @@ function text_size_slider_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
+fac = getappdata(handles.wordcloud_editor_figure, 'factory');
+fac = fac.setTextScale(get(hObject,'Value'));
+setappdata(handles.wordcloud_editor_figure, 'factory', fac);
 
 
 % --- Executes during object creation, after setting all properties.

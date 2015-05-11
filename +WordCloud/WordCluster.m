@@ -106,13 +106,13 @@ classdef WordCluster < handle
             
             % if the cluster no longer fits the ideal width/height ratio
             % then rebuild it.
-%             width  = this.right - this.left;
-%             height = this.top - this.bottom;
-%             if width > height * this.widthHeightRatio
-%                 disp('rebuilding cluster')
-%                 delete(this.wordRows);
-%                 this = this.buildCluster();
-%             end
+            width  = this.right - this.left;
+            height = this.top - this.bottom;
+            if width > height * this.widthHeightRatio
+                disp('rebuilding cluster')
+                delete(this.wordRows);
+                this = this.buildCluster();
+            end
         end
         
         function this = changeFonts(this, newFonts)

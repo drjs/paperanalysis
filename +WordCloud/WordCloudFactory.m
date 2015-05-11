@@ -97,6 +97,7 @@ classdef WordCloudFactory
         function obj = setColourMap(obj, idx)
             obj.colourMap = obj.possibleColourMaps{idx};
             setpref(obj.prefgroup, 'colourMap', obj.colourMap);
+            obj = obj.recolourCloud();
         end
         
         function idx = getColourMapIdx(obj)
@@ -108,6 +109,7 @@ classdef WordCloudFactory
         function obj = setColourMode(obj, idx)
             obj.colourMode = obj.colouringModes{idx};
             setpref(obj.prefgroup, 'colourMode', obj.colourMode);
+            obj = obj.recolourCloud();
         end
         
         function idx = getColourModeIdx(obj)
@@ -119,18 +121,32 @@ classdef WordCloudFactory
         function obj = setTextColour(obj, newColour)
             obj.textColour = newColour;
             setpref(obj.prefgroup, 'textColour', newColour);
+            obj = obj.recolourCloud();
         end
             
         function obj = setBackgroundColour(obj, newColour)
             obj.backgroundColour = newColour;
             setpref(obj.prefgroup, 'backgroundColour', newColour);
-            obj.cloud.figHandle.Color = newColour;            
+            obj.cloud.figHandle.Color = newColour;  
+            obj.cloud = obj.cloud.setLogo(obj.hasLogo);          
         end
         
         function obj = setHasLogo(obj, newState)
             obj.hasLogo = newState;
             setpref(obj.prefgroup, 'hasLogo', newState);
             obj.cloud = obj.cloud.setLogo(newState);
+        end
+        
+        function obj = setFonts(obj, fontList)
+            obj.fonts = fontList;
+            setpref(obj.prefgroup, 'fonts', fontList);
+            obj.cloud = obj.cloud.changeFonts(fontList);
+        end
+        
+        function obj = setTextScale(obj, newSize)
+            obj.textScaleFactor = newSize;
+            obj.cloud = obj.cloud.rescaleText(newSize);
+            setpref(obj.prefgroup, 'textScaleFactor', newSize);
         end
         
         function obj = recolourCloud(obj)
