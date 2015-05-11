@@ -22,6 +22,9 @@ classdef WordCluster < handle
             this.centreX     = x;
             this.centreY     = y;
             this.numWords    = numel(this.textHandles);
+            % Centre row is the only middle aligned row
+            this.wordRows    = WordCloud.WordClusterRow(this.textHandles(1), 'middle', this.centreX, this.centreY);
+            this = this.recalculateLimits();
         end
         
         function this = addWords(this, wordHandles, correlationToCentre)
@@ -30,17 +33,14 @@ classdef WordCluster < handle
             wordHandles = wordHandles(sortOrderIdx);
             this.textHandles = [this.textHandles, wordHandles];
             this.numWords = numel(this.textHandles);
-            this = this.buildCluster();
-        end
-        
-        function this = buildCluster(this)
-            % Centre row is the only middle aligned row
-            this.wordRows    = WordCloud.WordClusterRow(this.textHandles(1), 'middle', this.centreX, this.centreY);
-            this = this.recalculateLimits();
+%             this = this.buildCluster();
+%         end
+%         
+%         function this = buildCluster(this)
             
             wordAt = 2; % current word to add to cluster
             
-            while wordAt <= numel(this.textHandles)
+            while wordAt <= this.numWords
                 % if bottom row is full and there's at least one more word,
                 % create a new row underneath and add next word
                 if(this.isRowFull(1) && wordAt <= this.numWords)
@@ -106,13 +106,13 @@ classdef WordCluster < handle
             
             % if the cluster no longer fits the ideal width/height ratio
             % then rebuild it.
-            width  = this.right - this.left;
-            height = this.top - this.bottom;
-            if width > height * this.widthHeightRatio
-                disp('rebuilding cluster')
-                delete(this.wordRows);
-                this = this.buildCluster();
-            end
+%             width  = this.right - this.left;
+%             height = this.top - this.bottom;
+%             if width > height * this.widthHeightRatio
+%                 disp('rebuilding cluster')
+%                 delete(this.wordRows);
+%                 this = this.buildCluster();
+%             end
         end
         
         function this = changeFonts(this, newFonts)

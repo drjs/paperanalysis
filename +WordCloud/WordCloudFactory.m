@@ -93,7 +93,7 @@ classdef WordCloudFactory
             obj = obj.recolourCloud();
             obj.cloud = obj.cloud.setLogo(obj.hasLogo);
         end
-        
+              
         function obj = setColourMap(obj, idx)
             obj.colourMap = obj.possibleColourMaps{idx};
             setpref(obj.prefgroup, 'colourMap', obj.colourMap);
@@ -147,6 +147,28 @@ classdef WordCloudFactory
             obj.textScaleFactor = newSize;
             obj.cloud = obj.cloud.rescaleText(newSize);
             setpref(obj.prefgroup, 'textScaleFactor', newSize);
+        end
+        
+        function obj = setNumWords(obj, numWords, docParser)
+            obj.numWords = numWords;
+            setpref(obj.prefgroup, 'numWords', numWords);
+            delete(obj.cloud.figHandle);
+            delete(obj.cloud);
+            obj = obj.buildCloud(docParser);
+        end
+        
+        function obj = setNumClusters(obj, numClusters, docParser)
+            obj.numClusters = numClusters;
+            setpref(obj.prefgroup, 'numClusters', numClusters);
+            delete(obj.cloud.figHandle);
+            delete(obj.cloud);
+            obj = obj.buildCloud(docParser);
+        end
+        
+        function obj = setClusterSeparation(obj, newDistance)
+            obj.clusterDistanceFactor = newDistance;
+            getpref(obj.prefgroup, 'clusterDistanceFactor', newDistance);
+            obj.cloud = obj.cloud.rescaleClusterSeparation(newDistance);
         end
         
         function obj = recolourCloud(obj)

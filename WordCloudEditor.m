@@ -98,22 +98,25 @@ function initialiseUIObjectsWithFactoryDefaults(handles, fac)
     handles.colour_mode_menu.String = fac.colouringModes;
     handles.colour_mode_menu.Value = fac.getColourModeIdx();
     handles.select_text_colour_btn.BackgroundColor = fac.textColour;
-    setSelectTextButtonState(handles, fac.colourMode);
+    setSelectTextButtonState(handles, fac.colourMode, fac.textColour);
     handles.has_logo_chbx.Value = fac.hasLogo;
     
     handles.num_clusters_slider.Value = fac.numClusters;
     handles.cluster_separation_slider.Value = fac.clusterDistanceFactor;
     
 
-function setSelectTextButtonState(handles, colourMode)
+function setSelectTextButtonState(handles, colourMode, bgColour)
     if strcmp(colourMode, 'Uniform word colouring')
         % if uniform word colouring, then enable text colour label and button.
         handles.select_text_colour_label.Enable = 'on';
         handles.select_text_colour_btn.Enable = 'on';
+        handles.select_text_colour_btn.BackgroundColor = bgColour;
     else
         % otherwise disable text colour label and button.
         handles.select_text_colour_label.Enable = 'off';
         handles.select_text_colour_btn.Enable = 'off';
+        handles.select_text_colour_btn.BackgroundColor = ...
+            handles.wordcloud_editor_figure.Color;
     end
 
     
@@ -164,7 +167,7 @@ function colour_mode_menu_Callback(hObject, eventdata, handles)
 %        contents{get(hObject,'Value')} returns selected item from colour_mode_menu
 fac = getappdata(handles.wordcloud_editor_figure, 'factory');
 fac = fac.setColourMode(get(hObject,'Value'));
-setSelectTextButtonState(handles, fac.colourMode);
+setSelectTextButtonState(handles, fac.colourMode, fac.textColour);
 setappdata(handles.wordcloud_editor_figure, 'factory', fac);
 
 
@@ -303,6 +306,12 @@ function num_clusters_slider_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+nclust = ceil(get(hObject,'Value'));
+
+fac = getappdata(handles.wordcloud_editor_figure, 'factory');
+parser = getappdata(handles.wordcloud_editor_figure, 'parser');
+fac = fac.setNumClusters(nclust, parser);
+setappdata(handles.wordcloud_editor_figure, 'factory', fac);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -325,6 +334,10 @@ function cluster_separation_slider_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
+fac = getappdata(handles.wordcloud_editor_figure, 'factory');
+fac = fac.setClusterSeparation(get(hObject,'Value'));
+setappdata(handles.wordcloud_editor_figure, 'factory', fac);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -360,7 +373,12 @@ function num_words_edit_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of num_words_edit as text
 %        str2double(get(hObject,'String')) returns contents of num_words_edit as a double
+nwords = str2double(get(hObject,'String'));
 
+fac = getappdata(handles.wordcloud_editor_figure, 'factory');
+parser = getappdata(handles.wordcloud_editor_figure, 'parser');
+fac = fac.setNumWords(nwords, parser);
+setappdata(handles.wordcloud_editor_figure, 'factory', fac);
 
 
 % --- Executes during object creation, after setting all properties.
