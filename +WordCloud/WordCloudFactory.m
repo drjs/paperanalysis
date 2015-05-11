@@ -10,9 +10,20 @@ classdef WordCloudFactory
     %   * cluster width/height ratio?
     %   * presence of MATLAB logo?
     
-    properties
+    
+    % read only properties
+    properties (SetAccess = private)
+        colouringModes = {'Uniform clusters', ... 
+                          'Colour within cluster', ...
+                          'Colour by word', ...
+                          'Random word colouring', ...
+                          'Uniform word colouring'};
+        possibleColourMapNames;
+%         {'parula', 'jet', 'hsv', 'hot', 'cool', 'spring', ...
+%                     'summer', 'autumn', 'winter', 'gray', 'bone', 'copper', 'pink'};
         backgroundColour;
         textColour;
+        numWords;
         colourMap;
         fonts;
         colourMode;
@@ -21,17 +32,6 @@ classdef WordCloudFactory
         clusterDistanceFactor;
         hasLogo;
         cloud;
-    end
-    
-    % read only properties
-    properties (SetAccess = private)
-        possibleColourMapNames = {'parula', 'jet', 'hsv', 'hot', 'cool', 'spring', ...
-                    'summer', 'autumn', 'winter', 'gray', 'bone', 'copper', 'pink'};
-        colouringModes = {'Uniform clusters', ... 
-                          'Colour within cluster', ...
-                          'Colour by word', ...
-                          'Random word colouring', ...
-                          'Uniform word colouring'};
     end
     
     properties (Access = private)
@@ -44,18 +44,22 @@ classdef WordCloudFactory
         function obj = WordCloudFactory()
             obj.backgroundColour       = getpref(obj.prefgroup, 'backgroundColour', [0 0 0]);
             obj.textColour             = getpref(obj.prefgroup, 'textColour', [1 1 1]);
+            obj.numWords               = getpref(obj.prefgroup, 'numWords', 75);
             obj.colourMap              = getpref(obj.prefgroup, 'colourMap', @parula);
             obj.fonts                  = getpref(obj.prefgroup, 'fonts', {'Times New Roman'});
             obj.colourMode             = getpref(obj.prefgroup, 'colourMode', obj.colouringModes{2});  
             obj.textScaleFactor        = getpref(obj.prefgroup, 'textScaleFactor', 2);
             obj.numClusters            = getpref(obj.prefgroup, 'numClusters', 1);
             obj.clusterDistanceFactor  = getpref(obj.prefgroup, 'clusterDistanceFactor', 0.5);
-            obj.hasLogo                = getpref(obj.prefgroup, 'hasLogo', true);            
+            obj.hasLogo                = getpref(obj.prefgroup, 'hasLogo', 'on');       
+            
+            obj.possibleColourMapNames = cellfun(@func2str, obj.possibleColourMaps, 'UniformOutput', false);
         end
         
         function obj = clearAllPreferences(obj)
             rmpref(obj.prefgroup, 'backgroundColour');
             rmpref(obj.prefgroup, 'textColour');
+            rmpref(obj.prefgroup, 'numWords');
             rmpref(obj.prefgroup, 'colourMap');
             rmpref(obj.prefgroup, 'fonts');
             rmpref(obj.prefgroup, 'colourMode');  
@@ -65,11 +69,11 @@ classdef WordCloudFactory
             rmpref(obj.prefgroup, 'hasLogo');   
         end
         
-        function obj = buildCloud(obj, docParser, numWords)
-            keywords = docParser.uniqueWords(1:numWords);
-            wordCounts = docParser.wordCounts(1:numWords, :);
+        function obj = buildCloud(obj, docParser)
+            keywords = docParser.uniqueWords(1:obj.numWords);
+            wordCounts = docParser.wordCounts(1:obj.numWords, :);
             wordCounts = sum(wordCounts, 2);
-            normalisedWordCounts = docParser.normalisedWordCounts(1:numWords, :);
+            normalisedWordCounts = docParser.normalisedWordCounts(1:obj.numWords, :);
             
             % if the statistics toolbox is present then statistial analysis
             % is possible
@@ -79,13 +83,46 @@ classdef WordCloudFactory
                 clusterGroups = cluster(tree, 'maxclust', obj.numClusters);
             else
                 % otherwise only one cluster is possible
-                correlationMatrix = randn(numWords, numWords);
-                % correlationMatrix = ones(numWords, numWords);
-                clusterGroups = ones(numWords, 1);
+                correlationMatrix = randn(obj.numWords, obj.numWords);
+                % correlationMatrix = ones(obj.numWords, obj.numWords);
+                clusterGroups = ones(obj.numWords, 1);
             end
             
             obj.cloud = WordCloud.WordCloud(keywords, wordCounts, correlationMatrix, clusterGroups, obj);
-            obj.recolourCloud();
+            obj = obj.recolourCloud();
+        end
+        
+        function obj = setColourMap(obj, idx)
+            obj.colourMap = obj.possibleColourMaps{idx};
+            setpref(obj.prefgroup, 'colourMap', obj.colourMap);
+        end
+        
+        function idx = getColourMapIdx(obj)
+            findCmap = ismember(obj.possibleColourMapNames, func2str(obj.colourMap));
+            idx = 1:numel(obj.possibleColourMapNames);
+            idx = idx(findCmap);
+        end
+        
+        function obj = setColourMode(obj, idx)
+            obj.colourMode = obj.colouringModes{idx};
+            setpref(obj.prefgroup, 'colourMode', obj.colourMode);
+        end
+        
+        function idx = getColourModeIdx(obj)
+            findMode = ismember(obj.colouringModes, obj.colourMode);
+            idx = 1:numel(obj.colouringModes);
+            idx = idx(findMode);
+        end
+        
+        function obj = setTextColour(obj, newColour)
+            obj.textColour = newColour;
+            setpref(obj.prefgroup, 'textColour', newColour);
+        end
+            
+        function obj = setBackgroundColour(obj, newColour)
+            obj.backgroundColour = newColour;
+            setpref(obj.prefgroup, 'backgroundColour', newColour);
+            obj.cloud.figHandle.Color = newColour;            
         end
         
         function obj = recolourCloud(obj)
@@ -93,7 +130,7 @@ classdef WordCloudFactory
                 case 'Uniform clusters'
                     obj.cloud.recolourUniformClusters(obj.colourMap);
                 case 'Colour within cluster'
-                    obj.cloud.recolourWithinClusters(obj.colourMap);
+                    obj.cloud = obj.cloud.recolourWithinClusters(obj.colourMap);
                 case 'Colour by word'
                     obj.cloud.recolourByWord(obj.colourMap);
                 case 'Random word colouring'

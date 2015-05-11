@@ -1,4 +1,4 @@
-classdef WordCluster
+classdef WordCluster < handle
     %WORDCLOUD A single cluster of words within a WordCloud
     
     properties

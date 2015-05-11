@@ -7,8 +7,9 @@ testfiles = {testfiles{3:end}}';
 
 docParser = ParseFiles(testfiles, 'SEFI2014');
 docParser.run();
-fac = WordCloud.WordCloudFactory();
-fac.buildCloud(docParser, 100);
+WordCloudEditor('parser', docParser);
+% fac = WordCloud.WordCloudFactory();
+% fac.buildCloud(docParser, 100);
 
 % testfiles = dir('testdata');
 % testfiles = {testfiles.name};

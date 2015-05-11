@@ -1,4 +1,4 @@
-classdef WordCloud
+classdef WordCloud < handle
     
     properties
         % cell array of fonts to use in clouds. Fonts are randomly selected

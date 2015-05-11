@@ -22,7 +22,7 @@ function varargout = WordCloudEditor(varargin)
 
 % Edit the above text to modify the response to help WordCloudEditor
 
-% Last Modified by GUIDE v2.5 08-May-2015 17:13:20
+% Last Modified by GUIDE v2.5 11-May-2015 12:09:46
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -55,13 +55,68 @@ function WordCloudEditor_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for WordCloudEditor
 handles.output = hObject;
 
+% check if there is a statistics toolbox license.
+if license('test', 'Statistics_Toolbox') == 1
+    % If not disable cluster options and change panel tooltip to explanation.
+    set(handles.cluster_options_panel.Children, 'Enable', 'off');
+    set(handles.cluster_options_panel.Children, 'TooltipString', ...
+        'Cluster options only available with statistics toolbox');
+end
+% check the parser was provided
+if(nargin > 3)
+    for index = 1:2:(nargin-3),
+        switch lower(varargin{index})
+            case 'parser'
+                fac = WordCloud.WordCloudFactory();
+                setappdata(handles.wordcloud_editor_figure, 'factory', fac);
+                setappdata(handles.wordcloud_editor_figure, 'parser', varargin{index+1});
+                initialiseUIObjectsWithFactoryDefaults(handles, fac);
+                fac = fac.buildCloud(varargin{index+1});
+                setappdata(handles.wordcloud_editor_figure, 'factory', fac);
+                break;
+            otherwise
+                error(['WordCloudEditor not passed an object of type "ParseFiles". ' ...
+                    'Use the syntax WordCloudEditor(''parser'', ParseFilesObj);']);
+        end
+    end
+else
+    error(['WordCloudEditor not passed an object of type "ParseFiles". ' ...
+        'Use the syntax WordCloudEditor(''parser'', ParseFilesObj);']);
+end
+
 % Update handles structure
 guidata(hObject, handles);
 
-% UIWAIT makes WordCloudEditor wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+function initialiseUIObjectsWithFactoryDefaults(handles, fac)
+    handles.num_words_edit.String = fac.numWords;
+    handles.fonts_list.String = fac.fonts;
+    handles.text_size_slider.Value = fac.textScaleFactor;
+    
+    handles.select_background_colour_btn.BackgroundColor = fac.backgroundColour;
+    handles.colourmap_menu.String = fac.possibleColourMapNames;
+    handles.colourmap_menu.Value = fac.getColourMapIdx();
+    handles.colour_mode_menu.String = fac.colouringModes;
+    handles.colour_mode_menu.Value = fac.getColourModeIdx();
+    handles.select_text_colour_btn.BackgroundColor = fac.textColour;
+    setSelectTextButtonState(handles, fac.colourMode);
+    handles.has_logo_chbx.Value = fac.hasLogo;
+    
+    handles.num_clusters_slider.Value = fac.numClusters;
+    handles.cluster_separation_slider.Value = fac.clusterDistanceFactor;
+    
 
+function setSelectTextButtonState(handles, colourMode)
+    if strcmp(colourMode, 'Uniform word colouring')
+        % if uniform word colouring, then enable text colour label and button.
+        handles.select_text_colour_label.Enable = 'on';
+        handles.select_text_colour_btn.Enable = 'on';
+    else
+        % otherwise disable text colour label and button.
+        handles.select_text_colour_label.Enable = 'off';
+        handles.select_text_colour_btn.Enable = 'off';
+    end
 
+    
 % --- Outputs from this function are returned to the command line.
 function varargout = WordCloudEditor_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
@@ -81,6 +136,10 @@ function colourmap_menu_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns colourmap_menu contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from colourmap_menu
+fac = getappdata(handles.wordcloud_editor_figure, 'factory');
+fac = fac.setColourMap(get(hObject,'Value'));
+fac = fac.recolourCloud();
+setappdata(handles.wordcloud_editor_figure, 'factory', fac);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -104,6 +163,11 @@ function colour_mode_menu_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns colour_mode_menu contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from colour_mode_menu
+fac = getappdata(handles.wordcloud_editor_figure, 'factory');
+fac = fac.setColourMode(get(hObject,'Value'));
+setSelectTextButtonState(handles, fac.colourMode);
+fac = fac.recolourCloud();
+setappdata(handles.wordcloud_editor_figure, 'factory', fac);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -124,6 +188,11 @@ function select_text_colour_btn_Callback(hObject, eventdata, handles)
 % hObject    handle to select_text_colour_btn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+handles.select_text_colour_btn.BackgroundColor = uisetcolor;
+fac = getappdata(handles.wordcloud_editor_figure, 'factory');
+fac = fac.setTextColour(handles.select_text_colour_btn.BackgroundColor);
+fac = fac.recolourCloud();
+setappdata(handles.wordcloud_editor_figure, 'factory', fac);
 
 
 % --- Executes on button press in select_background_colour_btn.
@@ -131,6 +200,10 @@ function select_background_colour_btn_Callback(hObject, eventdata, handles)
 % hObject    handle to select_background_colour_btn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+handles.select_background_colour_btn.BackgroundColor = uisetcolor;
+fac = getappdata(handles.wordcloud_editor_figure, 'factory');
+fac = fac.setBackgroundColour(handles.select_background_colour_btn.BackgroundColor);
+setappdata(handles.wordcloud_editor_figure, 'factory', fac);
 
 
 % --- Executes on selection change in fonts_list.
@@ -192,65 +265,6 @@ if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColo
 end
 
 
-% --- Executes on selection change in popupmenu3.
-function popupmenu3_Callback(hObject, eventdata, handles)
-% hObject    handle to popupmenu3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu3 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from popupmenu3
-
-
-% --- Executes during object creation, after setting all properties.
-function popupmenu3_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to popupmenu3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: popupmenu controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-% --- Executes on selection change in popupmenu4.
-function popupmenu4_Callback(hObject, eventdata, handles)
-% hObject    handle to popupmenu4 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu4 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from popupmenu4
-
-
-% --- Executes during object creation, after setting all properties.
-function popupmenu4_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to popupmenu4 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: popupmenu controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-% --- Executes on button press in pushbutton3.
-function pushbutton3_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in pushbutton4.
-function pushbutton4_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton4 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
 
 % --- Executes on slider movement.
 function num_clusters_slider_Callback(hObject, eventdata, handles)
@@ -271,4 +285,59 @@ function num_clusters_slider_CreateFcn(hObject, eventdata, handles)
 % Hint: slider controls usually have a light gray background.
 if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+% --- Executes on slider movement.
+function cluster_separation_slider_Callback(hObject, eventdata, handles)
+% hObject    handle to num_clusters_slider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
+
+% --- Executes during object creation, after setting all properties.
+function cluster_separation_slider_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to cluster_separation_slider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+% --- Executes on button press in has_logo_chbx.
+function has_logo_chbx_Callback(hObject, eventdata, handles)
+% hObject    handle to has_logo_chbx (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of has_logo_chbx
+
+
+
+function num_words_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to num_words_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of num_words_edit as text
+%        str2double(get(hObject,'String')) returns contents of num_words_edit as a double
+
+
+
+% --- Executes during object creation, after setting all properties.
+function num_words_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to num_words_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
 end
