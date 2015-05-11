@@ -31,13 +31,14 @@ classdef WordCloudFactory
         numClusters;
         clusterDistanceFactor;
         hasLogo;
-        cloud;
     end
     
     properties (Access = private)
         prefgroup = 'WordCloud';
         possibleColourMaps = {@parula, @jet, @hsv, @hot, @cool, @spring, ...
                     @summer, @autumn, @winter, @gray, @bone, @copper, @pink};
+        cloud;
+        logoHandle;
     end
     
     methods
@@ -51,7 +52,7 @@ classdef WordCloudFactory
             obj.textScaleFactor        = getpref(obj.prefgroup, 'textScaleFactor', 2);
             obj.numClusters            = getpref(obj.prefgroup, 'numClusters', 1);
             obj.clusterDistanceFactor  = getpref(obj.prefgroup, 'clusterDistanceFactor', 0.5);
-            obj.hasLogo                = getpref(obj.prefgroup, 'hasLogo', 'on');       
+            obj.hasLogo                = getpref(obj.prefgroup, 'hasLogo', true);       
             
             obj.possibleColourMapNames = cellfun(@func2str, obj.possibleColourMaps, 'UniformOutput', false);
         end
@@ -90,6 +91,7 @@ classdef WordCloudFactory
             
             obj.cloud = WordCloud.WordCloud(keywords, wordCounts, correlationMatrix, clusterGroups, obj);
             obj = obj.recolourCloud();
+            obj.cloud = obj.cloud.setLogo(obj.hasLogo);
         end
         
         function obj = setColourMap(obj, idx)
@@ -125,6 +127,12 @@ classdef WordCloudFactory
             obj.cloud.figHandle.Color = newColour;            
         end
         
+        function obj = setHasLogo(obj, newState)
+            obj.hasLogo = newState;
+            setpref(obj.prefgroup, 'hasLogo', newState);
+            obj.cloud = obj.cloud.setLogo(newState);
+        end
+        
         function obj = recolourCloud(obj)
             switch obj.colourMode
                 case 'Uniform clusters'
@@ -139,6 +147,8 @@ classdef WordCloudFactory
                     obj.cloud.recolourWordsUniformly(obj.textColour);
             end
         end
+        
+
     end
     
 end

@@ -318,6 +318,10 @@ function has_logo_chbx_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of has_logo_chbx
 
+fac = getappdata(handles.wordcloud_editor_figure, 'factory');
+fac = fac.setHasLogo(logical(get(hObject,'Value')));
+setappdata(handles.wordcloud_editor_figure, 'factory', fac);
+
 
 
 function num_words_edit_Callback(hObject, eventdata, handles)

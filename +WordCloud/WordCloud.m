@@ -28,6 +28,7 @@ classdef WordCloud < handle
         centreY  = 0.5;
         satelliteDistances;
         numWords;
+        logoHandle;
     end
         
     methods        
@@ -126,6 +127,16 @@ classdef WordCloud < handle
         function this = changeFonts(this, newFonts)
             for c = this.clusters
                 c.changeFonts(newFonts);
+            end
+        end
+        
+        function this = setLogo(this, state)
+            if state
+                this.logoHandle = WordCloud.addMWLogo(this.figHandle);
+            else
+                if ishandle(this.logoHandle)
+                    delete(this.logoHandle);
+                end
             end
         end
     end
