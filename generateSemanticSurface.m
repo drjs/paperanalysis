@@ -9,18 +9,18 @@ end
 topNWords = parserObject.uniqueWords(1:nwords);
 
 % [x,y,z, axisLabels] = usePCAOnData(normalisedWordCounts, topNWords);
-[x,y,z, axisLabels] = usePCAOnData(parserObject.wordCounts(1:nwords,:), topNWords);
+[x,y,z, axisLabels] = useNNMFOnData(parserObject.wordCounts(1:nwords,:), topNWords);
  
 % Set up fittype and options.
-ftype = fittype( 'lowess' );
-fopts = fitoptions('Method', 'LowessFit');
-fopts.Normalize = 'on';
-fopts.Robust = 'LAR';
-fopts.Span = 0.1818; %Changing this will make the surface rougher or smoother
+% ftype = fittype( 'lowess' );
+% fopts = fitoptions('Method', 'LowessFit');
+% fopts.Normalize = 'on';
+% fopts.Robust = 'LAR';
+% fopts.Span = 0.1818; %Changing this will make the surface rougher or smoother
 
 % Fit model to data.
-[fitresult, gof] = fit( [x, y], z, ftype, fopts );
-% [fitresult, ~] = fit( [x, y], z, 'cubicinterp' );
+% [fitresult, gof] = fit( [x, y], z, ftype, fopts );
+[fitresult, ~] = fit( [x, y], z, 'cubicinterp' );
 
 % Plot fit with data.
 figTitle = [parserObject.projectName, ' Semantic Surface'];
@@ -77,7 +77,7 @@ pca_loadings(i,:) = [];
 tempWords = words;
 tempWords(i) = [];
 [~,i] = max(pca_loadings);
-axisLabels = strcat(axisLabels, '/', tempWords(i))
+axisLabels = strcat(axisLabels, '/', tempWords(i));
 
 % plot(pca_loadings);
 % set(gca, 'xtick', 1:numel(words), 'xticklabels', words, 'xticklabelrotation', 90);

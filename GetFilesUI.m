@@ -65,6 +65,13 @@ setappdata(handles.mainFig, 'LastFolderViewed', pwd);
 setappdata(handles.mainFig, 'SupportedFormats', {'*.txt'; '*.pdf'; '*.doc'; '*.docx'});
 % enable multiple select on the list box
 handles.file_listbox.Max = 2;
+% disable semantic surface until there are 10 files to parse
+handles.generate_surface_btn.Enable = 'off';
+% set tooltip string if statistics toolbox is unlicensed.
+if license('test', 'Statistics_Toolbox') ~= 1
+    handles.generate_surface_btn.TooltipString = ...
+        'Semantic surface functionality is only available with the statistics toolbox.';
+end
 
 
 % UIWAIT makes GetFilesUI wait for user response (see UIRESUME)
@@ -248,8 +255,8 @@ elseif isempty(name)
     uiwait(warndlg('Please enter a project name.'));
 else
     docparser = ParseFiles(flist, name);
-    docparser.runSequentially();
-    generateWordCloud(docparser, 100);
+    docparser.run();
+    WordCloudEditor('parser', docparser);
 end
 
 
@@ -272,7 +279,7 @@ elseif isempty(name)
 else
     docparser = ParseFiles(flist, name);
     docparser.run();
-    generateSemanticSurface(docparser, 1000);
+    generateSemanticSurface(docparser, 100);
 end
 
 
@@ -313,3 +320,14 @@ function setListBoxString(handles, fileList)
 handles.file_listbox.String = strcat(names, exts);
 % update list box with new file list INCLUDING full path name
 % handles.file_listbox.String = fileList;
+setGenerateSurfaceButtonEnableState(handles, numel(names));
+
+
+function setGenerateSurfaceButtonEnableState(handles, numFiles)
+% if there are enough files to parse and the statistics toolbox is licensed
+if (numFiles > 9) && (license('test', 'Statistics_Toolbox') == 1)
+   % then enable the generate surface button 
+    handles.generate_surface_btn.Enable = 'on';
+end
+    
+    

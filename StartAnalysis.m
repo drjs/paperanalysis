@@ -1,4 +1,4 @@
-function fac = StartAnalysis()
+function StartAnalysis()
 
 testfiles = dir('\\mathworks\marketing\Education\SharePoint_Big\ConferenceProceedings\SEFI2014\papers');
 testfiles = {testfiles.name};

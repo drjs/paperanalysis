@@ -47,17 +47,7 @@ These are:
 
 ### Visualisation TODO
 
-2. Create GUI for interactive customisation of Word Cloud. Make these things editable:
-  * number of clusters
-  * number of words
-  * background colour
-  * word colours? coloured randomly, by cluster or by correllated-to-other-words-ness (have transparency represent correllation maybe?)
-  * Fonts. My choices are not always present on the system. Use UISETFONT function.
-  * word scaling generally
-  * word size with respect to popularity. Maybe make a histogram?
-  * cluster separation: how far apart are the clusters.
-  * cluster width/height ratio?
-  * presence of MATLAB logo?
+1. Improve semantic surface visualisation.
 5. Make parser use MATLAB's big data functionality for maximum efficiency.
-6. Add checks to GetFilesUI to disable semantic surface with less than 5 papers. The surface is not meaningful otherwise.
 7. Make it possible to load a project from file.
+1. Fix bug with add/remove MATLAB logo.
