@@ -19,8 +19,6 @@ classdef WordCloudFactory
                           'Random word colouring', ...
                           'Uniform word colouring'};
         possibleColourMapNames;
-%         {'parula', 'jet', 'hsv', 'hot', 'cool', 'spring', ...
-%                     'summer', 'autumn', 'winter', 'gray', 'bone', 'copper', 'pink'};
         backgroundColour;
         textColour;
         numWords;
@@ -38,7 +36,6 @@ classdef WordCloudFactory
         possibleColourMaps = {@parula, @jet, @hsv, @hot, @cool, @spring, ...
                     @summer, @autumn, @winter, @gray, @bone, @copper, @pink};
         cloud;
-        logoHandle;
     end
     
     methods

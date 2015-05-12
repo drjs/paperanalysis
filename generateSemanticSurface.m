@@ -8,8 +8,8 @@ end
 % normalisedWordCounts = parserObject.normalisedWordCounts(1:nwords,:);
 topNWords = parserObject.uniqueWords(1:nwords);
 
-% [x,y,z, axisLabels] = usePCAOnData(normalisedWordCounts, topNWords);
-[x,y,z, axisLabels] = useNNMFOnData(parserObject.wordCounts(1:nwords,:), topNWords);
+[x,y,z, axisLabels] = usePCAOnData(parserObject.wordCounts(1:nwords,:), topNWords);
+% [x,y,z, axisLabels] = useNNMFOnData(parserObject.wordCounts(1:nwords,:), topNWords);
  
 % Set up fittype and options.
 % ftype = fittype( 'lowess' );

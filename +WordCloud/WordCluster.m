@@ -13,7 +13,7 @@ classdef WordCluster < handle
         top    = 0;
         bottom = 0;
         % the ideal width:height ratio of a word cluster
-        widthHeightRatio = 3/1;
+        widthHeightRatio = 4/1;
     end
     
     methods

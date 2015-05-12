@@ -13,7 +13,6 @@ How The Package Works
 4. Displays a word cloud. 
   * Word clusters indicate words that occured frequently together across different papers. 
   * Word size indicates how often the word occurs
-  * Words are coloured by cluster
   * Font is random
 5. Adjust word cloud so that it displays nicely and save cloud to image or to mat file.
 
@@ -25,29 +24,9 @@ To be able to read PDFs you need to install the free Xpdf utility from http://ww
 
 Reading doc or docx files is only possible on Windows operating systems, and requires Microsoft Word installed.
 
-Visualisation
--------------
 
-To visualise the SEFI conference data run the `GenerateSEFIWordCloud` [script](./visualisation/GenerateSEFIWordCloud.m).
-
-[visualisation/GenerateSEFIWordCloud.pdf](./visualisation/GenerateSEFIWordCloud.pdf) contains a short description of how the Word Cloud clustering and visualisation is performed.
-
-Example word cloud:
-![alt-text](https://raw.githubusercontent.com/drjs/paperanalysis/master/images/75WordsCloudBlack.png "sample word cloud")
-
-### Customisation
-
-To customise the WordCloud settings so that it looks how you want, edit the Constant properties in [WordCloud.m](./visualisation/WordCloud.m).
-These are:
-
-1. **prettyFonts**. A cell array of fonts to use for the words. Fonts are randomly selected from this list.
-2. **backgroundColour**. The colour to make the figure background. This can be a 1x3 RGB vector or a standard colour string e.g. `'black'` or `'k'`.
-3. **fontScaleFactor**. Scale factor controlling the size the fonts are displayed. Adjust this to make the words bigger or smaller.
-4. **satelliteClusterDistanceScaleFactor**. Controls how far the outer word clusters are from the central cluster. If the words are too close together or far apart, adjust this value. The distance is proportional to how correlated the two clusters are.
 
 ### Visualisation TODO
 
-1. Improve semantic surface visualisation.
 5. Make parser use MATLAB's big data functionality for maximum efficiency.
-7. Make it possible to load a project from file.
-1. Fix bug with add/remove MATLAB logo.
+7. Make it possible to load a project from file?
