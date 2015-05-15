@@ -146,10 +146,11 @@ classdef WordCloud < handle
             this.figHandle = figure('Name', 'Word Cloud', ...
                        'Units','normalized', ...
                        'OuterPosition',[0 0 1 1], ...
-                       'Color', settings.backgroundColour);
+                       'Color', settings.backgroundColour, ...
+                       'InvertHardcopy', 'off');
             % f = figure('Name', 'Word Cloud', 'Position', get(groot,'Screensize'));
             axis manual   
-            set(gca, 'Visible', 'off');
+            set(gca, 'Visible', 'off', 'Color', settings.backgroundColour);
         end
         
         function newOrder = sortClustersBySize(~, clusterGroups, wordCounts)
