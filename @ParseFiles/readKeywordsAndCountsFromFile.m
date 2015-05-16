@@ -1,4 +1,4 @@
-function allWords = readKeywordsAndCountsFromFiles(obj, fileToRead, fileToReadExtension, fileToSaveWordDataInto, commonWords)
+function allWords = readKeywordsAndCountsFromFile(obj, fileToRead, fileToReadExtension, fileToSaveWordDataInto, commonWords)
 
 % check file has not already been parsed and saved
 if exist(fileToSaveWordDataInto, 'file')

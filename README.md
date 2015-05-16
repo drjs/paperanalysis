@@ -68,4 +68,6 @@ a surface of best fit. Otherwise only a scatter plot is shown.
 Examples
 --------
 
-![alt-text](https://raw.githubusercontent.com/drjs/paperanalysis/master/images/75WordsCloudBlack.png "sample word cloud")
+![alt-text](https://raw.githubusercontent.com/drjs/paperanalysis/master/images/75WordsCloudBlack.png "sample word cloud using multiple sources")
+
+![alt-text](https://raw.githubusercontent.com/drjs/paperanalysis/master/images/hpl_example.png "sample word cloud using one source")

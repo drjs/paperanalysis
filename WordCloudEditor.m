@@ -22,7 +22,7 @@ function varargout = WordCloudEditor(varargin)
 
 % Edit the above text to modify the response to help WordCloudEditor
 
-% Last Modified by GUIDE v2.5 11-May-2015 12:09:46
+% Last Modified by GUIDE v2.5 16-May-2015 19:19:35
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -263,12 +263,14 @@ function add_fonts_btn_Callback(hObject, eventdata, handles)
 
 % get new font and add to listbox
 fontinfo = uisetfont;
-handles.fonts_list.String = [handles.fonts_list.String; fontinfo.FontName];
-handles.fonts_list.String = unique(handles.fonts_list.String);
-% get fonts in listbox and give to factory.
-fac = getappdata(handles.wordcloud_editor_figure, 'factory');
-fac = fac.setFonts(handles.fonts_list.String);
-setappdata(handles.wordcloud_editor_figure, 'factory', fac);
+if ~isequal(fontinfo, 0)
+    handles.fonts_list.String = [handles.fonts_list.String; fontinfo.FontName];
+    handles.fonts_list.String = unique(handles.fonts_list.String);
+    % get fonts in listbox and give to factory.
+    fac = getappdata(handles.wordcloud_editor_figure, 'factory');
+    fac = fac.setFonts(handles.fonts_list.String);
+    setappdata(handles.wordcloud_editor_figure, 'factory', fac);
+end
 
 
 % --- Executes on slider movement.
