@@ -16,6 +16,14 @@ for selecting the files to read. From there you can create word clouds or
 a semantic surface visualising how related the files are based on word analysis.
 
 
+Examples
+--------
+
+![alt-text](https://raw.githubusercontent.com/drjs/paperanalysis/master/images/hpl_example.png "sample word cloud using one source")
+
+![alt-text](https://raw.githubusercontent.com/drjs/paperanalysis/master/images/SEFI_Surface.png "sample Semantic Surface")
+
+
 How The Package Works
 ----------------------
 
@@ -67,7 +75,8 @@ This is the resulting WordCloud when separated into 8 clusters:
 
 To start generating word clouds run GetFilesUI.
 
-### TODO
+TODO
+----
 
 1. Improve read me project description. What does this do? why? how?
 2. make example images
@@ -75,13 +84,9 @@ To start generating word clouds run GetFilesUI.
 7. Make it possible to load a project from file?
 8. delete unused files from repository
 
-Prerequisites
--------------
-To be able to read PDFs you need to install the free Xpdf utility from http://www.foolabs.com/xpdf/download.html
 
-Reading doc or docx files is only possible on Windows operating systems, and requires Microsoft Word installed.
-
-### MATLAB Prerequisites
+MATLAB Prerequisites
+---------------------
 
 #### MATLAB R2014b or higher.
 This relies on the updated MATLAB graphics system which was introduced in R2014b.
@@ -101,9 +106,9 @@ although it might be slower.
 For the semantic surface plot, having this toolbox will allow MATLAB to generate
 a surface of best fit. Otherwise only a scatter plot is shown.
 
-Examples
---------
 
-![alt-text](https://raw.githubusercontent.com/drjs/paperanalysis/master/images/hpl_example.png "sample word cloud using one source")
+Other Prerequisites
+-------------------
+To be able to read PDFs you need to install the free Xpdf utility from http://www.foolabs.com/xpdf/download.html
 
-![alt-text](https://raw.githubusercontent.com/drjs/paperanalysis/master/images/SEFI_Surface.png "sample Semantic Surface")
+Reading doc or docx files is only possible on Windows operating systems, and requires Microsoft Word installed.

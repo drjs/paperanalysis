@@ -52,22 +52,6 @@ classdef ParseFiles < handle
         end
         
         function obj = run(obj)
-            % check the data has not already been parsed
-            if exist(fullfile(obj.projectFolder, 'ParsedWordData.mat'), 'file')
-                olddata = load(fullfile(obj.projectFolder, 'ParsedWordData.mat'));
-                % if the cached file list is different to the current one
-                if isequal(sort(olddata.obj.fileList), sort(obj.fileList))
-                    % copy useful data from saved parser to the current one
-                    obj.documentTitles = olddata.obj.documentTitles;
-                    obj.normalisedWordCounts = olddata.obj.normalisedWordCounts;
-                    obj.uniqueWords = olddata.obj.uniqueWords;
-                    obj.wordCounts = olddata.obj.wordCounts;
-                    return;
-                end
-                % otherwise reparse files
-            end
-            % if there is a parallel Computing Toolbox license present, use
-            % parallel processing. Otherwise parse files sequentially
             obj.runSequentially();
         end
         

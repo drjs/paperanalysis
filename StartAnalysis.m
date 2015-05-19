@@ -3,22 +3,21 @@ function StartAnalysis()
 testfiles = dir('\\mathworks\marketing\Education\SharePoint_Big\ConferenceProceedings\SEFI2014\papers');
 testfiles = {testfiles.name};
 testfiles = {testfiles{3:end}}';
+testfiles = strcat('\\mathworks\marketing\Education\SharePoint_Big\ConferenceProceedings\SEFI2014\papers\', testfiles);
 
-
-docParser = ParseFiles(testfiles, 'SEFI2014');
+docParser = ParseFiles(testfiles, 'test');
 docParser.run();
 WordCloudEditor('parser', docParser);
-% fac = WordCloud.WordCloudFactory();
-% fac.buildCloud(docParser, 100);
 
 % testfiles = dir('testdata');
 % testfiles = {testfiles.name};
 % testfiles = {testfiles{3:end}}';
-% 
+% testfiles = cellfun(@(x) fullfile(pwd, 'testdata', x), testfiles, 'UniformOutput', false);
 % 
 % docparser = ParseFiles(testfiles, 'TestProject');
 % docparser.run();
-% % generateWordCloud(docparser, 100);
+% rmdir(fullfile(pwd, 'TestProject'), 's');
+% generateWordCloud(docparser, 100);
 % generateSemanticSurface(docparser, 100);
     
 end

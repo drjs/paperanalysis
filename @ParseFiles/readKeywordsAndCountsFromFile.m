@@ -6,6 +6,7 @@ if exist(fileToSaveWordDataInto, 'file')
     % folder then load that instead
     data = load(fileToSaveWordDataInto);
     allWords = data.allWords;
+    fprintf('%s read from cache\n', fileToRead);
 else
     
     % use relevant parse script to get list of words and title
@@ -34,7 +35,7 @@ else
     allWords = allWords(~isundefined(allWords));
     
     % from categorical get list of unique keywords and their counts
-    keywordCount = countcats(allWords);
+    % keywordCount = countcats(allWords);
     
     % saved parsed data into a mat fileia
     %     save(parsedDataSaveFile, 'uniqueKeywords', 'keywordCount', 'paperTitle');
@@ -42,14 +43,14 @@ else
 end
 end
 
-function isValid = checkWordIsValid(oldWord)
+function isValid = checkWordIsValid(word)
 % === (slightly modified) code from Pantelis's datamining =========
 
 isValid = false;
 % remove short or empty words
-if length(oldWord) > 3
+if length(word) > 3
     % remove all words containing non alphabet characters or empties
-    if isempty(regexpi(oldWord, '[^a-z]', 'once'));
+    if isempty(regexpi(word, '[^a-z]', 'once'));
         % more clever regular expression stuff?
         isValid = true;
     end
