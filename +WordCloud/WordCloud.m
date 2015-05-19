@@ -132,6 +132,7 @@ classdef WordCloud < handle
         
         function this = setLogo(this, state)
             if state
+                delete(this.logoHandle);
                 this.logoHandle = WordCloud.addMWLogo(this.figHandle);
             else
                 if ishandle(this.logoHandle)

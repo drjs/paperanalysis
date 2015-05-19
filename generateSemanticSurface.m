@@ -11,22 +11,20 @@ topNWords = parserObject.uniqueWords(1:nwords);
 [x,y,z, axisLabels] = usePCAOnData(parserObject.wordCounts(1:nwords,:), topNWords);
 % [x,y,z, axisLabels] = useNNMFOnData(parserObject.wordCounts(1:nwords,:), topNWords);
  
-% Set up fittype and options.
-% ftype = fittype( 'lowess' );
-% fopts = fitoptions('Method', 'LowessFit');
-% fopts.Normalize = 'on';
-% fopts.Robust = 'LAR';
-% fopts.Span = 0.1818; %Changing this will make the surface rougher or smoother
-
-% Fit model to data.
-% [fitresult, gof] = fit( [x, y], z, ftype, fopts );
-[fitresult, ~] = fit( [x, y], z, 'cubicinterp' );
-
-% Plot fit with data.
+% create figure for plot
 figTitle = [parserObject.projectName, ' Semantic Surface'];
 h =figure('Name', figTitle);
-ax = plot( fitresult, [x, y], z  );
-legend(ax, figTitle, 'Document Entries', 'Location', 'NorthEast' );
+
+% if the curve fitting toolbox is present, add a best fit surface.
+if license('test', 'curve_fitting_toolbox') == 1
+    [fitresult, ~] = fit( [x, y], z, 'cubicinterp' );
+    % Plot fit with data.
+    ax = plot( fitresult, [x, y], z  );
+    legend(ax, figTitle, 'Document Entries', 'Location', 'NorthEast' );
+else
+    ax = scatter3( x, y, z  );
+end
+
 set(ax, 'MarkerFaceColor',[0 0 0])
 % Label axes
 xlabel(axisLabels{1});
@@ -75,7 +73,7 @@ pca_loadings(i,:) = [];
 tempWords = words;
 tempWords(i) = [];
 [~,i] = max(pca_loadings);
-axisLabels = strcat(axisLabels, '/', tempWords(i));
+axisLabels = strcat(axisLabels, ' / ', tempWords(i));
 
 % plot(pca_loadings);
 % set(gca, 'xtick', 1:numel(words), 'xticklabels', words, 'xticklabelrotation', 90);

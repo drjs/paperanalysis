@@ -1,4 +1,4 @@
-paperanalysis
+Paper Analysis
 =============
 
 Analyse conference papers in MATLAB, visualise similarities between papers in MATLAB.
@@ -33,11 +33,34 @@ How The Package Works
   3. To  get each file's new word count we recategorise the saved data from the mapping phase to use the `completeWordList` categories instead. Then use the `COUNTCATS` function to get the word counts.
 
 ### Making a Word Cloud
-4. Display a word cloud. 
-  * Word clusters indicate words that occured frequently together across different papers. 
-  * Word size indicates how often the word occurs
-  * Font is random
-  
+
+Words are clustered by how commonly they occur together. The word size indicates how frequently the word is mentioned in total.
+If only one file is provided in the project there will be no clustering because there are not enough separate files to compare word occurrences.
+
+Clustering is calculated using MATLAB's [hierarchical clustering](http://www.mathworks.com/help/stats/hierarchical-clustering.html) algorithms from the Statistics and Machine Learning Toolbox:
+* [linkage](http://www.mathworks.com/help/stats/linkage.html)
+* [cluster](http://www.mathworks.com/help/stats/cluster.html)
+
+The correlation between the words is used as a distance measure, so words that are perfectly positively correlated will have zero distance, and perfectly negatively correlated words have a very large distance.
+
+The "linkage" clustering algorithm then:
+1. steps through the words, and pairs words that are closest together (i.e. the words most postively correlated with each other).
+2. The pairs can then be combined with other words or pairs which are close to each other.
+3. The process of pairing words or pairs repeats until we have the number of groups required for the Word Cloud.
+4. Each group of words is rendered as a cluster in the WordCloud.
+
+This pairing tree is usually shown in a diagram called a dendrogram. It shows how words have been paired and the height of the link shows how close the two words being linked are.
+    
+This an example of a MATLAB [dendrogram](http://www.mathworks.com/help/stats/dendrogram.html) for some test files:
+
+![alt-text](https://raw.githubusercontent.com/drjs/paperanalysis/master/images/SEFI_dendrogram.png "sample dendrogram")
+
+This is the resulting WordCloud when separated into 8 clusters:
+
+![alt-text](https://raw.githubusercontent.com/drjs/paperanalysis/master/images/SEFI_WordCloud.png "sample Word Cloud")
+
+
+
 ### Making a Semantic Surface
 5. Display a semantic surface. The files are plotted as data points on a 3D scatter plot.
 
@@ -51,7 +74,6 @@ To start generating word clouds run GetFilesUI.
 5. **Make parser use MATLAB's big data functionality for maximum efficiency.**
 7. Make it possible to load a project from file?
 8. delete unused files from repository
-9. matlab logo in semantic surface
 
 Prerequisites
 -------------
@@ -82,6 +104,6 @@ a surface of best fit. Otherwise only a scatter plot is shown.
 Examples
 --------
 
-![alt-text](https://raw.githubusercontent.com/drjs/paperanalysis/master/images/75WordsCloudBlack.png "sample word cloud using multiple sources")
-
 ![alt-text](https://raw.githubusercontent.com/drjs/paperanalysis/master/images/hpl_example.png "sample word cloud using one source")
+
+![alt-text](https://raw.githubusercontent.com/drjs/paperanalysis/master/images/SEFI_Surface.png "sample Semantic Surface")

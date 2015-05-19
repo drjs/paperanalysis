@@ -279,7 +279,7 @@ elseif isempty(name)
 else
     docparser = ParseFiles(flist, name);
     docparser.run();
-    generateSemanticSurface(docparser, 100);
+    generateSemanticSurface(docparser, 50);
 end
 
 
