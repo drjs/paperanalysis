@@ -256,7 +256,7 @@ elseif isempty(name)
 else
     docparser = ParseFiles(flist, name);
     docparser.run();
-    WordCloud.WordCloudEditor('parser', docparser);
+    WordCloudEditor('parser', docparser);
 end
 
 

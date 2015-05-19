@@ -38,6 +38,7 @@ To start generating word clouds run GetFilesUI.
 5. **Make parser use MATLAB's big data functionality for maximum efficiency.**
 7. Make it possible to load a project from file?
 8. delete unused files from repository
+9. matlab logo in semantic surface
 
 Prerequisites
 -------------

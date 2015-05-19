@@ -41,10 +41,8 @@ h.UserData = parserObject.documentTitles;
 dcm = datacursormode(h);
 set(dcm, 'Enable', 'on', 'UpdateFcn', @dataCursorCallback);
 
-% Make the plot square / set position   
-% set(h, 'Position', [100, 100, 1100, 649]);
-% view( 47.5, 26.0 ); 
-% zlim([ -0.00 0.3]);
+% add logo
+WordCloud.addMWLogo(h);
 
 end
 

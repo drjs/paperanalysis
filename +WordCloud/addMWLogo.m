@@ -1,4 +1,5 @@
 function logoax = addMWLogo(figHandle)
+
 % if background is light, use dark logo else use white text logo
 if sum(figHandle.Color) > 1.5
     logofile = fullfile('+WordCloud', 'MATLAB_RGB.png');
@@ -10,9 +11,9 @@ else
 end
 
 [im,~,alpha] = imread(logofile);
-newX = 0.20;
-newY = newX * size(im, 1) / size(im, 2);
-logoax = axes('Position', [1-newX 0.01 newX newY], ...
+sizeX = 0.20; % sizeX controls how big the logo displays
+sizeY = sizeX * size(im, 1) / size(im, 2);
+logoax = axes('Position', [1-sizeX 0.01 sizeX sizeY], ...
     'Color', 'none', 'Clipping', 'off', 'Layer', 'top', ...
     'Parent', figHandle, 'Visible', 'off', 'Units', 'normalized');
 
