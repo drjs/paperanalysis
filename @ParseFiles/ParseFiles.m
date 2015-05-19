@@ -51,9 +51,9 @@ classdef ParseFiles < handle
 
         end
         
-        function obj = run(obj)
-            obj.runSequentially();
-        end
+%         function obj = run(obj)
+%             obj.runSequentially();
+%         end
         
     end
     

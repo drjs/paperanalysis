@@ -6,7 +6,7 @@ testfiles = {testfiles{3:end}}';
 testfiles = strcat('\\mathworks\marketing\Education\SharePoint_Big\ConferenceProceedings\SEFI2014\papers\', testfiles);
 
 docParser = ParseFiles(testfiles, 'test');
-docParser.run();
+docParser.parse();
 WordCloudEditor('parser', docParser);
 
 % testfiles = dir('testdata');

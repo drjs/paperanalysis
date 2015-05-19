@@ -24,6 +24,37 @@ Examples
 ![alt-text](https://raw.githubusercontent.com/drjs/paperanalysis/master/images/SEFI_Surface.png "sample Semantic Surface")
 
 
+MATLAB Prerequisites
+---------------------
+
+#### MATLAB R2014b or higher.
+This relies on the updated MATLAB graphics system which was introduced in R2014b.
+Earlier versions of MATLAB will not be able to reliably run this code.
+
+#### Statistics Toolbox (optional)
+This toolbox is used to do the statistical analysis, comparing files with each other.
+The code should work without the statistics toolbox installed, however you 
+can only create word clouds (without clusters) and not the Semantic Surface.
+
+#### Parallel Computing Toolbox (optional)
+If you have a very large number of files to read this toolbox can parallelise
+the scanning of files and data collection. The code will run without this toolbox
+although it might be slower.
+
+#### Curve Fitting Toolbox (optional)
+For the semantic surface plot, having this toolbox will allow MATLAB to generate
+a surface of best fit. Otherwise only a scatter plot is shown.
+
+
+Other Prerequisites
+-------------------
+To be able to read PDFs you need to install the free Xpdf utility from http://www.foolabs.com/xpdf/download.html
+
+Reading doc or docx files is only possible on Windows operating systems, and requires Microsoft Word installed.
+
+
+
+
 How The Package Works
 ----------------------
 
@@ -75,40 +106,11 @@ This is the resulting WordCloud when separated into 8 clusters:
 
 To start generating word clouds run GetFilesUI.
 
+
 TODO
 ----
 
 1. Improve read me project description. What does this do? why? how?
-2. make example images
-5. **Make parser use MATLAB's big data functionality for maximum efficiency.**
 7. Make it possible to load a project from file?
 8. delete unused files from repository
-
-
-MATLAB Prerequisites
----------------------
-
-#### MATLAB R2014b or higher.
-This relies on the updated MATLAB graphics system which was introduced in R2014b.
-Earlier versions of MATLAB will not be able to reliably run this code.
-
-#### Statistics Toolbox (optional)
-This toolbox is used to do the statistical analysis, comparing files with each other.
-The code should work without the statistics toolbox installed, however you 
-can only create word clouds (without clusters) and not the Semantic Surface.
-
-#### Parallel Computing Toolbox (optional)
-If you have a very large number of files to read this toolbox can parallelise
-the scanning of files and data collection. The code will run without this toolbox
-although it might be slower.
-
-#### Curve Fitting Toolbox (optional)
-For the semantic surface plot, having this toolbox will allow MATLAB to generate
-a surface of best fit. Otherwise only a scatter plot is shown.
-
-
-Other Prerequisites
--------------------
-To be able to read PDFs you need to install the free Xpdf utility from http://www.foolabs.com/xpdf/download.html
-
-Reading doc or docx files is only possible on Windows operating systems, and requires Microsoft Word installed.
+2. make cluster width an editable property of word cloud

@@ -255,7 +255,7 @@ elseif isempty(name)
     uiwait(warndlg('Please enter a project name.'));
 else
     docparser = ParseFiles(flist, name);
-    docparser.run();
+    docparser.parse();
     WordCloudEditor('parser', docparser);
 end
 
@@ -278,7 +278,7 @@ elseif isempty(name)
     uiwait(warndlg('Please enter a project name.'));
 else
     docparser = ParseFiles(flist, name);
-    docparser.run();
+    docparser.parse();
     generateSemanticSurface(docparser, 50);
 end
 
