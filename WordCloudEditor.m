@@ -22,7 +22,7 @@ function varargout = WordCloudEditor(varargin)
 
 % Edit the above text to modify the response to help WordCloudEditor
 
-% Last Modified by GUIDE v2.5 16-May-2015 19:19:35
+% Last Modified by GUIDE v2.5 19-May-2015 19:00:07
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -56,7 +56,7 @@ function WordCloudEditor_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.output = hObject;
 
 % check if there is a statistics toolbox license.
-if license('test', 'Statistics_Toolbox') ~= 1
+if license('test', 'Statistics_Toolbox') ~= 0
     % If not disable cluster options and change panel tooltip to explanation.
     set(handles.cluster_options_panel.Children, 'Enable', 'off');
     set(handles.cluster_options_panel.Children, 'TooltipString', ...
@@ -93,16 +93,17 @@ function initialiseUIObjectsWithFactoryDefaults(handles, fac)
     handles.text_size_slider.Value = fac.textScaleFactor;
     
     handles.select_background_colour_btn.BackgroundColor = fac.backgroundColour;
-    handles.colourmap_menu.String = fac.possibleColourMapNames;
-    handles.colourmap_menu.Value = fac.getColourMapIdx();
-    handles.colour_mode_menu.String = fac.colouringModes;
-    handles.colour_mode_menu.Value = fac.getColourModeIdx();
-    handles.select_text_colour_btn.BackgroundColor = fac.textColour;
-    setSelectTextButtonState(handles, fac.colourMode, fac.textColour);
-    handles.has_logo_chbx.Value = fac.hasLogo;
+    handles.colourmap_menu.String                        = fac.possibleColourMapNames;
+    handles.colourmap_menu.Value                         = fac.getColourMapIdx();
+    handles.colour_mode_menu.String                      = fac.colouringModes;
+    handles.colour_mode_menu.Value                       = fac.getColourModeIdx();
+    handles.select_text_colour_btn.BackgroundColor       = fac.textColour;
+    setSelectTextButtonState(handles, fac.colourMode, fac.textColour);    
+    handles.has_logo_chbx.Value                          = fac.hasLogo;    
     
-    handles.num_clusters_slider.Value = fac.numClusters;
+    handles.num_clusters_slider.Value       = fac.numClusters;
     handles.cluster_separation_slider.Value = fac.clusterDistanceFactor;
+    handles.cluster_width_slider.Value      = fac.clusterWidthRatio;
     
 
 function setSelectTextButtonState(handles, colourMode, bgColour)
@@ -394,3 +395,42 @@ function num_words_edit_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on slider movement.
+function cluster_width_slider_Callback(hObject, eventdata, handles)
+% hObject    handle to cluster_width_slider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+fac = getappdata(handles.wordcloud_editor_figure, 'factory');
+fac = fac.setClusterWidthRatio(get(hObject,'Value'));
+setappdata(handles.wordcloud_editor_figure, 'factory', fac);
+
+
+% --- Executes during object creation, after setting all properties.
+function cluster_width_slider_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to cluster_width_slider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+% --- Executes on button press in save_settings_btn.
+function save_settings_btn_Callback(hObject, eventdata, handles)
+% hObject    handle to save_settings_btn (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in save_image_btn.
+function save_image_btn_Callback(hObject, eventdata, handles)
+% hObject    handle to save_image_btn (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)

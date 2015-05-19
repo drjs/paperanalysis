@@ -132,7 +132,7 @@ classdef WordCloud < handle
         
         function this = setClusterWidthRatio(this, newRatio)
             for c = this.clusters
-                c.setWidthRatio(newRatio);
+                c.setClusterWidthRatio(newRatio);
             end
         end
         
@@ -203,7 +203,8 @@ classdef WordCloud < handle
                settings.textScaleFactor);
            
            % add text handle to cluster
-           this.clusters = [this.clusters, WordCloud.WordCluster(centreTextHandle, 0, 0)];
+           this.clusters = [this.clusters, ...
+               WordCloud.WordCluster(centreTextHandle, 0, 0, settings.clusterWidthRatio)];
            
            % create text handles for remaining words
            words(mostPopularWord)  = [];

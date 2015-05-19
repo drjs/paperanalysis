@@ -3,6 +3,7 @@ classdef WordCluster < handle
     
     properties
         textHandles;
+        widthHeightRatio;
         numWords;
         wordRows;
         centreX;
@@ -12,16 +13,15 @@ classdef WordCluster < handle
         right  = 0;
         top    = 0;
         bottom = 0;
-        % the ideal width:height ratio of a word cluster
-        widthHeightRatio = 3.5/1;
     end
     
     methods
-        function this = WordCluster(centreWordHandle, x, y)
+        function this = WordCluster(centreWordHandle, x, y, newRatio)
             this.textHandles = centreWordHandle;
-            this.centreX     = x;
-            this.centreY     = y;
-            this.numWords    = numel(this.textHandles);
+            this.centreX            = x;
+            this.centreY            = y;
+            this.widthHeightRatio   = newRatio;
+            this.numWords           = numel(this.textHandles);
             % Centre row is the only middle aligned row
             this.wordRows    = WordCloud.WordClusterRow(this.textHandles(1), 'middle', this.centreX, this.centreY);
             this = this.recalculateLimits();
