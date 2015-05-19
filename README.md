@@ -19,13 +19,26 @@ a semantic surface visualising how related the files are based on word analysis.
 How The Package Works
 ----------------------
 
+### Parsing Data Files
+
 1. Get list of files to parse from user using GetFilesUI.
-2. For each file get a list of words and count number of times a word occurs (MAP)
-3. Collate list of all words used across all files, and recalculate word counts for each paper based on new list (REDUCE)
-4. Displays a word cloud. 
+2. *MAP*: For each file get a list of words and count number of times a word occurs.
+  1. PDF, doc and docx files are converted to txt files and stored in the temporary directory.
+  2. The txt file is read in using TEXTSCAN, which converts the entire file to a cell array with one cell per word.
+  3. The cell array is converted to the [CATEGORICAL](http://uk.mathworks.com/help/matlab/ref/categorical.html) data type. This automatically generates a list of the unique words in the cell array (the "categories"), and the [COUNTCATS](http://uk.mathworks.com/help/matlab/ref/countcats.html) function can then be used to quickly count the number of occurrences of each unique word.
+  4. The categorical array is saved to mat file in the project directory. If you try to rescan the file again later, it will open the saved data instead.
+3. *REDUCE*: Collate list of all words used across all files, and recalculate word counts for each paper based on new list.
+  1. Now we have a set of categorical arrays containing all the words from all the files this is combined into one categorical `completeWordList`
+  2. The categories from `completeWordList` are taken to get a complete list of ALL unique words used in the set of files. This is reordered so that the most common word comes at index 1 and the least common word at the `end` position.
+  3. To  get each file's new word count we recategorise the saved data from the mapping phase to use the `completeWordList` categories instead. Then use the `COUNTCATS` function to get the word counts.
+
+### Making a Word Cloud
+4. Display a word cloud. 
   * Word clusters indicate words that occured frequently together across different papers. 
   * Word size indicates how often the word occurs
   * Font is random
+  
+### Making a Semantic Surface
 5. Display a semantic surface. The files are plotted as data points on a 3D scatter plot.
 
 

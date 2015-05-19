@@ -325,9 +325,12 @@ setGenerateSurfaceButtonEnableState(handles, numel(names));
 
 function setGenerateSurfaceButtonEnableState(handles, numFiles)
 % if there are enough files to parse and the statistics toolbox is licensed
-if (numFiles > 9) && (license('test', 'Statistics_Toolbox') == 1)
+if (numFiles > 4) && (license('test', 'Statistics_Toolbox') == 1)
    % then enable the generate surface button 
     handles.generate_surface_btn.Enable = 'on';
+else
+   % then disable the generate surface button 
+    handles.generate_surface_btn.Enable = 'off';    
 end
     
     
