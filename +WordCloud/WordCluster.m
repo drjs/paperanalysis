@@ -32,12 +32,11 @@ classdef WordCluster < handle
             [~, sortOrderIdx] = sort(correlationToCentre, 'descend');
             wordHandles = wordHandles(sortOrderIdx);
             this.textHandles = [this.textHandles, wordHandles];
-            this.numWords = numel(this.textHandles);
-%             this = this.buildCluster();
-%         end
-%         
-%         function this = buildCluster(this)
-            
+            this.numWords = numel(this.textHandles);     
+            this = this.buildCluster();
+        end
+              
+        function this = buildCluster(this)            
             wordAt = 2; % current word to add to cluster
             
             while wordAt <= this.numWords
@@ -121,6 +120,19 @@ classdef WordCluster < handle
             
             this = this.respaceRowsHorizontally();
             this = this.respaceRowsVertically();
+        end
+        
+        function this = setClusterWidthRatio(this, newWidthHeightRatio)
+            this.widthHeightRatio = newWidthHeightRatio;
+            % delete old rows.
+            delete(this.wordRows);
+            
+            % make first row again.
+            this.wordRows = WordCloud.WordClusterRow(this.textHandles(1), 'middle', this.centreX, this.centreY);
+            this = this.recalculateLimits();
+            
+            % build remaining rows
+            this = this.buildCluster();
         end
         
         function this = recalculateLimits(this)

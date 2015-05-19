@@ -28,6 +28,7 @@ classdef WordCloudFactory
         textScaleFactor;
         numClusters;
         clusterDistanceFactor;
+        clusterWidthRatio;
         hasLogo;
     end
     
@@ -49,6 +50,7 @@ classdef WordCloudFactory
             obj.textScaleFactor        = getpref(obj.prefgroup, 'textScaleFactor', 2);
             obj.numClusters            = getpref(obj.prefgroup, 'numClusters', 1);
             obj.clusterDistanceFactor  = getpref(obj.prefgroup, 'clusterDistanceFactor', 0.5);
+            obj.clusterWidthRatio      = getpref(obj.prefgroup, 'clusterWidthRatio', 4);
             obj.hasLogo                = getpref(obj.prefgroup, 'hasLogo', true);       
             
             obj.possibleColourMapNames = cellfun(@func2str, obj.possibleColourMaps, 'UniformOutput', false);
@@ -64,6 +66,7 @@ classdef WordCloudFactory
             rmpref(obj.prefgroup, 'textScaleFactor');
             rmpref(obj.prefgroup, 'numClusters');
             rmpref(obj.prefgroup, 'clusterDistanceFactor');
+            rmpref(obj.prefgroup, 'clusterWidthRatio');
             rmpref(obj.prefgroup, 'hasLogo');   
         end
         
@@ -153,7 +156,7 @@ classdef WordCloudFactory
             delete(obj.cloud);
             obj = obj.buildCloud(docParser);
         end
-        
+                
         function obj = setNumClusters(obj, numClusters, docParser)
             obj.numClusters = numClusters;
             setpref(obj.prefgroup, 'numClusters', numClusters);
@@ -166,6 +169,12 @@ classdef WordCloudFactory
             obj.clusterDistanceFactor = newDistance;
             getpref(obj.prefgroup, 'clusterDistanceFactor', newDistance);
             obj.cloud = obj.cloud.rescaleClusterSeparation(newDistance);
+        end
+        
+        function obj = setClusterWidthRatio(obj, newRatio)
+            obj.clusterWidthRatio = newRatio;
+            setpref(obj.prefgroup, 'clusterWidthRatio', newRatio);
+            obj.cloud = obj.cloud.setClusterWidthRatio(newRatio);
         end
         
         function obj = recolourCloud(obj)

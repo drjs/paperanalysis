@@ -124,9 +124,15 @@ classdef WordCloud < handle
             end
         end  
         
-        function this = changeFonts(this, newFonts)
+        function this = setFonts(this, newFonts)
             for c = this.clusters
                 c.changeFonts(newFonts);
+            end
+        end
+        
+        function this = setClusterWidthRatio(this, newRatio)
+            for c = this.clusters
+                c.setWidthRatio(newRatio);
             end
         end
         
