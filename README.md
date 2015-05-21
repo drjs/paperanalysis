@@ -114,3 +114,4 @@ TODO
 7. Make it possible to load a project from file?
 8. delete unused files from repository
 2. make cluster width an editable property of word cloud
+3. if your temp drive contains a folder and you're reading pdfs from an unwritable location I need to add a warning that xpdf will not work.
