@@ -26,13 +26,13 @@ classdef ParseFiles < handle
         documentTitles;
         uniqueWords;
         wordCounts;
-        normalisedWordCounts;        
+        normalisedWordCounts;
+        projectFolder;
     end
     
     properties (Access = private)
         pdfConverter=''; % utility for converting pdfs, if required
         wordApplication; % COM connection to MS Word, for converting doc files
-        projectFolder;
     end
     
     methods

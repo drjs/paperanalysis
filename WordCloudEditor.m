@@ -434,3 +434,10 @@ function save_image_btn_Callback(hObject, eventdata, handles)
 % hObject    handle to save_image_btn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+fac = getappdata(handles.wordcloud_editor_figure, 'factory');
+parser = getappdata(handles.wordcloud_editor_figure, 'parser');
+
+h = fac.getCloudFigureHandle();
+set(h, 'papertype', 'A0', 'renderer', 'painters', 'paperpositionmode', 'auto', 'InvertHardcopy', 'off');
+print(h, fullfile(parser.projectFolder, 'WordCloud.png'), '-dpng', '-noui');
+

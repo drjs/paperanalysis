@@ -192,7 +192,9 @@ classdef WordCloudFactory
             end
         end
         
-
+        function h = getCloudFigureHandle(obj)
+            h = obj.cloud.figHandle;
+        end
     end
     
 end
