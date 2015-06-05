@@ -56,7 +56,7 @@ function WordCloudEditor_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.output = hObject;
 
 % check if there is a statistics toolbox license.
-if license('test', 'Statistics_Toolbox') ~= 0
+if license('test', 'Statistics_Toolbox') == 0
     % If not disable cluster options and change panel tooltip to explanation.
     set(handles.cluster_options_panel.Children, 'Enable', 'off');
     set(handles.cluster_options_panel.Children, 'TooltipString', ...
