@@ -12,9 +12,9 @@ tempPlainTextFile = [tempname '.txt'];
 if any(isspace(tempPlainTextFile))
     tempPlainTextFile = fullfile(path,[docTitle '.txt']);
     % call utility to convert pdf
-    eval(['!', obj.pdfConverter, ' "', filename, '" ']);
+    eval(['!"', obj.pdfConverter, '" "', filename, '" ']);
 else
-    eval(['!', obj.pdfConverter, ' "', filename, '" "', tempPlainTextFile, '"']);
+    eval(['!"', obj.pdfConverter, '" "', filename, '" "', tempPlainTextFile, '"']);
 end
 
 % parse text file.
