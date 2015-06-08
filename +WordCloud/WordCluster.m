@@ -97,7 +97,7 @@ classdef WordCluster < handle
         
         function this = rescaleText(this, newScaleFactor)
             resizeFcn = @(h)set(h, 'FontSize', ...
-                h.UserData.wordCount*newScaleFactor);
+                6+h.UserData.wordCount*newScaleFactor);
             arrayfun(resizeFcn, this.textHandles);
             
             this = this.respaceRowsHorizontally();
