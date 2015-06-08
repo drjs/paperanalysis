@@ -41,34 +41,49 @@ classdef WordCloudFactory
     
     methods
         function obj = WordCloudFactory()
-            obj.backgroundColour       = getpref(obj.prefgroup, 'backgroundColour', [0 0 0]);
-            obj.textColour             = getpref(obj.prefgroup, 'textColour', [1 1 1]);
-            obj.numWords               = getpref(obj.prefgroup, 'numWords', 75);
-            obj.colourMap              = getpref(obj.prefgroup, 'colourMap', @parula);
-            obj.fonts                  = getpref(obj.prefgroup, 'fonts', {'Times New Roman'});
-            obj.colourMode             = getpref(obj.prefgroup, 'colourMode', obj.colouringModes{2});  
-            obj.textScaleFactor        = getpref(obj.prefgroup, 'textScaleFactor', 2);
-            obj.numClusters            = getpref(obj.prefgroup, 'numClusters', 1);
-            obj.clusterDistanceFactor  = getpref(obj.prefgroup, 'clusterDistanceFactor', 0.5);
-            obj.clusterWidthRatio      = getpref(obj.prefgroup, 'clusterWidthRatio', 4);
-            obj.hasLogo                = getpref(obj.prefgroup, 'hasLogo', true);       
+            obj.backgroundColour       = [0 0 0];
+            obj.textColour             = [1 1 1];
+            obj.numWords               = 75;
+            obj.colourMap              = @parula;
+            obj.fonts                  = {'Times New Roman'};
+            obj.colourMode             = obj.colouringModes{2};  
+            obj.textScaleFactor        = 2;
+            obj.numClusters            = 1;
+            obj.clusterDistanceFactor  = 0.5;
+            obj.clusterWidthRatio      = 4;
+            obj.hasLogo                = true;       
             
             obj.possibleColourMapNames = cellfun(@func2str, obj.possibleColourMaps, 'UniformOutput', false);
         end
         
-        function obj = clearAllPreferences(obj)
-            rmpref(obj.prefgroup, 'backgroundColour');
-            rmpref(obj.prefgroup, 'textColour');
-            rmpref(obj.prefgroup, 'numWords');
-            rmpref(obj.prefgroup, 'colourMap');
-            rmpref(obj.prefgroup, 'fonts');
-            rmpref(obj.prefgroup, 'colourMode');  
-            rmpref(obj.prefgroup, 'textScaleFactor');
-            rmpref(obj.prefgroup, 'numClusters');
-            rmpref(obj.prefgroup, 'clusterDistanceFactor');
-            rmpref(obj.prefgroup, 'clusterWidthRatio');
-            rmpref(obj.prefgroup, 'hasLogo');   
+        function obj = loadSettingsFromMatFile(obj, filename)
+            cache = load(filename);
+            obj.backgroundColour       = cache.backgroundColour;
+            obj.textColour             = cache.textColour;
+            obj.numWords               = cache.numWords;
+            obj.colourMap              = cache.colourMap;
+            obj.fonts                  = cache.fonts;
+            obj.colourMode             = cache.colourMode;
+            obj.textScaleFactor        = cache.textScaleFactor;
+            obj.numClusters            = cache.numClusters;
+            obj.clusterDistanceFactor  = cache.clusterDistanceFactor;
+            obj.clusterWidthRatio      = cache.clusterWidthRatio;
+            obj.hasLogo                = cache.hasLogo;
         end
+        
+%         function obj = clearAllPreferences(obj)
+%             rmpref(obj.prefgroup, 'backgroundColour');
+%             rmpref(obj.prefgroup, 'textColour');
+%             rmpref(obj.prefgroup, 'numWords');
+%             rmpref(obj.prefgroup, 'colourMap');
+%             rmpref(obj.prefgroup, 'fonts');
+%             rmpref(obj.prefgroup, 'colourMode');  
+%             rmpref(obj.prefgroup, 'textScaleFactor');
+%             rmpref(obj.prefgroup, 'numClusters');
+%             rmpref(obj.prefgroup, 'clusterDistanceFactor');
+%             rmpref(obj.prefgroup, 'clusterWidthRatio');
+%             rmpref(obj.prefgroup, 'hasLogo');   
+%         end
         
         function obj = buildCloud(obj, docParser)
             keywords = docParser.uniqueWords(1:obj.numWords);
@@ -140,7 +155,7 @@ classdef WordCloudFactory
         function obj = setFonts(obj, fontList)
             obj.fonts = fontList;
             setpref(obj.prefgroup, 'fonts', fontList);
-            obj.cloud = obj.cloud.changeFonts(fontList);
+            obj.cloud = obj.cloud.setFonts(fontList);
         end
         
         function obj = setTextScale(obj, newSize)

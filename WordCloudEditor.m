@@ -56,7 +56,7 @@ function WordCloudEditor_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.output = hObject;
 
 % check if there is a statistics toolbox license.
-if license('test', 'Statistics_Toolbox') == 0
+if license('test', 'Statistics_Toolbox') ~= 1
     % If not disable cluster options and change panel tooltip to explanation.
     set(handles.cluster_options_panel.Children, 'Enable', 'off');
     set(handles.cluster_options_panel.Children, 'TooltipString', ...
@@ -68,8 +68,15 @@ if(nargin > 3)
         switch lower(varargin{index})
             case 'parser'
                 fac = WordCloud.WordCloudFactory();
+                parser = varargin{index+1};
+                % check if we have factory settings already saved
+                if exist(fullfile(parser.projectFolder, 'CloudFactory.mat'), 'file')
+                    % if so, give the factory object the saved settings
+                    fac = fac.loadSettingsFromMatFile(...
+                        fullfile(parser.projectFolder, 'CloudFactory.mat'));
+                end
                 setappdata(handles.wordcloud_editor_figure, 'factory', fac);
-                setappdata(handles.wordcloud_editor_figure, 'parser', varargin{index+1});
+                setappdata(handles.wordcloud_editor_figure, 'parser', parser);
                 initialiseUIObjectsWithFactoryDefaults(handles, fac);
                 fac = fac.buildCloud(varargin{index+1});
                 setappdata(handles.wordcloud_editor_figure, 'factory', fac);
@@ -427,7 +434,33 @@ function save_settings_btn_Callback(hObject, eventdata, handles)
 % hObject    handle to save_settings_btn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+fac    = getappdata(handles.wordcloud_editor_figure, 'factory');
+parser = getappdata(handles.wordcloud_editor_figure, 'parser');
 
+savefilename = fullfile(parser.projectFolder, 'CloudFactory.mat');
+backgroundColour = fac.backgroundColour;
+textColour = fac.textColour;
+numWords = fac.numWords;
+colourMap = fac.colourMap;
+fonts = fac.fonts;
+colourMode = fac.colourMode;
+textScaleFactor = fac.textScaleFactor;
+numClusters = fac.numClusters;
+clusterDistanceFactor = fac.clusterDistanceFactor;
+clusterWidthRatio = fac.clusterWidthRatio;
+hasLogo = fac.hasLogo;
+save(savefilename, ...
+        'backgroundColour',...
+        'textColour',...
+        'numWords',...
+        'colourMap',...
+        'fonts',...
+        'colourMode',...
+        'textScaleFactor',...
+        'numClusters',...
+        'clusterDistanceFactor',...
+        'clusterWidthRatio',...
+        'hasLogo');
 
 % --- Executes on button press in save_image_btn.
 function save_image_btn_Callback(hObject, eventdata, handles)
