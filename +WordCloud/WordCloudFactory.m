@@ -78,7 +78,7 @@ classdef WordCloudFactory
             
             % if the statistics toolbox is present then statistial analysis
             % is possible
-            if license('test', 'Statistics_Toolbox') == 1
+            if (license('test', 'Statistics_Toolbox') == 1)
                 correlationMatrix = corr(normalisedWordCounts', 'type', 'Pearson');
                 tree = linkage(correlationMatrix, 'average');
                 clusterGroups = cluster(tree, 'maxclust', obj.numClusters);
