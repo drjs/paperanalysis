@@ -1,4 +1,4 @@
-function allWords = readKeywordsAndCountsFromFile(obj, fileToRead, fileToReadExtension, fileToSaveWordDataInto, commonWords)
+function allWords = readKeywordsAndCountsFromFile(obj, fileToRead, fileToReadExtension, fileToSaveWordDataInto, commonWords, canWriteToTempDir)
 
 % check file has not already been parsed and saved
 if exist(fileToSaveWordDataInto, 'file')
@@ -18,7 +18,7 @@ else
         case '.docx'
             [words, paperTitle] = obj.readOneDocFile(fileToRead);
         case '.pdf'
-            [words, paperTitle] = obj.readOnePDFFile(fileToRead);
+            [words, paperTitle] = obj.readOnePDFFile(fileToRead, canWriteToTempDir);
         otherwise
             error('Found unparsable file "%s", aborting.', fileToRead);
     end

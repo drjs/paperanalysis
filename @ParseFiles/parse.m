@@ -1,4 +1,4 @@
-function obj = runSequentially(obj)
+function obj = parse(obj)
 
 % check the data has not already been parsed
 if exist(fullfile(obj.projectFolder, 'ParsedWordData.mat'), 'file')
@@ -26,8 +26,14 @@ commonWords = commonWords.commonWords;
 parsedFileList = fullfile(obj.projectFolder, strcat(obj.documentTitles, '.mat'));
 
 % if there are pdf files to parse, locate the pdf to text converter
+canWriteToTempDir = true;
 if ismember('.pdf', fileExtensions)
     obj.locatePDFConverter();
+    % check if temp dir contains spaces, if not we can save data to temp drive.
+    if any(isspace(tempdir))
+        % otherwise we need to write to the same folder as the source file
+        canWriteToTempDir = false;
+    end
 end
 
 % if there are doc files to parse, open up MS Word
@@ -50,7 +56,8 @@ parfor fileIndex = 1:numFiles
         obj.fileList{fileIndex}, ...
         fileExtensions{fileIndex}, ...
         parsedFileList{fileIndex}, ...
-        commonWords);
+        commonWords, ...
+        canWriteToTempDir);
     completeWordList = [completeWordList; allWords];
     fprintf('Parsed %s\n', obj.fileList{fileIndex});
 end

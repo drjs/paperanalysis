@@ -10,11 +10,11 @@ classdef ParseFiles < handle
     % caching parsed data locally into mat files.
     % 
     % Example:
-    % p = ParseFiles('data\mydoc.txt')
-    % p = ParseFiles({'data\mydoc1.txt'; data\mydoc2.txt'});
+    % p = ParseFiles('data\mydoc.txt', 'myProject')
+    % p = ParseFiles({'data\mydoc1.txt'; data\mydoc2.txt'}, 'myProject');
     %
     % See also:
-    % GetFileUI.m
+    % GetFileUI
     %
     % Author: Jenny Owen
     % Copyright: MathWorks 2015
@@ -50,10 +50,6 @@ classdef ParseFiles < handle
             end
 
         end
-        
-%         function obj = run(obj)
-%             obj.runSequentially();
-%         end
         
     end
     

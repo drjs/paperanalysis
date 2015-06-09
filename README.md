@@ -31,7 +31,7 @@ MATLAB Prerequisites
 This relies on the updated MATLAB graphics system which was introduced in R2014b.
 Earlier versions of MATLAB will not be able to reliably run this code.
 
-#### Statistics Toolbox (optional)
+#### Statistics Toolbox (optional but recommended)
 This toolbox is used to do the statistical analysis, comparing files with each other.
 The code should work without the statistics toolbox installed, however you 
 can only create word clouds (without clusters) and not the Semantic Surface.

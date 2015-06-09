@@ -1,15 +1,17 @@
 classdef WordCloudFactory
-    %WORDCLOUDSETTINGS Holds settings for the word cloud. 
-    % Automatically finds the defaults on startup.
-    %   * background colour
-    %   * word colours? coloured randomly, by cluster or by correllated-to-other-words-ness (have transparency represent correllation maybe?)
-    %   * Fonts. My choices are not always present on the system. Use UISETFONT function.
-    %   * word scaling generally
-    %   * word size with respect to popularity. Maybe make a histogram?
-    %   * cluster separation: how far apart are the clusters.
-    %   * cluster width/height ratio?
-    %   * presence of MATLAB logo?
-    
+    %WORDCLOUDFACTORY contains display settings and controls how the word
+    %cloud is generated. A ParseFiles object is required before building a 
+    %cloud to provide a set of words and their counts.
+    %
+    % It is possible to edit the word cloud programmatically using this
+    % class, however it is recommended to use the WordCloudEditor GUI for
+    % ease of use.
+    %
+    % See also:
+    % WordCloud, WordCloudEditor
+    %
+    % Author: Jenny Owen
+    % Copyright: MathWorks 2015
     
     % read only properties
     properties (SetAccess = private)
@@ -33,7 +35,7 @@ classdef WordCloudFactory
     end
     
     properties (Access = private)
-        prefgroup = 'WordCloud';
+%         prefgroup = 'WordCloud';
         possibleColourMaps = {@parula, @jet, @hsv, @hot, @cool, @spring, ...
                     @summer, @autumn, @winter, @gray, @bone, @copper, @pink};
         cloud;
@@ -111,7 +113,6 @@ classdef WordCloudFactory
               
         function obj = setColourMap(obj, idx)
             obj.colourMap = obj.possibleColourMaps{idx};
-            setpref(obj.prefgroup, 'colourMap', obj.colourMap);
             obj = obj.recolourCloud();
         end
         
@@ -123,7 +124,6 @@ classdef WordCloudFactory
         
         function obj = setColourMode(obj, idx)
             obj.colourMode = obj.colouringModes{idx};
-            setpref(obj.prefgroup, 'colourMode', obj.colourMode);
             obj = obj.recolourCloud();
         end
         
@@ -135,38 +135,32 @@ classdef WordCloudFactory
         
         function obj = setTextColour(obj, newColour)
             obj.textColour = newColour;
-            setpref(obj.prefgroup, 'textColour', newColour);
             obj = obj.recolourCloud();
         end
             
         function obj = setBackgroundColour(obj, newColour)
             obj.backgroundColour = newColour;
-            setpref(obj.prefgroup, 'backgroundColour', newColour);
             obj.cloud.figHandle.Color = newColour;  
             obj.cloud = obj.cloud.setLogo(obj.hasLogo);          
         end
         
         function obj = setHasLogo(obj, newState)
             obj.hasLogo = newState;
-            setpref(obj.prefgroup, 'hasLogo', newState);
             obj.cloud = obj.cloud.setLogo(newState);
         end
         
         function obj = setFonts(obj, fontList)
             obj.fonts = fontList;
-            setpref(obj.prefgroup, 'fonts', fontList);
             obj.cloud = obj.cloud.setFonts(fontList);
         end
         
         function obj = setTextScale(obj, newSize)
             obj.textScaleFactor = newSize;
             obj.cloud = obj.cloud.rescaleText(newSize);
-            setpref(obj.prefgroup, 'textScaleFactor', newSize);
         end
         
         function obj = setNumWords(obj, numWords, docParser)
             obj.numWords = numWords;
-            setpref(obj.prefgroup, 'numWords', numWords);
             delete(obj.cloud.figHandle);
             delete(obj.cloud);
             obj = obj.buildCloud(docParser);
@@ -174,7 +168,6 @@ classdef WordCloudFactory
                 
         function obj = setNumClusters(obj, numClusters, docParser)
             obj.numClusters = numClusters;
-            setpref(obj.prefgroup, 'numClusters', numClusters);
             delete(obj.cloud.figHandle);
             delete(obj.cloud);
             obj = obj.buildCloud(docParser);
@@ -182,13 +175,11 @@ classdef WordCloudFactory
         
         function obj = setClusterSeparation(obj, newDistance)
             obj.clusterDistanceFactor = newDistance;
-            getpref(obj.prefgroup, 'clusterDistanceFactor', newDistance);
             obj.cloud = obj.cloud.rescaleClusterSeparation(newDistance);
         end
         
         function obj = setClusterWidthRatio(obj, newRatio)
             obj.clusterWidthRatio = newRatio;
-            setpref(obj.prefgroup, 'clusterWidthRatio', newRatio);
             obj.cloud = obj.cloud.setClusterWidthRatio(newRatio);
         end
         
