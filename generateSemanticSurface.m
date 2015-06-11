@@ -16,12 +16,13 @@ figTitle = [parserObject.projectName, ' Semantic Surface'];
 h =figure('Name', figTitle);
 
 % if the curve fitting toolbox is present, add a best fit surface.
-if license('test', 'curve_fitting_toolbox') == 1
+% if license('test', 'curve_fitting_toolbox') == 1
+try
     [fitresult, ~] = fit( [x, y], z, 'cubicinterp' );
     % Plot fit with data.
     ax = plot( fitresult, [x, y], z  );
     legend(ax, figTitle, 'Document Entries', 'Location', 'NorthEast' );
-else
+catch
     ax = scatter3( x, y, z  );
 end
 

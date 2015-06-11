@@ -67,8 +67,11 @@ setappdata(handles.mainFig, 'SupportedFormats', {'*.txt'; '*.pdf'; '*.doc'; '*.d
 handles.file_listbox.Max = 2;
 % disable semantic surface until there are 10 files to parse
 handles.generate_surface_btn.Enable = 'off';
+% check if the statistics toolbox is installed.
+hasStatsTbx = WordCloud.checkForStatisticsToolbox();
+setappdata(handles.mainFig, 'hasStatsToolbox', hasStatsTbx);
 % set tooltip string if statistics toolbox is unlicensed.
-if license('test', 'Statistics_Toolbox') ~= 1
+if ~hasStatsTbx
     handles.generate_surface_btn.TooltipString = ...
         'Semantic surface functionality is only available with the statistics toolbox.';
 end
@@ -324,8 +327,9 @@ setGenerateSurfaceButtonEnableState(handles, numel(names));
 
 
 function setGenerateSurfaceButtonEnableState(handles, numFiles)
-% if there are enough files to parse and the statistics toolbox is licensed
-if (numFiles > 4) && (license('test', 'Statistics_Toolbox') == 1)
+% if there are enough files to parse and the statistics toolbox is installed
+hasStatsTbx = getappdata(handles.mainFig, 'hasStatsToolbox');
+if (numFiles > 4) && hasStatsTbx
    % then enable the generate surface button 
     handles.generate_surface_btn.Enable = 'on';
 else

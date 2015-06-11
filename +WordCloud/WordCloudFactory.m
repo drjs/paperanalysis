@@ -35,9 +35,9 @@ classdef WordCloudFactory
     end
     
     properties (Access = private)
-%         prefgroup = 'WordCloud';
         possibleColourMaps = {@parula, @jet, @hsv, @hot, @cool, @spring, ...
                     @summer, @autumn, @winter, @gray, @bone, @copper, @pink};
+        hasStatsToolbox;
         cloud;
     end
     
@@ -56,6 +56,7 @@ classdef WordCloudFactory
             obj.hasLogo                = true;       
             
             obj.possibleColourMapNames = cellfun(@func2str, obj.possibleColourMaps, 'UniformOutput', false);
+            obj.hasStatsToolbox        = WordCloud.checkForStatisticsToolbox();
         end
         
         function obj = loadSettingsFromMatFile(obj, filename)
@@ -73,21 +74,14 @@ classdef WordCloudFactory
             obj.hasLogo                = cache.hasLogo;
         end
         
-%         function obj = clearAllPreferences(obj)
-%             rmpref(obj.prefgroup, 'backgroundColour');
-%             rmpref(obj.prefgroup, 'textColour');
-%             rmpref(obj.prefgroup, 'numWords');
-%             rmpref(obj.prefgroup, 'colourMap');
-%             rmpref(obj.prefgroup, 'fonts');
-%             rmpref(obj.prefgroup, 'colourMode');  
-%             rmpref(obj.prefgroup, 'textScaleFactor');
-%             rmpref(obj.prefgroup, 'numClusters');
-%             rmpref(obj.prefgroup, 'clusterDistanceFactor');
-%             rmpref(obj.prefgroup, 'clusterWidthRatio');
-%             rmpref(obj.prefgroup, 'hasLogo');   
-%         end
-        
+
         function obj = buildCloud(obj, docParser)
+            % this is unlikely to ever be true, but it's worth checking
+            % anyway.
+            if numel(docParser.uniqueWords) < obj.numWords
+                obj.numWords = numel(docParser.uniqueWords);
+            end
+            
             keywords = docParser.uniqueWords(1:obj.numWords);
             wordCounts = docParser.wordCounts(1:obj.numWords, :);
             wordCounts = sum(wordCounts, 2);
@@ -95,8 +89,9 @@ classdef WordCloudFactory
             
             % if the statistics toolbox is present then statistial analysis
             % is possible
-            if (license('test', 'Statistics_Toolbox') == 1)
+            if obj.hasStatsToolbox
                 correlationMatrix = corr(normalisedWordCounts', 'type', 'Pearson');
+                % correlationMatrix = corr(docParser.wordCounts(1:obj.numWords, :)', 'type', 'Pearson');
                 tree = linkage(correlationMatrix, 'average');
                 clusterGroups = cluster(tree, 'maxclust', obj.numClusters);
             else
@@ -105,7 +100,6 @@ classdef WordCloudFactory
                 % correlationMatrix = ones(obj.numWords, obj.numWords);
                 clusterGroups = ones(obj.numWords, 1);
             end
-            
             obj.cloud = WordCloud.WordCloud(keywords, wordCounts, correlationMatrix, clusterGroups, obj);
             obj = obj.recolourCloud();
             obj.cloud = obj.cloud.setLogo(obj.hasLogo);

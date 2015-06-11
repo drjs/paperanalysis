@@ -51,7 +51,7 @@ completeWordList = [];
 
 disp('Mapping files');
 
-parfor fileIndex = 1:numFiles
+for fileIndex = 1:numFiles
     allWords = obj.readKeywordsAndCountsFromFile(...
         obj.fileList{fileIndex}, ...
         fileExtensions{fileIndex}, ...
@@ -82,7 +82,7 @@ wordCounts = zeros(numel(obj.uniqueWords), numFiles);
 
 % reorder each paper's word counts so they are the same order
 % as the new unique keyword list
-parfor fileIndex = 1:numFiles
+for fileIndex = 1:numFiles
     data = load(parsedFileList{fileIndex});
     paperWords = data.allWords;
     paperWords = setcats(paperWords, obj.uniqueWords);

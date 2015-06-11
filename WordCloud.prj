@@ -1,0 +1,85 @@
+<deployment-project plugin="plugin.apptool" plugin-version="1.0">
+  <configuration build-checksum="470284321" file="C:\Users\owenj\matlab_workspace\paperanalysis\WordCloud.prj" location="C:\Users\owenj\matlab_workspace\paperanalysis" name="WordCloud" target="target.mlapps" target-name="Package App">
+    <param.appname>WordCloud</param.appname>
+    <param.authnamewatermark>Jenny Owen</param.authnamewatermark>
+    <param.email />
+    <param.company>MathWorks Ltd.</param.company>
+    <param.icon />
+    <param.icons />
+    <param.summary>Makes word clouds and semantic surface visualisations from a set of documents.</param.summary>
+    <param.description>my very cool app which is amazing.</param.description>
+    <param.screenshot>${PROJECT_ROOT}\images\SEFI_WordCloud.png</param.screenshot>
+    <param.version>1.0</param.version>
+    <param.products.name>
+      <item>MATLAB</item>
+    </param.products.name>
+    <param.products.id>
+      <item>1</item>
+    </param.products.id>
+    <param.products.version>
+      <item>8.6</item>
+    </param.products.version>
+    <param.platforms />
+    <param.output>C:\Users\owenj\matlab_workspace\paperanalysis</param.output>
+    <param.guid>cd97f62e-0d01-4ec0-a899-c64bf0b5282a</param.guid>
+    <unset>
+      <param.email />
+      <param.icon />
+      <param.icons />
+      <param.version />
+      <param.platforms />
+      <param.output />
+    </unset>
+    <fileset.main>
+      <file>${PROJECT_ROOT}\GetFilesUI.m</file>
+    </fileset.main>
+    <fileset.depfun>
+      <file>${PROJECT_ROOT}\+WordCloud\addMWLogo.m</file>
+      <file>${PROJECT_ROOT}\+WordCloud\WordCloud.m</file>
+      <file>${PROJECT_ROOT}\+WordCloud\WordCloudFactory.m</file>
+      <file>${PROJECT_ROOT}\+WordCloud\WordCluster.m</file>
+      <file>${PROJECT_ROOT}\+WordCloud\WordClusterRow.m</file>
+      <file>${PROJECT_ROOT}\@ParseFiles\calculateNormalisedWordFrequencies.m</file>
+      <file>${PROJECT_ROOT}\@ParseFiles\locatePDFConverter.m</file>
+      <file>${PROJECT_ROOT}\@ParseFiles\parse.m</file>
+      <file>${PROJECT_ROOT}\@ParseFiles\ParseFiles.m</file>
+      <file>${PROJECT_ROOT}\@ParseFiles\readKeywordsAndCountsFromFile.m</file>
+      <file>${PROJECT_ROOT}\@ParseFiles\readOneDocFile.m</file>
+      <file>${PROJECT_ROOT}\@ParseFiles\readOnePDFFile.m</file>
+      <file>${PROJECT_ROOT}\@ParseFiles\readOneTextFile.m</file>
+      <file>${PROJECT_ROOT}\generateSemanticSurface.m</file>
+      <file>${PROJECT_ROOT}\GetFilesUI.fig</file>
+      <file>${PROJECT_ROOT}\WordCloudEditor.fig</file>
+      <file>${PROJECT_ROOT}\WordCloudEditor.m</file>
+    </fileset.depfun>
+    <fileset.resources>
+      <file>${PROJECT_ROOT}\+WordCloud\MATLAB_rev.png</file>
+      <file>${PROJECT_ROOT}\+WordCloud\MATLAB_RGB.png</file>
+      <file>${PROJECT_ROOT}\@ParseFiles\CommonWords.mat</file>
+    </fileset.resources>
+    <fileset.package />
+    <build-deliverables>
+      <file location="C:\Users\owenj\matlab_workspace" name="paperanalysis" optional="false">C:\Users\owenj\matlab_workspace\paperanalysis</file>
+    </build-deliverables>
+    <workflow />
+    <matlab>
+      <root>C:\MATLAB\bash</root>
+      <toolboxes />
+    </matlab>
+    <platform>
+      <unix>false</unix>
+      <mac>false</mac>
+      <windows>true</windows>
+      <win2k>false</win2k>
+      <winxp>false</winxp>
+      <vista>false</vista>
+      <linux>false</linux>
+      <solaris>false</solaris>
+      <osver>6.1</osver>
+      <os32>false</os32>
+      <os64>true</os64>
+      <arch>win64</arch>
+      <matlab>true</matlab>
+    </platform>
+  </configuration>
+</deployment-project>
