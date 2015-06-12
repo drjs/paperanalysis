@@ -205,7 +205,7 @@ end
 % getting here means that the user entered a title and some text.
 % save this as a txt file 
 savefolder = getappdata(handles.mainFig, 'LastFolderViewed');
-filename = fullfile(savefolder, [dialogueOutput{1}, '.txt'])
+filename = fullfile(savefolder, [dialogueOutput{1}, '.txt']);
 fid = fopen(filename, 'w');
 % write text to file row by row.
 for row = 1:size(dialogueOutput{2}, 1)

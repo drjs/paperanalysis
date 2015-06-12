@@ -48,6 +48,7 @@ if any(ismember({'.doc', '.docx'}, fileExtensions))
 end
 
 completeWordList = [];
+emptyFiles = false(1,numFiles);
 
 disp('Mapping files');
 
@@ -59,12 +60,30 @@ for fileIndex = 1:numFiles
         commonWords, ...
         canWriteToTempDir);
     completeWordList = [completeWordList; allWords];
-    fprintf('Parsed %s\n', obj.fileList{fileIndex});
+    
+    fprintf('Parsed %s\n', obj.fileList{fileIndex});    
+    % if the file was empty, flag it as empty to avoid any errors later.
+    if(isempty(allWords))
+        emptyFiles(fileIndex) = true;
+        fprintf('%s was empty, ignoring from project\n', obj.fileList{fileIndex});
+    end
 end
 
 % close MS Word if we used it
 if containsDoc
     obj.wordApplication.Quit;
+end
+
+% remove any files flagged as empty from the rest of the parsing algorithm.
+if any(emptyFiles)
+    obj.fileList = obj.fileList(~emptyFiles);
+    parsedFileList = parsedFileList(~emptyFiles);
+    obj.documentTitles = obj.documentTitles(~emptyFiles);
+    numFiles = numFiles - nnz(emptyFiles);
+    % if there are no files left, that's an error.
+    if numFiles < 1
+        error('All files were empty, check the data or choose different files');
+    end
 end
 
 disp('Reducing files');

@@ -110,8 +110,6 @@ To start generating word clouds run GetFilesUI.
 TODO
 ----
 
-1. Using license to check if a toolbox is installed gives the wrong answer because it only checks the toolbox is LICENSED. Change source so that calls to other toolboxes are in `try`/`catch` blocks.
 1. Improve read me project description. What does this do? why? how?
 7. Make it possible to load a project from file?
 8. delete unused files from repository
-3. if your temp drive contains a space and you're reading pdfs from an unwritable location I need to add a warning that xpdf will not work.

@@ -37,9 +37,10 @@ else
     % from categorical get list of unique keywords and their counts
     % keywordCount = countcats(allWords);
     
-    % saved parsed data into a mat fileia
-    %     save(parsedDataSaveFile, 'uniqueKeywords', 'keywordCount', 'paperTitle');
-    save(fileToSaveWordDataInto, 'allWords', 'paperTitle');
+    % saved parsed data into a mat file
+    if ~isempty(allWords)
+        save(fileToSaveWordDataInto, 'allWords', 'paperTitle');
+    end
 end
 end
 
