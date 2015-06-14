@@ -83,7 +83,7 @@ Clustering is calculated using MATLAB's [hierarchical clustering](http://www.mat
 The correlation between the words is used as a distance measure, so words that are perfectly positively correlated will have zero distance, and perfectly negatively correlated words have a very large distance.
 
 The "linkage" clustering algorithm then:
-1. steps through the words, and pairs words that are closest together (i.e. the words most postively correlated with each other).
+1. Steps through the words, and pairs words that are closest together (i.e. the words most postively correlated with each other).
 2. The pairs can then be combined with other words or pairs which are close to each other.
 3. The process of pairing words or pairs repeats until we have the number of groups required for the Word Cloud.
 4. Each group of words is rendered as a cluster in the WordCloud.
@@ -101,6 +101,43 @@ This is the resulting WordCloud when separated into 8 clusters:
 
 
 ### Making a Semantic Surface
+
+Say there are N unique words observed across all the documents. 
+Each document can be represented as a point in an N dimensional space where its position on the
+Xth axis is the document's count for the Xth word.
+
+We use a statistical technique called ["Principal Component Analysis"](http://www.mathworks.com/help/stats/pca.html)
+(PCA) to reduce the data down from N dimensions to 3 dimensions.
+
+PCA works by rotating the axes of the N dimensional data, redefining the direction of the axis so that there is the most variation along the first axis,
+then as much variation as possible along the second axis, and so on.
+
+For example, say the we have a set of documents with 3 unique words: `'alpha'`, `'bravo'` and `'charlie'`.
+Normally, we orient the axes so that each dimension corresponds to only one variable.
+With the example of just 3 words:
+
+```matlab
+X.alpha = 1;  X.bravo = 0;  X.charlie = 0;
+Y.alpha = 0;  Y.bravo = 1;  Y.charlie = 0;
+Z.alpha = 0;  Z.bravo = 0;  Z.charlie = 1;
+```
+
+`X`, `Y` and `Z` are the dimensions of the axes, 
+`X.alpha` is how much the X dimension represents the word `'alpha'`,
+`X.bravo` is how much the X dimension represents the word `'bravo'` and so on.
+
+The PCA algorithm looks at the data set, and maybe finds that the data varies the most along the vector:
+```matlab
+alpha = 0.53;  bravo = 0.07;  charlie = 0.4;
+````
+The first axis `X` is redefined to be this new vector.
+
+Next the PCA algorithm looks at the data set again to find a vector orthogonal to `X` which has the most possible variation.
+
+
+A full explanation of how Principal Compnent Analysis works can be found in 
+[MATLAB's feature transformation documentation](http://www.mathworks.com/help/stats/feature-transformation.html#f75476).
+
 5. Display a semantic surface. The files are plotted as data points on a 3D scatter plot.
 
 
@@ -111,5 +148,7 @@ TODO
 ----
 
 1. Improve read me project description. What does this do? why? how?
+ * [ ] finish description of PCA
+ * [ ] make scatter plot example of what word corellation means. X and Y axis are different words data points different documents.
 7. Make it possible to load a project from file?
 8. delete unused files from repository
