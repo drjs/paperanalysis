@@ -55,13 +55,6 @@ function WordCloudEditor_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for WordCloudEditor
 handles.output = hObject;
 
-% check if there is a statistics toolbox license.
-if ~WordCloud.checkForStatisticsToolbox()
-    % If not disable cluster options and change panel tooltip to explanation.
-    set(handles.cluster_options_panel.Children, 'Enable', 'off');
-    set(handles.cluster_options_panel.Children, 'TooltipString', ...
-        'Cluster options only available with statistics toolbox');
-end
 % check the parser was provided
 if(nargin > 3)
     for index = 1:2:(nargin-3),
@@ -91,6 +84,21 @@ else
         'Use the syntax WordCloudEditor(''parser'', ParseFilesObj);']);
 end
 
+% check if there is a statistics toolbox license.
+if ~WordCloud.checkForStatisticsToolbox()
+    % If not disable cluster options and change panel tooltip to explanation.
+    set(handles.cluster_options_panel.Children, 'Enable', 'off');
+    set(handles.cluster_options_panel.Children, 'TooltipString', ...
+        'Cluster options only available with statistics toolbox');
+end
+% if there is only one file in the parser, clustering is also disabled
+if numel(parser.fileList) == 1
+    % If not disable cluster options and change panel tooltip to explanation.
+    set(handles.cluster_options_panel.Children, 'Enable', 'off');
+    set(handles.cluster_options_panel.Children, 'TooltipString', ...
+        'Cluster options only available when viewing more than one file');
+end
+    
 % Update handles structure
 guidata(hObject, handles);
 
