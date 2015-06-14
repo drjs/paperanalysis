@@ -32,9 +32,9 @@ This relies on the updated MATLAB graphics system which was introduced in R2014b
 Earlier versions of MATLAB will not be able to reliably run this code.
 
 #### Statistics Toolbox (optional but recommended)
-This toolbox is used to do the statistical analysis, comparing files with each other.
+This toolbox is used to do the statistical analysis of comparing files with each other.
 The code should work without the statistics toolbox installed, however you 
-can only create word clouds (without clusters) and not the Semantic Surface.
+can only create word clouds (without clustering) and not the Semantic Surface.
 
 #### Parallel Computing Toolbox (optional)
 If you have a very large number of files to read this toolbox can parallelise
