@@ -135,7 +135,7 @@ The first axis `X` is redefined to be this new vector.
 Next the PCA algorithm looks at the data set again to find a vector orthogonal to `X` which has the most possible variation.
 
 
-A full explanation of how Principal Compnent Analysis works can be found in 
+A full explanation of how Principal Component Analysis works can be found in 
 [MATLAB's feature transformation documentation](http://www.mathworks.com/help/stats/feature-transformation.html#f75476).
 
 5. Display a semantic surface. The files are plotted as data points on a 3D scatter plot.
