@@ -14,6 +14,8 @@ topNWords = parserObject.uniqueWords(1:nwords);
 % create figure for plot
 figTitle = [parserObject.projectName, ' Semantic Surface'];
 h =figure('Name', figTitle);
+colordef black;
+h.Color='black';
 
 % if the curve fitting toolbox is present, add a best fit surface.
 % if license('test', 'curve_fitting_toolbox') == 1
@@ -21,12 +23,13 @@ try
     [fitresult, ~] = fit( [x, y], z, 'cubicinterp' );
     % Plot fit with data.
     ax = plot( fitresult, [x, y], z  );
-    legend(ax, figTitle, 'Document Entries', 'Location', 'NorthEast' );
+    %legend(ax, figTitle, 'Document Entries', 'Location', 'NorthEast' );
 catch
     ax = scatter3( x, y, z  );
 end
 
 set(ax, 'MarkerFaceColor',[0 0 0])
+
 % Label axes
 xlabel(axisLabels{1});
 ylabel(axisLabels{2});
@@ -39,6 +42,12 @@ h.UserData = parserObject.documentTitles;
 % Change the updater for the data cursor
 dcm = datacursormode(h);
 set(dcm, 'Enable', 'on', 'UpdateFcn', @dataCursorCallback);
+
+% Light
+lighting gouraud;
+material shiny;
+shading interp;
+li = light('Position',[200 100 10000],'Style','local');
 
 % add logo
 WordCloud.addMWLogo(h);
