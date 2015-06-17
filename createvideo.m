@@ -4,7 +4,7 @@ h=h.Children(2);
 
 OptionZ.Periodic = 1;
 OptionZ.FrameRate = 24;
-OptionZ.Duration = 25;
+OptionZ.Duration = 35;
 
 angle = [0 90;30 8; 110 8; 190 8; 270 8; 360 90]
 

@@ -1,7 +1,7 @@
 function StartAnalysis()
 
 % thedir = '\\mathworks\marketing\Education\SharePoint_Big\ConferenceProceedings\SEFI2014\papers';
-thedir = 'h:\Documents\MATLAB\paperanalysis\SEFI_2014';
+thedir = 'h:\Documents\MATLAB\paperanalysis\SEFI_2015';
 testfiles = dir(strcat(thedir,'\','*.doc*'));
 testfiles = [testfiles; dir(strcat(thedir,'\','*.pdf'))];
 testfiles = {testfiles.name};
