@@ -1,19 +1,24 @@
 Paper Analysis
 =============
 
-Analyse conference papers in MATLAB, visualise similarities between papers in MATLAB.
+This application takes text data from multiple sources, and visualises that data in a way which shows how the words and documents are related.
+It was originally designed to analyse conference papers, but can also be used for books, articles, blogs, reviews... basically anything that's text!
 
-* what does this do?
-* what is a semantic surface?
-* what is the word cloud
+There are 2 ways you can visualise data with this app:
+1. **Word Cloud:** 
+The size of the word indicates how much it appears across all the documents. 
+Words are grouped into clusters according to how frequently they are mentioned together.
+2. **Semantic Surface**
+Scatter plot showing each separate document as a point in a 3D space. 
+Documents that are close to each other in the plot are similar to each other.
+This gives you a view of how the documents are related in the project. Clicking on a point will show the document title.
 
 
 Usage
 -----
 
 To get started, run the function `GetFilesUI`. This will open up the user interface
-for selecting the files to read. From there you can create word clouds or 
-a semantic surface visualising how related the files are based on word analysis.
+for selecting the files to read. From there you can create word clouds or a semantic surface.
 
 
 Examples
@@ -101,6 +106,8 @@ This is the resulting WordCloud when separated into 8 clusters:
 
 
 ### Making a Semantic Surface
+
+The semantic surface view uses a statistical technique ... to map documents to a position in a 3D space.
 
 Say there are N unique words observed across all the documents. 
 Each document can be represented as a point in an N dimensional space where its position on the
