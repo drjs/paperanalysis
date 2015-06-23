@@ -48,7 +48,7 @@ classdef WordCloudFactory
             obj.numWords               = 75;
             obj.colourMap              = @parula;
             obj.fonts                  = {'Times New Roman'};
-            obj.colourMode             = obj.colouringModes{1};  
+            obj.colourMode             = obj.colouringModes{3};  
             obj.textScaleFactor        = 2;
             obj.numClusters            = 1;
             obj.clusterDistanceFactor  = 0.5;

@@ -1,27 +1,6 @@
 classdef WordCloud < handle
     
     properties
-        % cell array of fonts to use in clouds. Fonts are randomly selected
-        % from this list.
-%         prettyFonts = {'Century Gothic', 'Cooper Black', 'Magneto Bold'}; 
-%         prettyFonts;
-        
-        % The colour to make the figure background. This can be a 1x3 RGB 
-        % vector or a standard colour string e.g. 'black' or 'k'.
-%         backgroundColour = [1 1 1];
-        
-        % Scale factor controlling the size the fonts are displayed. Adjust
-        % this to make the words bigger or smaller
-%         fontScaleFactor;
-        
-        % Controls how far the outer word clusters are from the central
-        % cluster. If the words are too close together or far apart,
-        % adjust this value. The distance is proportional to how correlated 
-        % the two clusters are.
-%         satelliteClusterDistanceScaleFactor;
-    end
-    
-    properties
         figHandle;
         clusters;
         centreX  = 0.5;
@@ -72,20 +51,35 @@ classdef WordCloud < handle
         end
         
         function this = rescaleClusterSeparation(this, newDistanceScaleFactor)            
-            % for the remaining clusters
-            distances = ( this.satelliteDistances./max(this.satelliteDistances) ) .* newDistanceScaleFactor;
             nClusters = numel(this.clusters);
             
-            for clust = 2:nClusters
-                % go in a circle around the centre starting from ~45deg
-                theta = (2*pi*clust/(nClusters-1)) + (pi/4);
-                
-                % places this cluster some distance from centre, proportional
-                % to the correlation between the two clusters.
-                newX = cos(theta).*distances(clust) + this.centreX;
-                newY = sin(theta).*distances(clust) + this.centreY;
-                this.clusters(clust) = this.clusters(clust).recentreCluster(newX, newY);
+            % if there are only 2 clusters, it looks bad if one is
+            % automatically in the centre, so put them above and below the
+            % centre
+            if nClusters == 2
+                theta = pi/2;
+                r = 0.5 * newDistanceScaleFactor;
+                this = this.placeClusterAtPolarCoord(1, r, theta);
+                theta = 3*pi/2;
+                this = this.placeClusterAtPolarCoord(2, r, theta);
+            else
+                distances = ( this.satelliteDistances./max(this.satelliteDistances) ) .* newDistanceScaleFactor
+                for clustIdx = 2:nClusters
+                    % go in a circle around the centre starting from ~45deg
+                    % places this cluster some distance from centre, proportional
+                    % to the correlation between the two clusters.
+                    theta = (2*pi*clustIdx/(nClusters-1)) + (pi/4);
+                    this = this.placeClusterAtPolarCoord(clustIdx, distances(clustIdx), theta);
+                end
             end
+        end
+        
+        function this = placeClusterAtPolarCoord(this, clustIdx, r, theta)
+            % places the cluster in index clustIdx the distance r and angle
+            % theta, using the centre as polar coordinate origin.
+            newX = cos(theta).*r + this.centreX;
+            newY = sin(theta).*r + this.centreY;
+            this.clusters(clustIdx) = this.clusters(clustIdx).recentreCluster(newX, newY);
         end
         
         function this = recolourUniformClusters(this, colourMapFcn)
