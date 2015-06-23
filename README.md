@@ -5,9 +5,11 @@ This application takes text data from multiple sources, and visualises that data
 It was originally designed to analyse conference papers, but can also be used for books, articles, blogs, reviews... basically anything that's text!
 
 There are 2 ways you can visualise data with this app:
+
 1. **Word Cloud:** 
 The size of the word indicates how much it appears across all the documents. 
 Words are grouped into clusters according to how frequently they are mentioned together.
+
 2. **Semantic Surface**
 Scatter plot showing each separate document as a point in a 3D space. 
 Documents that are close to each other in the plot are similar to each other.
@@ -66,12 +68,12 @@ How The Package Works
 ### Parsing Data Files
 
 1. Get list of files to parse from user using GetFilesUI.
-2. *MAP*: For each file get a list of words and count number of times a word occurs.
+2. **MAP**: For each file get a list of words and count number of times a word occurs.
   1. PDF, doc and docx files are converted to txt files and stored in the temporary directory.
   2. The txt file is read in using TEXTSCAN, which converts the entire file to a cell array with one cell per word.
   3. The cell array is converted to the [CATEGORICAL](http://uk.mathworks.com/help/matlab/ref/categorical.html) data type. This automatically generates a list of the unique words in the cell array (the "categories"), and the [COUNTCATS](http://uk.mathworks.com/help/matlab/ref/countcats.html) function can then be used to quickly count the number of occurrences of each unique word.
   4. The categorical array is saved to mat file in the project directory. If you try to rescan the file again later, it will open the saved data instead.
-3. *REDUCE*: Collate list of all words used across all files, and recalculate word counts for each paper based on new list.
+3. **REDUCE**: Collate list of all words used across all files, and recalculate word counts for each paper based on new list.
   1. Now we have a set of categorical arrays containing all the words from all the files this is combined into one categorical `completeWordList`
   2. The categories from `completeWordList` are taken to get a complete list of ALL unique words used in the set of files. This is reordered so that the most common word comes at index 1 and the least common word at the `end` position.
   3. To  get each file's new word count we recategorise the saved data from the mapping phase to use the `completeWordList` categories instead. Then use the `COUNTCATS` function to get the word counts.
@@ -156,6 +158,5 @@ TODO
 
 1. Improve read me project description. What does this do? why? how?
  * [ ] finish description of PCA
- * [ ] make scatter plot example of what word corellation means. X and Y axis are different words data points different documents.
-7. Make it possible to load a project from file?
 8. delete unused files from repository
+2. improve word colouring so all words contrast readably with the background colour.

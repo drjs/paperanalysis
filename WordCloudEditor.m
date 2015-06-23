@@ -497,6 +497,6 @@ if ~(isequal(f,0) || isequal(p,0))
         'renderer', 'painters',...
         'paperpositionmode', 'auto',...
         'InvertHardcopy', 'off');
-    print(h, fullfile(p, f), '-dpng', '-noui');
+    print(h, fullfile(p, f), '-dpng', '-noui', '-r600');
 end
 

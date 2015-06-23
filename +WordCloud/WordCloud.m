@@ -63,7 +63,7 @@ classdef WordCloud < handle
                 theta = 3*pi/2;
                 this = this.placeClusterAtPolarCoord(2, r, theta);
             else
-                distances = ( this.satelliteDistances./max(this.satelliteDistances) ) .* newDistanceScaleFactor
+                distances = ( this.satelliteDistances./max(this.satelliteDistances) ) .* newDistanceScaleFactor;
                 for clustIdx = 2:nClusters
                     % go in a circle around the centre starting from ~45deg
                     % places this cluster some distance from centre, proportional
