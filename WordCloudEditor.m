@@ -205,10 +205,13 @@ function select_text_colour_btn_Callback(hObject, eventdata, handles)
 % hObject    handle to select_text_colour_btn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-handles.select_text_colour_btn.BackgroundColor = uisetcolor;
-fac = getappdata(handles.wordcloud_editor_figure, 'factory');
-fac = fac.setTextColour(handles.select_text_colour_btn.BackgroundColor);
-setappdata(handles.wordcloud_editor_figure, 'factory', fac);
+col = uisetcolor;
+if size(col, 2) == 3
+    handles.select_text_colour_btn.BackgroundColor = col;
+    fac = getappdata(handles.wordcloud_editor_figure, 'factory');
+    fac = fac.setTextColour(handles.select_text_colour_btn.BackgroundColor);
+    setappdata(handles.wordcloud_editor_figure, 'factory', fac);
+end
 
 
 % --- Executes on button press in select_background_colour_btn.
@@ -216,10 +219,13 @@ function select_background_colour_btn_Callback(hObject, eventdata, handles)
 % hObject    handle to select_background_colour_btn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-handles.select_background_colour_btn.BackgroundColor = uisetcolor;
-fac = getappdata(handles.wordcloud_editor_figure, 'factory');
-fac = fac.setBackgroundColour(handles.select_background_colour_btn.BackgroundColor);
-setappdata(handles.wordcloud_editor_figure, 'factory', fac);
+col = uisetcolor;
+if size(col, 2) == 3
+    handles.select_background_colour_btn.BackgroundColor = col;
+    fac = getappdata(handles.wordcloud_editor_figure, 'factory');
+    fac = fac.setBackgroundColour(handles.select_background_colour_btn.BackgroundColor);
+    setappdata(handles.wordcloud_editor_figure, 'factory', fac);
+end
 
 
 % --- Executes on selection change in fonts_list.
