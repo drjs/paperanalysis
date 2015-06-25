@@ -109,21 +109,23 @@ This is the resulting WordCloud when separated into 8 clusters:
 
 ### Making a Semantic Surface
 
-The semantic surface view uses a statistical technique ... to map documents to a position in a 3D space.
+Say there are *N* unique words observed across all the documents. 
+Each document can be represented as a point in an *N* dimensional space, where its position on the
+*X*th axis is the number of times the *X*th word appears in the document.
 
-Say there are N unique words observed across all the documents. 
-Each document can be represented as a point in an N dimensional space where its position on the
-Xth axis is the document's count for the Xth word.
+The Semantic surface visualisation uses a statistical technique called ["Principal Component Analysis"](http://www.mathworks.com/help/stats/pca.html)
+(PCA) to reduce this data down from *N* dimensions to just 3.
 
-We use a statistical technique called ["Principal Component Analysis"](http://www.mathworks.com/help/stats/pca.html)
-(PCA) to reduce the data down from N dimensions to 3 dimensions.
+#### How Principal Component Analysis Works
 
-PCA works by rotating the axes of the N dimensional data, redefining the direction of the axis so that there is the most variation along the first axis,
+PCA works by rotating the axes of the *N* dimensional data, redefining their 
+directions so that there is the most possible variation along the first axis,
 then as much variation as possible along the second axis, and so on.
+
 
 For example, say the we have a set of documents with 3 unique words: `'alpha'`, `'bravo'` and `'charlie'`.
 Normally, we orient the axes so that each dimension corresponds to only one variable.
-With the example of just 3 words:
+So, with the example of just 3 words:
 
 ```matlab
 X.alpha = 1;  X.bravo = 0;  X.charlie = 0;
@@ -141,22 +143,48 @@ alpha = 0.53;  bravo = 0.07;  charlie = 0.4;
 ````
 The first axis `X` is redefined to be this new vector.
 
-Next the PCA algorithm looks at the data set again to find a vector orthogonal to `X` which has the most possible variation.
-
+Next the PCA algorithm looks at the data set again to find a vector orthogonal to `X` 
+which has the most possible variation. So maybe it finds that this vector 
+ is the one with most variance across the data:
+```matlab
+alpha = 0.17;  bravo = 1.28;  charlie = -0.45;
+````
+The algorithm sets `Y` to be this vector. Finally, since the data only has 3 dimensions, `Z` 
+is set to the remaining orthogonal vector.
 
 A full explanation of how Principal Component Analysis works can be found in 
 [MATLAB's feature transformation documentation](http://www.mathworks.com/help/stats/feature-transformation.html#f75476).
 
-5. Display a semantic surface. The files are plotted as data points on a 3D scatter plot.
+#### Turning the PCA Results into a Scatter Plot
+
+Although the data is multi-dimensional, we can only visualise up to 3 dimensions at a time.
+The first axes the PCA algorithm produces have the most variation across the data, so
+we only plot the data on the first 3 axes and ignore all the higher dimensionality information.
+
+This does however mean that axes no longer map to one single word but a 
+combination of words, so labelling the axes becomes slightly trickier.
+We take the two words that have the strongest weighting for the axis as a label.
+
+From the earlier example, the axis `X` was rotated to be this vector:
+```matlab
+alpha = 0.53;  bravo = 0.07;  charlie = 0.4;
+````
+The weightings for the words `alpha` (0.53) and `charlie` (0.4) are the strongest,
+so axis `X` would be labelled `'alpha / charlie'`.
+
+This is a simplification of what the axis actually represents, because it is 
+a multi-dimensional vector and consequently influenced by *all* words in the dataset.
+However, it does give a decent summary of what the axis represents and which words
+are the most divisive.
+
+Finally, after all the data is plotted, we use the Curve Fitting Toolbox function [FIT](http://uk.mathworks.com/help/curvefit/fit.html)
+to fit a surface to the data points, so that we have a surface of best fit.
 
 
-To start generating word clouds run GetFilesUI.
 
 
 TODO
 ----
 
-1. Improve read me project description. What does this do? why? how?
- * [ ] finish description of PCA
 8. delete unused files from repository
 2. improve word colouring so all words contrast readably with the background colour.
