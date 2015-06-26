@@ -9,7 +9,7 @@ testfiles = {testfiles{3:end}}';
 testfiles = strcat(thedir, '\', testfiles);
 
 
-docParser = ParseFiles(testfiles, 'SEFI_2014');
+docParser = ParseFiles(testfiles, 'SEFI_2015');
 docParser.parse();
 save docParser;
 WordCloudEditor('parser', docParser);

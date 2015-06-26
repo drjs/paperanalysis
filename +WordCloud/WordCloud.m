@@ -73,15 +73,7 @@ classdef WordCloud < handle
                 end
             end
         end
-        
-        function this = placeClusterAtPolarCoord(this, clustIdx, r, theta)
-            % places the cluster in index clustIdx the distance r and angle
-            % theta, using the centre as polar coordinate origin.
-            newX = cos(theta).*r + this.centreX;
-            newY = sin(theta).*r + this.centreY;
-            this.clusters(clustIdx) = this.clusters(clustIdx).recentreCluster(newX, newY);
-        end
-        
+                
         function this = recolourUniformClusters(this, colourMapFcn)
             colours = colourMapFcn(numel(this.clusters));
             for i = 1:numel(this.clusters)
@@ -221,6 +213,14 @@ classdef WordCloud < handle
                this.clusters(end) = ...
                    this.clusters(end).addWords(textHandles, corr2centre);
            end
+       end
+       
+       function this = placeClusterAtPolarCoord(this, clustIdx, r, theta)
+           % places the cluster in index clustIdx the distance r and angle
+           % theta, using the centre as polar coordinate origin.
+           newX = cos(theta).*r + this.centreX;
+           newY = sin(theta).*r + this.centreY;
+           this.clusters(clustIdx) = this.clusters(clustIdx).recentreCluster(newX, newY);
        end
        
        function th = makeSingleTextHandle(~, word, wordCount, rgb, totalCorrelation, fonts, textScaleFactor)

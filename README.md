@@ -182,9 +182,3 @@ to fit a surface to the data points, so that we have a surface of best fit.
 
 
 
-
-TODO
-----
-
-8. delete unused files from repository
-2. improve word colouring so all words contrast readably with the background colour.

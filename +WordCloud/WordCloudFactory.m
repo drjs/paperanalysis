@@ -90,8 +90,8 @@ classdef WordCloudFactory
             % if the statistics toolbox is present then statistial analysis
             % is possible
             if obj.hasStatsToolbox
-                correlationMatrix = corr(normalisedWordCounts', 'type', 'Pearson');
-                % correlationMatrix = corr(docParser.wordCounts(1:obj.numWords, :)', 'type', 'Pearson');
+                % correlationMatrix = corr(normalisedWordCounts', 'type', 'Pearson');
+                correlationMatrix = corr(docParser.wordCounts(1:obj.numWords, :)', 'type', 'Pearson');
                 tree = linkage(correlationMatrix, 'average');
                 clusterGroups = cluster(tree, 'maxclust', obj.numClusters);
             else
