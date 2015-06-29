@@ -1,4 +1,6 @@
 function obj = parse(obj)
+% Author: Jenny Owen
+% Copyright 2015 The MathWorks Inc.
 
 % check the data has not already been parsed
 if exist(fullfile(obj.projectFolder, 'ParsedWordData.mat'), 'file')

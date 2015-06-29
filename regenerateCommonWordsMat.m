@@ -1,3 +1,5 @@
+% Copyright 2015 The MathWorks Inc.
+%
 fid = fopen(fullfile('@ParseFiles','CommonWords.txt'), 'r');
 commonWords = textscan(fid, '%s');
 fclose(fid);

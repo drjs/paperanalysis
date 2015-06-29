@@ -1,4 +1,6 @@
 function obj = locatePDFConverter(obj)
+% Copyright 2015 The MathWorks Inc.
+
 prefgroup = 'WordCloud';
 prefname  = 'pdfConverter';
 

@@ -1,4 +1,5 @@
 function StartAnalysis()
+% Copyright 2015 The MathWorks Inc.
 
 % thedir = '\\mathworks\marketing\Education\SharePoint_Big\ConferenceProceedings\SEFI2014\papers';
 thedir = 'h:\Documents\MATLAB\paperanalysis\SEFI_2015';

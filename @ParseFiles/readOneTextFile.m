@@ -5,6 +5,8 @@ function [allWords, varargout] = readOneTextFile(obj, filename)
 % file
 % [allWords, docTitle] = parseOneTextFile(filename) returns the title and
 % the words.
+% 
+% Copyright 2015 The MathWorks Inc.
 
 fid = fopen(filename, 'r');
 

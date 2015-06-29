@@ -1,4 +1,6 @@
 function allWords = readKeywordsAndCountsFromFile(obj, fileToRead, fileToReadExtension, fileToSaveWordDataInto, commonWords, canWriteToTempDir)
+% Author: Jenny Owen, Pantelis Hadjipantelis
+% Copyright 2015 The MathWorks Inc.
 
 % check file has not already been parsed and saved
 if exist(fileToSaveWordDataInto, 'file')

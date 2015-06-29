@@ -1,4 +1,5 @@
 function logoax = addMWLogo(figHandle)
+% Copyright 2015 The MathWorks Inc.
 
 % if background is light, use dark logo else use white text logo
 if sum(figHandle.Color) > 1.5

@@ -11,7 +11,7 @@ classdef WordCloudFactory
     % WordCloud, WordCloudEditor
     %
     % Author: Jenny Owen
-    % Copyright: MathWorks 2015
+    % Copyright 2015 The MathWorks Inc.
     
     % read only properties
     properties (SetAccess = private)

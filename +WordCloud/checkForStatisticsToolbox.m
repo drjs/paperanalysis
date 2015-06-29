@@ -11,6 +11,8 @@ function hasStatsTbx = checkForStatisticsToolbox()
     %   on statistical analysis techniques (mostly PCA) to measure the
     %   similarity  between documents. Without the statistics toolbox this
     %   will not work at all, so the feature is disabled.
+    %     
+    % Copyright 2015 The MathWorks Inc.
     
     installedToolboxes = ver;
     installedToolboxes = {installedToolboxes.Name};

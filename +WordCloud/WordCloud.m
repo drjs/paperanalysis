@@ -1,4 +1,10 @@
 classdef WordCloud < handle
+%WORDCLOUD Basic class for creating and modifying Word Clouds.
+% This code is not intended to be user facing, if you want to create a 
+% Word Cloud programmatically then use the WordCloudFactory class instead.
+% 
+% Author: Jenny Owen
+% Copyright 2015 The MathWorks Inc.
     
     properties
         figHandle;

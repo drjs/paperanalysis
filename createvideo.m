@@ -1,3 +1,5 @@
+%Copyright 2015 The MathWorks Inc.
+
 h=gcf;
 h=h.Children(2);
 

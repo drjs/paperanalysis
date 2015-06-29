@@ -1,5 +1,8 @@
 classdef WordCluster < handle
     %WORDCLOUD A single cluster of words within a WordCloud
+    % 
+    % Author: Jenny Owen
+    % Copyright 2015 The MathWorks Inc.
     
     properties
         textHandles;

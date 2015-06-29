@@ -19,6 +19,9 @@ function varargout = WordCloudEditor(varargin)
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
+% 
+% Author: Jenny Owen
+% Copyright 2015 The MathWorks Inc.
 
 % Edit the above text to modify the response to help WordCloudEditor
 

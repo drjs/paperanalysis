@@ -1,6 +1,8 @@
 function [allWords, docTitle] = readOnePDFFile(obj, filename, canWriteToTempDir)
 %PARSEONEPDFFILE Parses a pdf file and returns its title and a
 %cell array containing all words in the text file (one cell per word)
+% 
+% Copyright 2015 The MathWorks Inc.
 
 % get document title from filename
 [path, docTitle, ~] = fileparts(filename);

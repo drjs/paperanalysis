@@ -16,6 +16,8 @@ Documents that are close to each other in the plot are similar to each other.
 This gives you a view of how the documents are related in the project. Clicking on a point will show the document title.
 
 
+Copyright 2015 The MathWorks Inc.
+
 Usage
 -----
 
