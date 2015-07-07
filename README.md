@@ -1,7 +1,9 @@
 Paper Analysis
 =============
 
-This application takes text data from multiple sources, and visualises that data in a way which shows how the words and documents are related.
+
+
+Copyright 2015 The MathWorks Inc.This application takes text data from multiple sources, and visualises that data in a way which shows how the words and documents are related.
 It was originally designed to analyse conference papers, but can also be used for books, articles, blogs, reviews... basically anything that's text!
 
 There are 2 ways you can visualise data with this app:
@@ -15,8 +17,6 @@ Scatter plot showing each separate document as a point in a 3D space.
 Documents that are close to each other in the plot are similar to each other.
 This gives you a view of how the documents are related in the project. Clicking on a point will show the document title.
 
-
-Copyright 2015 The MathWorks Inc.
 
 Usage
 -----
@@ -45,10 +45,11 @@ This toolbox is used to do the statistical analysis of comparing files with each
 The code should work without the statistics toolbox installed, however you 
 can only create word clouds (without clustering) and not the Semantic Surface.
 
+<!---
 #### Parallel Computing Toolbox (optional)
 If you have a very large number of files to read this toolbox can parallelise
 the scanning of files and data collection. The code will run without this toolbox
-although it might be slower.
+although it might be slower. -->
 
 #### Curve Fitting Toolbox (optional)
 For the semantic surface plot, having this toolbox will allow MATLAB to generate

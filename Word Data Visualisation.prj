@@ -1,7 +1,7 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="3128834557" file="C:\Users\owenj\matlab_workspace\paperanalysis\Word Data Visualisation.prj" location="C:\Users\owenj\matlab_workspace\paperanalysis" name="Word Data Visualisation" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="2766992164" file="C:\Users\owenj\matlab_workspace\paperanalysis\Word Data Visualisation.prj" location="C:\Users\owenj\matlab_workspace\paperanalysis" name="Word Data Visualisation" target="target.mlapps" target-name="Package App">
     <param.appname>Word Data Visualisation</param.appname>
-    <param.authnamewatermark>Jenny Owen</param.authnamewatermark>
+    <param.authnamewatermark>Jenny Owen,</param.authnamewatermark>
     <param.email />
     <param.company>MathWorks Ltd.</param.company>
     <param.icon>${PROJECT_ROOT}\Word Data Visualisation_resources\icon_24.png</param.icon>
@@ -10,7 +10,9 @@
       <file>${PROJECT_ROOT}\Word Data Visualisation_resources\icon_24.png</file>
       <file>${PROJECT_ROOT}\Word Data Visualisation_resources\icon_16.png</file>
     </param.icons>
-    <param.summary>Makes word clouds and semantic surface visualisations from a set of documents.</param.summary>
+    <param.summary>Makes word clouds and semantic surface visualisations from a set of documents.
+&lt;/br&gt;
+Copyright 2015 The MathWorks Inc.</param.summary>
     <param.description>This application takes text data from multiple sources, and visualises that data in a way which shows how the words and documents are related. 
 It was originally designed to analyse conference papers, but can also be used for books, articles, blogs, reviews... basically anything that's text!
 
@@ -20,12 +22,7 @@ There are 2 ways you can visualise data with this app:
 Words are grouped into clusters according to how frequently they are mentioned together.&lt;/li&gt;
 &lt;li&gt;&lt;b&gt;Semantic Surface&lt;/b&gt; Scatter plot showing each separate document as a point in a 3D space. 
 Documents that are close to each other in the plot are similar to each other. This gives you a view of how the documents are related in the project. Clicking on a point will show the document title.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;/br&gt;
-&lt;b&gt;Usage:&lt;/b&gt;
-&lt;/br&gt;
-To get started, run the function `GetFilesUI`. This will open up the user interface for selecting the files to read. From there you can create word clouds or a semantic surface.</param.description>
+&lt;/ol&gt;</param.description>
     <param.screenshot>${PROJECT_ROOT}\images\MATLAB Graphics Cloud.png</param.screenshot>
     <param.version>1.0</param.version>
     <param.products.name>
