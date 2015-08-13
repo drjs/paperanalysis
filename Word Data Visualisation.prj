@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="2766992164" file="C:\Users\owenj\matlab_workspace\paperanalysis\Word Data Visualisation.prj" location="C:\Users\owenj\matlab_workspace\paperanalysis" name="Word Data Visualisation" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="2039575487" file="C:\Users\owenj\matlab_workspace\paperanalysis\Word Data Visualisation.prj" location="C:\Users\owenj\matlab_workspace\paperanalysis" name="Word Data Visualisation" target="target.mlapps" target-name="Package App">
     <param.appname>Word Data Visualisation</param.appname>
     <param.authnamewatermark>Jenny Owen,</param.authnamewatermark>
     <param.email />

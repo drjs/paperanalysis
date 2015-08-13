@@ -2,7 +2,6 @@ function obj = calculateNormalisedWordFrequencies(obj)
 %CALCULATENORMALISEDWORDFREQUENCIES Calculates the normalised word
 %frequencies for the semantic surface and word cloud visualisations.
 % 
-% Author: Jenny Owen, Pantelis Hadjipantelis.
 % Copyright 2015 The MathWorks Inc.
 
 % === Pantelis code ===

@@ -2,7 +2,6 @@ function h = generateSemanticSurface(parserObject, nwords)
 %GENERATESEMANTICSURFACE Creates Semantic surface showing relationship
 %between papers.
 % 
-% Author: Pantelis Hadjipantelis, Jenny Owen, Joachim Schlosser.
 % Copyright 2015 The MathWorks Inc.
 
 if nwords > size(parserObject.normalisedWordCounts, 1)
