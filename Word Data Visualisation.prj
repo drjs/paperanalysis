@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="2414663108" file="C:\Users\owenj\matlab_workspace\paperanalysis\Word Data Visualisation.prj" location="C:\Users\owenj\matlab_workspace\paperanalysis" name="Word Data Visualisation" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="1107096908" file="C:\Users\owenj\matlab_workspace\paperanalysis\Word Data Visualisation.prj" location="C:\Users\owenj\matlab_workspace\paperanalysis" name="Word Data Visualisation" target="target.mlapps" target-name="Package App">
     <param.appname>Word Data Visualisation</param.appname>
     <param.authnamewatermark>Jenny Owen,</param.authnamewatermark>
     <param.email />
@@ -22,7 +22,9 @@ There are 2 ways you can visualise data with this app:
 Words are grouped into clusters according to how frequently they are mentioned together.
 
 2) Semantic Surface Scatter plot showing each separate document as a point in a 3D space. 
-Documents that are close to each other in the plot are similar to each other. This gives you a view of how the documents are related in the project. Clicking on a point will show the document title.</param.description>
+Documents that are close to each other in the plot are similar to each other. This gives you a view of how the documents are related in the project. Clicking on a point will show the document title.
+
+Copyright 2015 The MathWorks Inc.</param.description>
     <param.screenshot>${PROJECT_ROOT}\images\MATLAB Graphics Cloud.png</param.screenshot>
     <param.version>1.0</param.version>
     <param.products.name>
