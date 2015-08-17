@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="2039575487" file="C:\Users\owenj\matlab_workspace\paperanalysis\Word Data Visualisation.prj" location="C:\Users\owenj\matlab_workspace\paperanalysis" name="Word Data Visualisation" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="2414663108" file="C:\Users\owenj\matlab_workspace\paperanalysis\Word Data Visualisation.prj" location="C:\Users\owenj\matlab_workspace\paperanalysis" name="Word Data Visualisation" target="target.mlapps" target-name="Package App">
     <param.appname>Word Data Visualisation</param.appname>
     <param.authnamewatermark>Jenny Owen,</param.authnamewatermark>
     <param.email />
@@ -11,32 +11,38 @@
       <file>${PROJECT_ROOT}\Word Data Visualisation_resources\icon_16.png</file>
     </param.icons>
     <param.summary>Makes word clouds and semantic surface visualisations from a set of documents.
-&lt;/br&gt;
+
 Copyright 2015 The MathWorks Inc.</param.summary>
     <param.description>This application takes text data from multiple sources, and visualises that data in a way which shows how the words and documents are related. 
 It was originally designed to analyse conference papers, but can also be used for books, articles, blogs, reviews... basically anything that's text!
 
 There are 2 ways you can visualise data with this app:
-&lt;ol&gt;
-&lt;li&gt;&lt;b&gt;Word Cloud:&lt;/b&gt;The size of the word indicates how much it appears across all the documents. 
-Words are grouped into clusters according to how frequently they are mentioned together.&lt;/li&gt;
-&lt;li&gt;&lt;b&gt;Semantic Surface&lt;/b&gt; Scatter plot showing each separate document as a point in a 3D space. 
-Documents that are close to each other in the plot are similar to each other. This gives you a view of how the documents are related in the project. Clicking on a point will show the document title.&lt;/li&gt;
-&lt;/ol&gt;</param.description>
+
+1) Word Cloud:The size of the word indicates how much it appears across all the documents. 
+Words are grouped into clusters according to how frequently they are mentioned together.
+
+2) Semantic Surface Scatter plot showing each separate document as a point in a 3D space. 
+Documents that are close to each other in the plot are similar to each other. This gives you a view of how the documents are related in the project. Clicking on a point will show the document title.</param.description>
     <param.screenshot>${PROJECT_ROOT}\images\MATLAB Graphics Cloud.png</param.screenshot>
     <param.version>1.0</param.version>
     <param.products.name>
       <item>MATLAB</item>
+      <item>Curve Fitting Toolbox</item>
+      <item>Statistics Toolbox</item>
     </param.products.name>
     <param.products.id>
-      <item>1</item>
+      <item>'1'</item>
+      <item>'60'</item>
+      <item>'19'</item>
     </param.products.id>
     <param.products.version>
-      <item>8.6</item>
+      <item>8.4</item>
+      <item>3.5</item>
+      <item>9.1</item>
     </param.products.version>
     <param.platforms />
     <param.output>${PROJECT_ROOT}\Word Data Visualisation.mlappinstall</param.output>
-    <param.guid>cd97f62e-0d01-4ec0-a899-c64bf0b5282a</param.guid>
+    <param.guid>48cf518f-bb53-4cab-a386-ca6961a1a519</param.guid>
     <unset>
       <param.email />
       <param.version />
@@ -47,6 +53,7 @@ Documents that are close to each other in the plot are similar to each other. Th
     </fileset.main>
     <fileset.depfun>
       <file>${PROJECT_ROOT}\+WordCloud\addMWLogo.m</file>
+      <file>${PROJECT_ROOT}\+WordCloud\checkForStatisticsToolbox.m</file>
       <file>${PROJECT_ROOT}\+WordCloud\WordCloud.m</file>
       <file>${PROJECT_ROOT}\+WordCloud\WordCloudFactory.m</file>
       <file>${PROJECT_ROOT}\+WordCloud\WordCluster.m</file>

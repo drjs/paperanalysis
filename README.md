@@ -1,9 +1,7 @@
 Paper Analysis
 =============
 
-
-
-Copyright 2015 The MathWorks Inc.This application takes text data from multiple sources, and visualises that data in a way which shows how the words and documents are related.
+This application takes text data from multiple sources, and visualises that data in a way which shows how the words and documents are related.
 It was originally designed to analyse conference papers, but can also be used for books, articles, blogs, reviews... basically anything that's text!
 
 There are 2 ways you can visualise data with this app:
@@ -18,11 +16,17 @@ Documents that are close to each other in the plot are similar to each other.
 This gives you a view of how the documents are related in the project. Clicking on a point will show the document title.
 
 
+Copyright 2015 The MathWorks Inc.
+
 Usage
 -----
 
 To get started, run the function `GetFilesUI`. This will open up the user interface
 for selecting the files to read. From there you can create word clouds or a semantic surface.
+
+This app can also be downloaded from MATLAB File Exchange here:
+
+http://uk.mathworks.com/matlabcentral/fileexchange/51793-word-data-visualisation
 
 
 Examples
